@@ -1,0 +1,11 @@
+name: WebhookIntegrations
+version: '${project.version}'
+main: rudynakodach.github.io.webhookintegrations.WebhookIntegrations
+api-version: 1.19
+commands:
+  seturl:
+    usage: /seturl <url>
+    permission: webhookintegration.setwebhookurl
+  send:
+    usage: /send <isEmbed> <message>
+    permission: webhookintegration.send
