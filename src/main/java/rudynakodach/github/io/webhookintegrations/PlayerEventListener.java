@@ -128,7 +128,7 @@ public class PlayerEventListener implements Listener {
         String json = "{" +
                 "\"embeds\": [" +
                 "{" +
-                "\"color\": 16776960," +
+                "\"color\": " + webhookEmbedColor + "," +
                 "\"description\": \"" + eventMessage + "\"" +
                 "}" +
                 "]" +

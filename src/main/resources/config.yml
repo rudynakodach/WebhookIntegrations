@@ -72,8 +72,4 @@ playerAdvancementEvent: '[%time%] **%player%** achieved **%advancement%**'
 playerAdvancementEventEmbedColor: 16776960
 
 
-#SERVER START EVENT
-
-serverStartRawJson: ""
-
 #END OF FILE
