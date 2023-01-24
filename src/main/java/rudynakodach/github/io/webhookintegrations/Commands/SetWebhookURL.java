@@ -1,4 +1,4 @@
-package rudynakodach.github.io.webhookintegrations;
+package rudynakodach.github.io.webhookintegrations.Commands;
 
 import okhttp3.*;
 import org.bukkit.ChatColor;
@@ -13,6 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import org.jetbrains.annotations.NotNull;
+import rudynakodach.github.io.webhookintegrations.PlayerEventListener;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -20,7 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-public class Commands implements CommandExecutor {
+public class SetWebhookURL implements CommandExecutor {
 
     final PlayerEventListener playerEventListener;
     final FileConfiguration config;
@@ -28,7 +29,7 @@ public class Commands implements CommandExecutor {
 
     final Logger logger;
 
-    public Commands(PlayerEventListener _pel, FileConfiguration _cfg, JavaPlugin _javaPlugin, Logger _logger) {
+    public SetWebhookURL(PlayerEventListener _pel, FileConfiguration _cfg, JavaPlugin _javaPlugin, Logger _logger) {
         playerEventListener = _pel;
         config = _cfg;
         javaPlugin = _javaPlugin;
@@ -53,7 +54,7 @@ public class Commands implements CommandExecutor {
                 return false;
             }
         }
-        else if(command.getName().equalsIgnoreCase("send")) {
+        if(command.getName().equalsIgnoreCase("send")) {
             if(args.length >= 2) {
                 String webhookUrl = config.getString("webhookUrl");
 

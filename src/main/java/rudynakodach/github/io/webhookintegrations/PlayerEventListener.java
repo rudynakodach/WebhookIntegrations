@@ -22,7 +22,7 @@ import java.util.Date;
 public class PlayerEventListener implements Listener {
 
     //config logic
-    String webhookUrl;
+    public String webhookUrl;
 
     final Boolean isAnnouncingPlayerJoin;
     final Boolean isAnnouncingPlayerQuit;
