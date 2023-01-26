@@ -2,16 +2,13 @@ package rudynakodach.github.io.webhookintegrations.Commands;
 
 import okhttp3.*;
 import org.bukkit.ChatColor;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-
 import org.jetbrains.annotations.NotNull;
 import rudynakodach.github.io.webhookintegrations.PlayerEventListener;
 
@@ -39,7 +36,7 @@ public class SendToWebhook implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String label, String[] args) {
-        if(command.getName().equalsIgnoreCase("send")) {
+        if (command.getName().equalsIgnoreCase("send")) {
             if (args.length >= 2) {
                 String webhookUrl = Objects.requireNonNull(config.getString("webhookUrl"));
 
@@ -101,7 +98,7 @@ public class SendToWebhook implements CommandExecutor {
 
         String webhookUrl = Objects.requireNonNull(config.getString("webhookUrl"));
 
-        if(webhookUrl.equals(""))  {
+        if (webhookUrl.equals("")) {
             logger.log(Level.WARNING, "Attempted to perform a POST request to an empty webhook url!");
             return;
         }
@@ -120,9 +117,11 @@ public class SendToWebhook implements CommandExecutor {
                     if (!response.isSuccessful()) {
                         logger.log(Level.WARNING, "Failed to send eventMessage to Discord webhook: " + response.body().string());
                     }
+                    response.close();
                 } catch (IOException e) {
                     logger.log(Level.SEVERE, e.getMessage());
                 }
+
             }
         }.runTaskAsynchronously(javaPlugin);
     }

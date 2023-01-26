@@ -1,4 +1,5 @@
 package rudynakodach.github.io.webhookintegrations;
+
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import okhttp3.*;
@@ -7,33 +8,31 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerAdvancementDoneEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class PlayerEventListener implements Listener {
-
-    //config logic
-    public String webhookUrl;
 
     final Boolean isAnnouncingPlayerJoin;
     final Boolean isAnnouncingPlayerQuit;
     final Boolean isAnnouncingPlayerKills;
     final Boolean isAnnouncingPlayerDeaths;
-
     final Boolean isAnnouncingPlayerAdvancements;
     final Boolean isAnnouncingPlayerChatMessages;
-
     final Logger logger;
     final FileConfiguration config;
+    //config logic
+    public String webhookUrl;
     JavaPlugin javaPlugin;
 
     public PlayerEventListener(Logger _log, FileConfiguration _config, JavaPlugin _plgn) {
@@ -57,7 +56,9 @@ public class PlayerEventListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
 
-        if(!isAnnouncingPlayerJoin) {return;}
+        if (!isAnnouncingPlayerJoin) {
+            return;
+        }
 
         String eventMessage = config.getString("onPlayerJoinEventMessage");
         String playerName = event.getPlayer().getName();
@@ -68,8 +69,8 @@ public class PlayerEventListener implements Listener {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         String time = sdf.format(new Date());
 
-        eventMessage = eventMessage.replace("%time%",time);
-        eventMessage = eventMessage.replace("%player%",playerName);
+        eventMessage = eventMessage.replace("%time%", time);
+        eventMessage = eventMessage.replace("%player%", playerName);
 
         String json = "{" +
                 "\"embeds\": [" +
@@ -87,7 +88,9 @@ public class PlayerEventListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
 
-        if(!isAnnouncingPlayerQuit) {return;}
+        if (!isAnnouncingPlayerQuit) {
+            return;
+        }
 
         int embedColor = config.getInt("onPlayerQuitEventEmbedColor");
 
@@ -113,7 +116,9 @@ public class PlayerEventListener implements Listener {
     @EventHandler
     public void onPlayerChat(AsyncChatEvent event) {
 
-        if(!isAnnouncingPlayerChatMessages) {return;}
+        if (!isAnnouncingPlayerChatMessages) {
+            return;
+        }
 
         String eventMessage = config.getString("chatEventMessage");
         int webhookEmbedColor = config.getInt("chatEventEmbedColor");
@@ -156,10 +161,10 @@ public class PlayerEventListener implements Listener {
                 String eventMessage = config.getString("playerKilledByWeaponEventMessage");
                 int webhookEmbedColor = config.getInt("playerKilledByWeaponEmbedColor");
 
-                eventMessage = eventMessage.replace("%time%",time);
+                eventMessage = eventMessage.replace("%time%", time);
                 eventMessage = eventMessage.replace("%player%", playerName);
-                eventMessage = eventMessage.replace("%killer%",killerName);
-                eventMessage = eventMessage.replace("%weapon%",PlainTextComponentSerializer.plainText().serialize(weapon.getItemMeta().displayName()));
+                eventMessage = eventMessage.replace("%killer%", killerName);
+                eventMessage = eventMessage.replace("%weapon%", PlainTextComponentSerializer.plainText().serialize(weapon.getItemMeta().displayName()));
 
                 String json = "{" +
                         "\"embeds\": [" +
@@ -173,12 +178,12 @@ public class PlayerEventListener implements Listener {
 
             } else {
                 //item name unknown
-                if(isAnnouncingPlayerKills) {
+                if (isAnnouncingPlayerKills) {
 
                     String eventMessage = config.getString("playerKilledEventMessage");
                     int webhookEmbedColor = config.getInt("playerKilledEventEmbedColor");
 
-                    eventMessage = eventMessage.replace("%time%",time);
+                    eventMessage = eventMessage.replace("%time%", time);
                     eventMessage = eventMessage.replace("%player%", playerName);
 
                     String json = "{" +
@@ -193,14 +198,13 @@ public class PlayerEventListener implements Listener {
                     Send(json);
                 }
             }
-        }
-        else {
-            if(isAnnouncingPlayerDeaths) {
+        } else {
+            if (isAnnouncingPlayerDeaths) {
 
                 String eventMessage = config.getString("playerDeathEventMessage");
                 int webhookEmbedColor = config.getInt("playerDeathEventEmbedColor");
 
-                eventMessage = eventMessage.replace("%time%",time);
+                eventMessage = eventMessage.replace("%time%", time);
                 eventMessage = eventMessage.replace("%player%", playerName);
 
                 String json = "{" +
@@ -221,7 +225,9 @@ public class PlayerEventListener implements Listener {
     //done
     @EventHandler
     public void onAdvancementDone(PlayerAdvancementDoneEvent event) {
-        if(!isAnnouncingPlayerAdvancements) {return;}
+        if (!isAnnouncingPlayerAdvancements) {
+            return;
+        }
 
         String advancementName = PlainTextComponentSerializer.plainText().serialize(event.getAdvancement().displayName());
 
@@ -255,7 +261,7 @@ public class PlayerEventListener implements Listener {
 
     public void Send(String json) {
 
-        if(webhookUrl.equals(""))  {
+        if (webhookUrl.equals("")) {
             logger.log(Level.WARNING, "Attempted to perform a POST request to an empty webhook url!");
             return;
         }
@@ -274,6 +280,7 @@ public class PlayerEventListener implements Listener {
                     if (!response.isSuccessful()) {
                         logger.log(Level.WARNING, "Failed to send eventMessage to Discord webhook: " + response.body().string());
                     }
+                    response.close();
                 } catch (IOException e) {
                     logger.log(Level.SEVERE, e.getMessage());
                 }
