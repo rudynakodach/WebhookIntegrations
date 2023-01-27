@@ -32,7 +32,7 @@ The plugin currently has 2 commands which hold the main functionality.
 ```
 
 # Configuration
-Setting up this plugin is trival.
+Setting up this plugin is trivial.
 In this example, I will modify the join message to be as in the image below
 ![Image](https://cdn.discordapp.com/attachments/943973201392861216/1068280210333630464/image.png)
 The following message is a `onPlayerJoinEventMessage` message of specified `onPlayerJoinEventEmbedColor`.
