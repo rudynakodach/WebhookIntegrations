@@ -229,7 +229,7 @@ public class PlayerEventListener implements Listener {
             return;
         }
 
-        String advancementName = PlainTextComponentSerializer.plainText().serialize(event.getAdvancement().displayName());
+        String advancementName = PlainTextComponentSerializer.plainText().serialize(event.getAdvancement().getDisplay().title());
 
         if (advancementName.contains(":") || advancementName.contains("minecraft")) {
             return;
