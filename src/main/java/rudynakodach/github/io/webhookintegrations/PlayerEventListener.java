@@ -119,16 +119,26 @@ public class PlayerEventListener implements Listener {
         if (!isAnnouncingPlayerChatMessages) {
             return;
         }
-
-        String eventMessage = config.getString("chatEventMessage");
-        int webhookEmbedColor = config.getInt("chatEventEmbedColor");
-
         String playerName = event.getPlayer().getName();
         String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
 
+        String eventMessage = config.getString("chatEventMessage");
         eventMessage = eventMessage.replace("%time%", time);
         eventMessage = eventMessage.replace("%player%", playerName);
         eventMessage = eventMessage.replace("%message%", PlainTextComponentSerializer.plainText().serialize(event.message()));
+
+        if (config.getBoolean("preventPingsAndTags")) {
+            if(eventMessage.contains("@everyone") || eventMessage.contains("@here")) {
+                return;
+            }
+        }
+
+
+        int webhookEmbedColor = config.getInt("chatEventEmbedColor");
+
+
+
+
 
         String json = "{" +
                 "\"embeds\": [" +

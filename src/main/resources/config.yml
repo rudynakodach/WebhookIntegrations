@@ -14,7 +14,8 @@ announceChatMessages: true
 announcePlayerJoin: true
 announcePlayerQuit: true
 
-
+# prevent players from using @everyone and @here
+preventPingsAndTags: false
 
   ########################################
   ############# PLACEHOLDERS #############
