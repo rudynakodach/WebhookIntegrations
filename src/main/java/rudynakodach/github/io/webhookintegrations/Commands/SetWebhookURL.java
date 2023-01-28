@@ -36,10 +36,10 @@ public class SetWebhookURL implements CommandExecutor {
                 config.set("webhookUrl", newUrl);
                 javaPlugin.saveConfig();
 
-                sender.sendMessage("New webhook url has been set!");
+                sender.sendMessage("Pomyślnie ustawiono webhook url!");
                 return true;
             } else {
-                sender.sendMessage("Incorrect usage.");
+                sender.sendMessage("Niepoprawne użycie.");
                 return false;
             }
         }

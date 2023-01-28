@@ -272,7 +272,7 @@ public class PlayerEventListener implements Listener {
     public void Send(String json) {
 
         if (webhookUrl.equals("")) {
-            logger.log(Level.WARNING, "Attempted to perform a POST request to an empty webhook url!");
+            logger.log(Level.WARNING, "Próbowano wysłać POST do pustego webhooka!");
             return;
         }
 
@@ -288,7 +288,7 @@ public class PlayerEventListener implements Listener {
                         .build();
                 try (Response response = client.newCall(request).execute()) {
                     if (!response.isSuccessful()) {
-                        logger.log(Level.WARNING, "Failed to send eventMessage to Discord webhook: " + response.body().string());
+                        logger.log(Level.WARNING, "Próba wysłania nie powiodła się: " + response.body().string());
                     }
                     response.close();
                 } catch (IOException e) {

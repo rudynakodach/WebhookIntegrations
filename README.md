@@ -1,42 +1,41 @@
 # WebhookIntegrations
-The simpliest solution for Discord Webhook integration with your Minecraft server.
+Najłatwiejsze rozwiązanie do integracji webhooków z serwerem minecraft.
 
-# Features
+# Funkcje
 
-- Chat logging
-- Player quit/join messages
-- Player death messages
-- Advancement logging
+- Logowanie wiadomości czatu
+- Wiadomości wejścia i wyjścia gracza
+- Wiadomości o śmierci gracza
+- Powiadomienia o osiągnięciach gracza
+# Użycie
+Pobierz plik .jar z [tąd](https://github.com/rudynakodach/WebhookIntegrations/releases/latest) i dodaj go do folderu `Plugins`.
 
-# Usage
-Download the .jar file from [here](https://github.com/rudynakodach/WebhookIntegrations/releases/latest) and drop it into your `Plugins` folder.
+Kiedy będziesz w grze lub konsoli użyj komendy `/seturl <adres url webhooka>`.
+Jeśli użycie tej komendy się powiedzie, powinieneś widzieć twoje wiadomości na dicordzie.
+Jeśli nie, sprawdź czy adres url jest poprawny.
 
-Once in game/console, to set the URL for your Webhook, use `/seturl <url>`.
-If done correctly, you will be able to see messages appearing in the specified channel.
-However, if you do not see the bot to start messaging, check the console for warnings from the plugin.
+Możesz skonfigurować jakie wiadomości mają być wysyłane w pliku `config.yml` w folderze `plugins/WebhookIntegrations`.
 
-You can configure what messages will be sent and their format inside WebhookIntegrations/config.yml of your server's Plugins folder
-
-# Permissions & Commands
-The plugin currently has 2 commands which hold the main functionality.
+# Uprawnienia i komendy
+Plugin posiada 2 główne komendy które zawierają jego główne funkcje.
 ```
   setWebhookUrl:
-    Sets the URL for your webhook.
+    SUstawia url webhook'a.
     Usage: /seturl <url | string>
     Permission: webhookintegration.seturl
    
    send:
-    Sends the provided message to a webhook.
+    Wysyła wiadomosć przez webhook.
     Usage: /send <isEmbed | boolean> <message | string>
     Permission: webhookintegration.send
 ```
 
-# Configuration
-Setting up this plugin is trivial.
-In this example, I will modify the join message to be as in the image below
+# Konfiguracja
+Przygotowanie plguinu do działania jest bardzo proste!
+W tym przykładzie zmodyfikujemy wiadomości dołaczenia wysyłane przez plugin.
 ![Image](https://cdn.discordapp.com/attachments/943973201392861216/1068280210333630464/image.png)
-The following message is a `onPlayerJoinEventMessage` message of specified `onPlayerJoinEventEmbedColor`.
-To make your message look the same, `onPlayerEventMessage` will be set to:
+Tą wiadmość możesz edytować używajac zmiennej `onPlayerJoinEventMessage` a kolor jej embedu zmieniać `onPlayerJoinEventEmbedColor`.
+Jeśli chesz aby twoja wiadomość wyglądała tak jak w przykładzie zmień wartość `onPlayerEventMessage` na:
 ```yml
 onPlayerJoinEventMessage: '[%time%] **%player%** joined the server.'
 ```
@@ -44,9 +43,11 @@ and for the color,
 ```yml
 onPlayerJoinEventEmbedColor: 3066993
 ```
-If you don't want a message to be announced, like chat messages, you need to disabled them in the config:
+Jeśli niechcesz, aby wiadomości były wysyłane  możesz to zmienić w konfiguracji:
 ```yml
 announceChatMessages: false
 ```
 
 Keep in mind that the embed color has to be a decimal number.
+### Translated to polish by [NightOwl](https://nightowl.dev)
+

@@ -42,8 +42,8 @@ public class SendToWebhook implements CommandExecutor {
 
                 if (webhookUrl.equals("")) {
 
-                    String response = ChatColor.translateAlternateColorCodes('&', "&cYour webhook URL is &lEMPTY\n" +
-                            "&ePlease use /seturl <url>");
+                    String response = ChatColor.translateAlternateColorCodes('&', "&cTwój webhook url jest &lPUSTY\n" +
+                            "&eProszę użyć /seturl <url>");
                     sender.sendMessage(response);
 
                     return true;
@@ -55,7 +55,7 @@ public class SendToWebhook implements CommandExecutor {
                 Player player = (Player) sender;
                 String username = player.getName();
 
-                logger.log(Level.INFO, player + " used /send with the following message: " + message);
+                logger.log(Level.INFO, player + " użyj /send z tą wiadmościa: " + message);
 
                 if (isEmbed) {
 
@@ -83,8 +83,8 @@ public class SendToWebhook implements CommandExecutor {
                 return true;
 
             } else {
-                String response = ChatColor.translateAlternateColorCodes('&', "&cIncorrect usage\n" +
-                        "&r&f/send &aisEmbed&7(true/false)&r&a message");
+                String response = ChatColor.translateAlternateColorCodes('&', "&cZłe użycie!\n" +
+                        "&r&f/send &aisEmbed&7(true/false)&r&a wiadomość");
                 sender.sendMessage(response);
 
                 return true;
@@ -99,7 +99,7 @@ public class SendToWebhook implements CommandExecutor {
         String webhookUrl = Objects.requireNonNull(config.getString("webhookUrl"));
 
         if (webhookUrl.equals("")) {
-            logger.log(Level.WARNING, "Attempted to perform a POST request to an empty webhook url!");
+            logger.log(Level.WARNING, "Próba wysłania wiadomości do webhooka, ale webhook url jest pusty!");
             return;
         }
 
@@ -115,7 +115,7 @@ public class SendToWebhook implements CommandExecutor {
                         .build();
                 try (Response response = client.newCall(request).execute()) {
                     if (!response.isSuccessful()) {
-                        logger.log(Level.WARNING, "Failed to send eventMessage to Discord webhook: " + response.body().string());
+                        logger.log(Level.WARNING, "Wysyłanie wiadomości do webhooka nie powiodło się!" + response.body().toString());
                     }
                     response.close();
                 } catch (IOException e) {

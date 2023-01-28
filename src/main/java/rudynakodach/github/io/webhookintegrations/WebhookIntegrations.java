@@ -22,13 +22,13 @@ public final class WebhookIntegrations extends JavaPlugin {
     @Override
     public void onEnable() {
 
-        getLogger().log(Level.INFO, "Hello, World!");
+        getLogger().log(Level.INFO, "Witaj Świecie!");
 
-        getLogger().log(Level.INFO, "Checking for updates...");
+        getLogger().log(Level.INFO, "Sprawdzanie akutalizacji..");
 
         int receivedBuildNumber = getVersion();
         if (currentBuildNumber < receivedBuildNumber && receivedBuildNumber != -1) {
-            Component text = Component.text("New version available on the GitHub repository. Please update.", NamedTextColor.GREEN);
+            Component text = Component.text("Nowa wersja jest dostępna na githubie! Proszę zaktualizować plugin!.", NamedTextColor.GREEN);
             getComponentLogger().info(text);
         }
 
@@ -38,26 +38,26 @@ public final class WebhookIntegrations extends JavaPlugin {
 
 
         if (Objects.equals(getConfig().getString("webhookUrl"), "")) {
-            getLogger().log(Level.WARNING, "WebhookURL is empty and cannot be used! Set the value of webhookUrl inside the config.yml file and restart the server or use \"/seturl <url>\"!");
+            getLogger().log(Level.WARNING, "Zmienna webhookUrl jest pusta zmień ją w configu lub uzyj \"/seturl <url>\"!");
         }
 
         getServer().getPluginManager().registerEvents(pel, this);
-        getLogger().log(Level.INFO, "Events registered.");
+        getLogger().log(Level.INFO, "Zarejestrowano eventy.");
 
         SetWebhookURL setWebhookUrlCommand = new SetWebhookURL(pel, getConfig(), this, getLogger());
         Objects.requireNonNull(getCommand("seturl")).setExecutor(setWebhookUrlCommand);
 
         SendToWebhook sendToWebhookCommand = new SendToWebhook(pel, getConfig(), this, getLogger());
         Objects.requireNonNull(getCommand("send")).setExecutor(sendToWebhookCommand);
-        getLogger().log(Level.INFO, "Commands registered.");
+        getLogger().log(Level.INFO, "Zarehestrowano komendy.");
 
     }
 
     //on shutdown
     @Override
     public void onDisable() {
-        getLogger().log(Level.INFO, "this is my final message");
-        getLogger().log(Level.INFO, "goodb ye");
+        getLogger().log(Level.INFO, "to moja ostatnia wiadomosć");
+        getLogger().log(Level.INFO, "do widzenia świecie!");
     }
 
     public Integer getVersion() {
@@ -79,7 +79,7 @@ public final class WebhookIntegrations extends JavaPlugin {
             }
 
         } catch (IOException e) {
-            getLogger().log(Level.WARNING, "Failed to get build number: " + e.getMessage());
+            getLogger().log(Level.WARNING, "Wystąpił błąd podczas sprawdzania numeru wersji: " + e.getMessage());
         }
         return -1;
     }
