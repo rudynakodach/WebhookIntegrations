@@ -5,6 +5,7 @@ The simpliest solution for Discord Webhook integration with your Minecraft serve
 
 - Chat logging
 - Player quit/join messages
+- Player kick logging
 - Player death messages
 - Advancement logging
 
