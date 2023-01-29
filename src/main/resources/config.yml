@@ -1,4 +1,4 @@
-# The URL for you Discord Webhook.
+# The URL for your Discord Webhook.
 # This cannot be empty!
 webhookUrl: ""
 
@@ -32,13 +32,12 @@ onPlayerJoin:
   # Available variables:
   # %player% - player who joined
   # %time% - server's local time
-
   announce: true
   messageJson: "{
             \"embeds\": [
               {
-                \"color\": 3066993,
-                \"description:\": \"[%time%] **%player%** joined the game.\" 
+                \"description\": \"[%time%] **%player%** joined the game.\", 
+                \"color\": 3066993
               }
             ]
           }"
@@ -51,8 +50,8 @@ onPlayerQuit:
   messageJson: "{
             \"embeds\": [
               {
-                \"color\": 16711680,
-                \"description\": \"[%time%] **%player%** left the game.\"
+                \"description\": \"[%time%] **%player%** left the game.\",
+                \"color\": 16711680
               }
             ]
           }"
@@ -62,8 +61,8 @@ onPlayerKicked:
   messageJson: "{
             \"embeds\": [
               {
-                \"color\": 16711680,
-                \"description\": \"[%time%] **%player%** was kicked: *%reason%*\"
+                \"description\": \"[%time%] **%player%** was kicked: *%reason%*\",
+                \"color\": 16753920
               }
             ]
           }"
@@ -85,21 +84,25 @@ onPlayerChat:
   messageJson: "{
             \"embeds\": [
               {
-                \"color\": 16711680,
-                \"description\": \"[%time%] ***%player%***: %message%\"
+                \"description\": \"[%time%] ***%player%***: %message%\",
+                \"color\": 3447003
               }
             ]
           }"
 
 onPlayerAdvancementComplete:
+  # Available variables:
+  # %player% - player name
+  # %time% - server's local time
+  # %advancement% - advancement name visible in game
   announce: true
   messageJson: "{
             \"embeds\": [
               {
-                \"color\": 16776960,
-                \"description:\": \"[%time%] **%player%**\" 
+                \"description\": \"[%time%] **%player%** has made the advancement **%advancement%**\", 
+                \"color\": 16776960
               }
             ]
           }"
 
-
+#END OF FILE

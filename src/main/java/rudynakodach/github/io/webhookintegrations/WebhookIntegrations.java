@@ -16,7 +16,7 @@ import java.util.logging.Level;
 
 public final class WebhookIntegrations extends JavaPlugin {
 
-    public static int currentBuildNumber = 4;
+    public static int currentBuildNumber = 5;
     static String buildNumberUrl = "https://raw.githubusercontent.com/rudynakodach/WebhookIntegrations/master/buildnumber";
 
     //on startup
@@ -31,26 +31,27 @@ public final class WebhookIntegrations extends JavaPlugin {
         if (currentBuildNumber < receivedBuildNumber && receivedBuildNumber != -1) {
             Component text = Component.text("New version available on the GitHub repository. Please update.", NamedTextColor.GREEN);
             getComponentLogger().info(text);
+        } else {
+            Component text = Component.text("Already running the latest version!", NamedTextColor.GREEN);
+            getComponentLogger().info(text);
         }
 
         this.saveDefaultConfig();
-
-
 
         if (Objects.equals(Objects.requireNonNull(getConfig().getString("webhookUrl")).trim(), "")) {
             getLogger().log(Level.WARNING, "WebhookURL is empty and cannot be used! Set the value of webhookUrl inside the oldconfig.yml file and restart the server or use \"/seturl <url>\"!");
         }
 
-        getLogger().log(Level.INFO,"Registering events...");
+        getLogger().log(Level.INFO, "Registering events...");
 
         onPlayerChat chatEvent = new onPlayerChat(this);
-        getServer().getPluginManager().registerEvents(chatEvent,this);
+        getServer().getPluginManager().registerEvents(chatEvent, this);
 
         onPlayerJoin onPlayerJoinEvent = new onPlayerJoin(this);
         getServer().getPluginManager().registerEvents(onPlayerJoinEvent, this);
 
         onPlayerQuit playerQuitEvent = new onPlayerQuit(this);
-        getServer().getPluginManager().registerEvents(playerQuitEvent,this);
+        getServer().getPluginManager().registerEvents(playerQuitEvent, this);
 
         onPlayerKick playerKick = new onPlayerKick(this);
         getServer().getPluginManager().registerEvents(playerKick, this);

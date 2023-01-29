@@ -13,13 +13,16 @@ import java.util.Date;
 public class onPlayerChat implements Listener {
 
     JavaPlugin plugin;
+
     public onPlayerChat(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 
     @EventHandler
-    public void onPlayerChatEvent(AsyncChatEvent  event) {
-        if(!plugin.getConfig().getBoolean("onPlayerChat.announce")) {return;}
+    public void onPlayerChatEvent(AsyncChatEvent event) {
+        if (!plugin.getConfig().getBoolean("onPlayerChat.announce")) {
+            return;
+        }
         String message = PlainTextComponentSerializer.plainText().serialize(event.message());
         String playerName = event.getPlayer().getName();
         String time = new SimpleDateFormat("HH:mm:ss").format(new Date());

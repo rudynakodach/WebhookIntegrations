@@ -12,6 +12,7 @@ import java.util.logging.Level;
 public class WebhookActions {
 
     JavaPlugin plugin;
+
     public WebhookActions(JavaPlugin plugin) {
         this.plugin = plugin;
     }
@@ -19,7 +20,7 @@ public class WebhookActions {
     public void Send(String json) {
         String webhookUrl = plugin.getConfig().getString("webhookUrl").trim();
 
-        if(webhookUrl.equals("")) {
+        if (webhookUrl.equals("")) {
             Component warningMessage = Component.text("Attempted to send a message to an empty webhook URL! Use /seturl or disable the event in the config!", NamedTextColor.RED);
             plugin.getComponentLogger().warn(warningMessage);
         }
@@ -34,8 +35,9 @@ public class WebhookActions {
                         .post(requestBody)
                         .build();
                 try (Response response = client.newCall(request).execute()) {
-                    if(!response.isSuccessful()) {
-                        plugin.getLogger().log(Level.WARNING, "Failed to send eventMessage to Discord webhook: " + response.body().string());
+                    if (!response.isSuccessful()) {
+                        plugin.getLogger().log(Level.WARNING, "Failed to send eventMessage to Discord webhook: " + response.body().string()); // <-- this caused me a mental breakdown
+                        plugin.getLogger().log(Level.INFO, json);
                     }
                     response.close();
                 } catch (IOException e) {
