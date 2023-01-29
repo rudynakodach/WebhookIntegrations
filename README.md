@@ -24,7 +24,8 @@ The plugin currently has 2 commands which hold the main functionality.
     Sets the URL for your webhook.
     Usage: /seturl <url | string>
     Permission: webhookintegration.seturl
-   
+```
+```
    send:
     Sends the provided message to a webhook.
     Usage: /send <isEmbed | boolean> <message | string>
@@ -44,9 +45,10 @@ and for the color,
 ```yml
 onPlayerJoinEventEmbedColor: 3066993
 ```
+Keep in mind that the embed color has to be a decimal number.
+
 If you don't want a message to be announced, like chat messages, you need to disabled them in the config:
 ```yml
 announceChatMessages: false
 ```
 
-Keep in mind that the embed color has to be a decimal number.

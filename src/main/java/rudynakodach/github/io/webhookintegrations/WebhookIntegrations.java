@@ -8,6 +8,7 @@ import okhttp3.Response;
 import org.bukkit.plugin.java.JavaPlugin;
 import rudynakodach.github.io.webhookintegrations.Commands.SendToWebhook;
 import rudynakodach.github.io.webhookintegrations.Commands.SetWebhookURL;
+import rudynakodach.github.io.webhookintegrations.Events.*;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -15,7 +16,7 @@ import java.util.logging.Level;
 
 public final class WebhookIntegrations extends JavaPlugin {
 
-    public static int currentBuildNumber = 3;
+    public static int currentBuildNumber = 4;
     static String buildNumberUrl = "https://raw.githubusercontent.com/rudynakodach/WebhookIntegrations/master/buildnumber";
 
     //on startup
@@ -34,20 +35,35 @@ public final class WebhookIntegrations extends JavaPlugin {
 
         this.saveDefaultConfig();
 
-        PlayerEventListener pel = new PlayerEventListener(getLogger(), this.getConfig(), this);
 
 
-        if (Objects.equals(getConfig().getString("webhookUrl"), "")) {
-            getLogger().log(Level.WARNING, "WebhookURL is empty and cannot be used! Set the value of webhookUrl inside the config.yml file and restart the server or use \"/seturl <url>\"!");
+        if (Objects.equals(Objects.requireNonNull(getConfig().getString("webhookUrl")).trim(), "")) {
+            getLogger().log(Level.WARNING, "WebhookURL is empty and cannot be used! Set the value of webhookUrl inside the oldconfig.yml file and restart the server or use \"/seturl <url>\"!");
         }
 
-        getServer().getPluginManager().registerEvents(pel, this);
+        getLogger().log(Level.INFO,"Registering events...");
+
+        onPlayerChat chatEvent = new onPlayerChat(this);
+        getServer().getPluginManager().registerEvents(chatEvent,this);
+
+        onPlayerJoin onPlayerJoinEvent = new onPlayerJoin(this);
+        getServer().getPluginManager().registerEvents(onPlayerJoinEvent, this);
+
+        onPlayerQuit playerQuitEvent = new onPlayerQuit(this);
+        getServer().getPluginManager().registerEvents(playerQuitEvent,this);
+
+        onPlayerKick playerKick = new onPlayerKick(this);
+        getServer().getPluginManager().registerEvents(playerKick, this);
+
+        onPlayerAdvancementCompleted onPlayerAdvancement = new onPlayerAdvancementCompleted(this);
+        getServer().getPluginManager().registerEvents(onPlayerAdvancement, this);
+
         getLogger().log(Level.INFO, "Events registered.");
 
-        SetWebhookURL setWebhookUrlCommand = new SetWebhookURL(pel, getConfig(), this, getLogger());
+        SetWebhookURL setWebhookUrlCommand = new SetWebhookURL(getConfig(), this, getLogger());
         Objects.requireNonNull(getCommand("seturl")).setExecutor(setWebhookUrlCommand);
 
-        SendToWebhook sendToWebhookCommand = new SendToWebhook(pel, getConfig(), this, getLogger());
+        SendToWebhook sendToWebhookCommand = new SendToWebhook(getConfig(), this, getLogger());
         Objects.requireNonNull(getCommand("send")).setExecutor(sendToWebhookCommand);
         getLogger().log(Level.INFO, "Commands registered.");
 

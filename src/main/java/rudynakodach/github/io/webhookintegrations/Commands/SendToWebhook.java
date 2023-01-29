@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
-import rudynakodach.github.io.webhookintegrations.PlayerEventListener;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -21,14 +20,12 @@ import java.util.logging.Logger;
 
 public class SendToWebhook implements CommandExecutor {
 
-    final PlayerEventListener playerEventListener;
     final FileConfiguration config;
     final JavaPlugin javaPlugin;
 
     final Logger logger;
 
-    public SendToWebhook(PlayerEventListener _pel, FileConfiguration _cfg, JavaPlugin _javaPlugin, Logger _logger) {
-        playerEventListener = _pel;
+    public SendToWebhook(FileConfiguration _cfg, JavaPlugin _javaPlugin, Logger _logger) {
         config = _cfg;
         javaPlugin = _javaPlugin;
         logger = _logger;

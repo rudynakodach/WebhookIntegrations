@@ -6,21 +6,18 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import rudynakodach.github.io.webhookintegrations.PlayerEventListener;
 
 import java.util.logging.Logger;
 
 
 public class SetWebhookURL implements CommandExecutor {
 
-    final PlayerEventListener playerEventListener;
     final FileConfiguration config;
     final JavaPlugin javaPlugin;
 
     final Logger logger;
 
-    public SetWebhookURL(PlayerEventListener _pel, FileConfiguration _cfg, JavaPlugin _javaPlugin, Logger _logger) {
-        playerEventListener = _pel;
+    public SetWebhookURL(FileConfiguration _cfg, JavaPlugin _javaPlugin, Logger _logger) {
         config = _cfg;
         javaPlugin = _javaPlugin;
         logger = _logger;
@@ -32,7 +29,6 @@ public class SetWebhookURL implements CommandExecutor {
             if (args.length == 1) {
                 String newUrl = args[0];
 
-                playerEventListener.webhookUrl = newUrl;
                 config.set("webhookUrl", newUrl);
                 javaPlugin.saveConfig();
 

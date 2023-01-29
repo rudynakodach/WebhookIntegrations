@@ -1,76 +1,105 @@
-
-#Your webhook URL to send messages to
-#This can`t be empty.
+# The URL for you Discord Webhook.
+# This cannot be empty!
 webhookUrl: ""
 
-# stuff to announce
-# true - send messages
-# false - ignore
-announceAdvancements: true
-announcePlayerDeaths: true
-announcePlayerKills: true
-announceChatMessages: true
+# IF YOU DON'T KNOW ANYTHING ABOUT WEBHOOK STRUCTURE, PLEASE GO HERE: https://gist.github.com/Birdie0/78ee79402a4301b1faf412ab5f1cdcf9#structure-of-webhooks
 
-announcePlayerJoin: true
-announcePlayerQuit: true
+# TODO
+onServerStart:
+  announce: false
+  messageJson: "{
+            \"embeds\": [
+              {
+                \"color\":,
+                \"description:\": \"\" 
+              }
+            ]
+          }"
 
-# prevent players from using @everyone and @here
-preventPingsAndTags: false
+# TODO
+onServerStop:
+  announce: false
+  messageJson: "{
+            \"embeds\": [
+              {
+                \"color\":,
+                \"description:\": \"\" 
+              }
+            ]
+          }"
 
-  ########################################
-  ############# PLACEHOLDERS #############
-  ########################################
+onPlayerJoin:
+  # Available variables:
+  # %player% - player who joined
+  # %time% - server's local time
 
-  # %player% - player name
-  # %message% - raw message sent (ONLY IN onChatEvent)
-  # %killer% - player who killed someone (ONLY WORKING IN PLAYER KILL MESSAGES IF THE PLAYER DIES FROM ANOTHER PLAYER)
-  # %weapon% - meta name of the weapon the killer used (if any)
-  # %advancement% - the advancement the player unlocked
-  # %time% - server time (from computer)
+  announce: true
+  messageJson: "{
+            \"embeds\": [
+              {
+                \"color\": 3066993,
+                \"description:\": \"[%time%] **%player%** joined the game.\" 
+              }
+            ]
+          }"
 
-#JOIN EVENT
-onPlayerJoinEventMessage: '[%time%] **%player%** joined the server.'
+onPlayerQuit:
+  # Available variables:
+  # %player% - player who left
+  # %time% - server's local time
+  announce: true
+  messageJson: "{
+            \"embeds\": [
+              {
+                \"color\": 16711680,
+                \"description\": \"[%time%] **%player%** left the game.\"
+              }
+            ]
+          }"
 
-#HAS TO BE A DECIMAL NUMBER
-onPlayerJoinEventEmbedColor: 3066993
+onPlayerKicked:
+  announce: true
+  messageJson: "{
+            \"embeds\": [
+              {
+                \"color\": 16711680,
+                \"description\": \"[%time%] **%player%** was kicked: *%reason%*\"
+              }
+            ]
+          }"
+
+# TODO
+onPlayerDeath:
+  announce: false
+  messageJson: "{
+            \"embeds\": [
+              {
+                \"color\": 16711680,
+                \"description:\": \"\" 
+              }
+            ]
+          }"
+
+onPlayerChat:
+  announce: true
+  messageJson: "{
+            \"embeds\": [
+              {
+                \"color\": 16711680,
+                \"description\": \"[%time%] ***%player%***: %message%\"
+              }
+            ]
+          }"
+
+onPlayerAdvancementComplete:
+  announce: true
+  messageJson: "{
+            \"embeds\": [
+              {
+                \"color\": 16776960,
+                \"description:\": \"[%time%] **%player%**\" 
+              }
+            ]
+          }"
 
 
-#QUIT EVENT
-onPlayerQuitEventMessage: '[%time%] **%player%** left the server.'
-
-#HAS TO BE A DECIMAL NUMBER
-onPlayerQuitEventEmbedColor: 16711680
-
-
-#CHAT MESSAGE EVENT
-chatEventMessage: '[%time%] ***%player%:*** **%message%**'
-
-#WHEN USING /send
-onCommandForceMessageEmbedColor: 65535
-
-#HAS TO BE A DECIMAL NUMBER
-chatEventEmbedColor: 65535
-
-
-#PLAYER DEATH EVENT
-
-#this message is only used when player died to an NPC (e.g. zombie) or natural causes (hunger/fall damage)
-playerDeathEventMessage: '[%time%] **%player%** died.'
-playerDeathEventEmbedColor: 16711680
-
-
-#PLAYER KILLED EVENT
-playerKilledEventMessage: '[%time%] **%player%** was killed by **%killer%**'
-playerKilledEventEmbedColor: 16711680
-
-#ONLY WHEN KILLER'S ITEM HAD A SPECIAL NAME
-playerKilledByWeaponEventMessage: '[%time%] **%player%** was killed by **%killer%** using *%weapon%*'
-playerKilledByWeaponEmbedColor: 16711680
-
-
-#PLAYER ADVANCEMENT EVENT
-playerAdvancementEvent: '[%time%] **%player%** achieved **%advancement%**'
-playerAdvancementEventEmbedColor: 16776960
-
-
-#END OF FILE
