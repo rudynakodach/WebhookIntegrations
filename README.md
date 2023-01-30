@@ -5,6 +5,7 @@ The simpliest solution for Discord Webhook integration with your Minecraft serve
 
 - Chat logging
 - Player quit/join messages
+- Player kick logging
 - Player death messages
 - Advancement logging
 
@@ -61,5 +62,5 @@ To achieve the same result as the image above, the JSON would look like this:
 ```
 JSON syntax is very easy and important. An incorrect JSON will not be sent, and you will see a warning in the console.
 
-A both short and good overview of Webhook structure can be found [here](https://gist.github.com/Birdie0/78ee79402a4301b1faf412ab5f1cdcf9).
+A both short and good overview of Webhook structure can be found [here](https://gist.github.com/Birdie0/78ee79402a4301b1faf412ab5f1cdcf9#structure-of-webhooks).
 
