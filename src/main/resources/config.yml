@@ -89,7 +89,7 @@ onPlayerDeath:
               \"embeds\": [
                 {
                   \"color\": 16711680,
-                  \"description:\": \"\" 
+                  \"description:\": \"**%player%** died.\" 
                 }
               ]
             }"
