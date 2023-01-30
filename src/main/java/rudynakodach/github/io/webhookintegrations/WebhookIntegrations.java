@@ -20,7 +20,7 @@ import java.util.logging.Level;
 
 public final class WebhookIntegrations extends JavaPlugin {
 
-    public static int currentBuildNumber = 6;
+    public static int currentBuildNumber = 7;
     static String buildNumberUrl = "https://raw.githubusercontent.com/rudynakodach/WebhookIntegrations/master/buildnumber";
     public static String localeLang;
     public static FileConfiguration lang;
@@ -80,6 +80,9 @@ public final class WebhookIntegrations extends JavaPlugin {
 
         onPlayerAdvancementCompleted onPlayerAdvancement = new onPlayerAdvancementCompleted(this);
         getServer().getPluginManager().registerEvents(onPlayerAdvancement, this);
+
+        onPlayerDeath playerDeath = new onPlayerDeath(this);
+        getServer().getPluginManager().registerEvents(playerDeath,this);
 
         getLogger().log(Level.INFO, lang.getString(localeLang + ".onStart.eventRegisterFinish"));
 

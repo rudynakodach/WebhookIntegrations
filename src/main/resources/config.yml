@@ -30,8 +30,8 @@ onServerStop:
 
 onPlayerJoin:
   # Available variables:
-  # %player% - player who joined
-  # %time% - server's local time
+  # - %player% - player who joined
+  # - %time% - server's local time
   announce: true
   messageJson: "{
             \"embeds\": [
@@ -44,8 +44,8 @@ onPlayerJoin:
 
 onPlayerQuit:
   # Available variables:
-  # %player% - player who left
-  # %time% - server's local time
+  # - %player% - player who left
+  # - %time% - server's local time
   announce: true
   messageJson: "{
             \"embeds\": [
@@ -57,6 +57,10 @@ onPlayerQuit:
           }"
 
 onPlayerKicked:
+  # Available variables:
+  # - %player% - player who left
+  # - %time% - server's local time
+  # - %reason% - reason provided
   announce: true
   messageJson: "{
             \"embeds\": [
@@ -67,17 +71,40 @@ onPlayerKicked:
             ]
           }"
 
-# TODO
 onPlayerDeath:
-  announce: false
-  messageJson: "{
-            \"embeds\": [
-              {
-                \"color\": 16711680,
-                \"description:\": \"\" 
-              }
-            ]
-          }"
+  # This event is different.
+  # Message for a player dying from an NPC and a player are different.
+
+  # Available variables:
+  # - %player% - player who left
+  # - %time% - server's local time
+  # - %deathMessage% - death message visible in chat
+  # - %newLevel% - player's level after death
+  # - %newExp% - player's experience after death
+  # - %oldLevel% - player's level before dying
+  # - %oldExp% - player's experience before dying
+  playerKilledByNPC:
+    announce: true
+    messageJson: "{
+              \"embeds\": [
+                {
+                  \"color\": 16711680,
+                  \"description:\": \"\" 
+                }
+              ]
+            }"
+  playerKilledByPlayer:
+    # Additional variables:
+    # - %killer% - killer's player name
+    announce: true
+    messageJson: "{
+              \"embeds\": [
+                {
+                  \"color\": 16711680,
+                  \"description:\": \"[%time%] **%player%** was killed by **%killer%**\" 
+                }
+              ]
+            }"
 
 onPlayerChat:
   announce: true
@@ -92,9 +119,9 @@ onPlayerChat:
 
 onPlayerAdvancementComplete:
   # Available variables:
-  # %player% - player name
-  # %time% - server's local time
-  # %advancement% - advancement name visible in game
+  # - %player% - player name
+  # - %time% - server's local time
+  # - %advancement% - advancement name visible in game
   announce: true
   messageJson: "{
             \"embeds\": [
