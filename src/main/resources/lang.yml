@@ -1,0 +1,52 @@
+en_US:
+  update:
+    checking: "Checking for updates..."
+    checkFailed: "Failed to get build number: "
+    latest: "Already running the latest version!"
+    updateFound: "New version available on the GitHub repository. Please update."
+
+  onStart:
+    webhookEmpty: "WebhookURL is empty and cannot be used! Set the value of webhookUrl inside the config.yml file and restart the server or use \"/seturl <url>\"!"
+    registeringEvents: "Registering events..."
+    eventRegisterFinish: "Events registered."
+    commandRegisterFinish: "Commands registered."
+
+  commands:
+    seturl:
+      verifyStart: "Verifying URL..."
+      verifySuccess: "URL verified!"
+      verifyFail: "Failed to verify."
+      newUrlSet: "New webhook URL has been saved!"
+      commandIncorrectUsage: "Incorrect usage."
+
+    send:
+      onEmptyUrl: "Webhook URL is &lEMPTY! Use &e/seturl&r first!"
+      commandIncorrectUsage: "Incorrect usage."
+
+pl_PL:
+  update:
+    checking: "Sprawdzanie aktualizacji..."
+    checkFailed: "Wystąpił błąd podczas sprawdzania aktualizacji: "
+    latest: "Najnowsza wersja już zainstalowana!"
+    updateFound: "Nowa wersja dostępna na repozytorium!"
+
+  onStart:
+    webhookEmpty: "Adres Webhooka jest pusty i nie może zostać użyty! Ustaw wartość 'webhookUrl' w configu albo użyj \"seturl <url>\"!"
+
+    registeringEvents: "Rejestrowanie wydarzeń..."
+    eventRegisterFinish: "Wydarzenia zarejestrowane."
+    commandRegisterFinish: "Komendy zarejestrowne."
+
+  commands:
+    seturl:
+      verifyStart: "Weryfikowanie URL..."
+      verifySuccess: "URL zweryfikowane!"
+      verifyFail: "Nie udało się zweryfikować adresu URL."
+      newUrlSet: "Nowy adres URL został zapisany!"
+      commandIncorrectUsage: "Niepoprawne użycie komendy."
+
+    send:
+      onEmptyUrl: "Adres URL jest &lPUSTY! Najpierw użyj &e/seturl&r!"
+      commandIncorrectUsage: "Niepoprawne użycie."
+
+# END OF FILE

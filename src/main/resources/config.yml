@@ -99,7 +99,7 @@ onPlayerAdvancementComplete:
   messageJson: "{
             \"embeds\": [
               {
-                \"description\": \"[%time%] **%player%** has made the advancement **%advancement%**\", 
+                \"description\": \"[%time%] **%player%** has made the advancement [**%advancement%**]\", 
                 \"color\": 16776960
               }
             ]

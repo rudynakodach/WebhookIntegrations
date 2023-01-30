@@ -1,6 +1,5 @@
 package rudynakodach.github.io.webhookintegrations.Commands;
 
-import okhttp3.*;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -8,10 +7,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+import rudynakodach.github.io.webhookintegrations.WebhookActions;
+import rudynakodach.github.io.webhookintegrations.WebhookIntegrations;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -22,7 +21,8 @@ public class SendToWebhook implements CommandExecutor {
 
     final FileConfiguration config;
     final JavaPlugin javaPlugin;
-
+    final String localeName = WebhookIntegrations.localeLang;
+    final FileConfiguration lang = WebhookIntegrations.lang;
     final Logger logger;
 
     public SendToWebhook(FileConfiguration _cfg, JavaPlugin _javaPlugin, Logger _logger) {
@@ -39,8 +39,7 @@ public class SendToWebhook implements CommandExecutor {
 
                 if (webhookUrl.equals("")) {
 
-                    String response = ChatColor.translateAlternateColorCodes('&', "&cYour webhook URL is &lEMPTY\n" +
-                            "&ePlease use /seturl <url>");
+                    String response = ChatColor.translateAlternateColorCodes('&', lang.getString(localeName + ".command.send.onEmptyUrl"));
                     sender.sendMessage(response);
 
                     return true;
@@ -68,19 +67,19 @@ public class SendToWebhook implements CommandExecutor {
                             "]" +
                             "}";
 
-                    Send(json);
+                    new WebhookActions(javaPlugin).Send(json);
 
                 } else {
                     message = username + ": " + message;
 
                     String json = "\"content\": \"" + message + "\"";
 
-                    Send(json);
+                    new WebhookActions(javaPlugin).Send(json);
                 }
                 return true;
 
             } else {
-                String response = ChatColor.translateAlternateColorCodes('&', "&cIncorrect usage\n" +
+                String response = ChatColor.translateAlternateColorCodes('&', lang.getString(localeName + ".commands.send.commandIncorrectUsage") + "\n" +
                         "&r&f/send &aisEmbed&7(true/false)&r&a message");
                 sender.sendMessage(response);
 
@@ -89,38 +88,4 @@ public class SendToWebhook implements CommandExecutor {
         }
         return false;
     }
-
-    public void Send(String json) {
-
-
-        String webhookUrl = Objects.requireNonNull(config.getString("webhookUrl"));
-
-        if (webhookUrl.equals("")) {
-            logger.log(Level.WARNING, "Attempted to perform a POST request to an empty webhook url!");
-            return;
-        }
-
-        new BukkitRunnable() {
-            public void run() {
-                OkHttpClient client = new OkHttpClient();
-
-                MediaType mediaType = MediaType.get("application/json");
-                RequestBody body = RequestBody.create(json, mediaType);
-                Request request = new Request.Builder()
-                        .url(webhookUrl)
-                        .post(body)
-                        .build();
-                try (Response response = client.newCall(request).execute()) {
-                    if (!response.isSuccessful()) {
-                        logger.log(Level.WARNING, "Failed to send eventMessage to Discord webhook: " + response.body().string());
-                    }
-                    response.close();
-                } catch (IOException e) {
-                    logger.log(Level.SEVERE, e.getMessage());
-                }
-
-            }
-        }.runTaskAsynchronously(javaPlugin);
-    }
-
 }

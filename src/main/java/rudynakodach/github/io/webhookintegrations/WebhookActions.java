@@ -23,6 +23,7 @@ public class WebhookActions {
         if (webhookUrl.equals("")) {
             Component warningMessage = Component.text("Attempted to send a message to an empty webhook URL! Use /seturl or disable the event in the config!", NamedTextColor.RED);
             plugin.getComponentLogger().warn(warningMessage);
+            return; //bruh I forgor to return :skull:
         }
         new BukkitRunnable() {
             public void run() {
@@ -39,7 +40,6 @@ public class WebhookActions {
                         plugin.getLogger().log(Level.WARNING, "Failed to send eventMessage to Discord webhook: " + response.body().string()); // <-- this caused me a mental breakdown
                         plugin.getLogger().log(Level.INFO, json);
                     }
-                    response.close();
                 } catch (IOException e) {
                     plugin.getLogger().warning("Failed to POST json to URL: " + e.getMessage());
                 }
