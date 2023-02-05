@@ -4,6 +4,8 @@ webhookUrl: ""
 
 # IF YOU DON'T KNOW ANYTHING ABOUT WEBHOOK STRUCTURE, PLEASE GO HERE: https://gist.github.com/Birdie0/78ee79402a4301b1faf412ab5f1cdcf9#structure-of-webhooks
 
+# API breaks json indentation :(
+
 onServerStart:
   # Available variables:
   # - %time% - server's local time
@@ -17,24 +19,24 @@ onServerStart:
   # - %minecraftVersion% - minecraft version the server is running
   announce: true
   # I won't make this message for you.
-  messageJson: "{
-    \"embeds\": [
-      \"author\": {
-        \"name\": \"Server\"
-        },
-      {
-        \"description\": \"Server Started.\",
-        \"color\": 15258703,
-        \"fields\": [
-        {
-          \"name\":\"Time\",
-          \"value\":\"%time%\",
-          \"inline\":false
-        }
-      ]
-      }
-    ]
-  }"
+  messageJson: '{
+ "embeds": [ 
+  { 
+   "author": { 
+    "name": "Server" 
+   }, 
+   "description": "Server Started.", 
+   "color": 15258703, 
+   "fields": [ 
+    { 
+     "name": "Time", 
+     "value": "%time%", 
+     "inline": false 
+    } 
+   ] 
+  } 
+ ] 
+}'
 
 onServerStop:
   # Available variables:
@@ -49,57 +51,25 @@ onServerStop:
   # - %minecraftVersion% - minecraft version the server is running
   announce: true
   # I won't make this message for you.
-  messageJson: "{
-    \"embeds\": [
-      {
-        \"author\": {
-          \"name\": \"Server\"
-        },
-        \"description\": \"Server Stopped.\",
-        \"color\": 15258703,
-        \"fields\": [
-        {
-          \"name\":\"Time\",
-          \"value\":\"%time%\",
-          \"inline\":false
-        }
-      ]
-      }
-    ]
-  }"
+  messageJson: '{ "embeds": [ { "author": { "name": "Server" }, "description": "Server
+    Stopped.", "color": 15258703, "fields": [ { "name":"Time", "value":"%time%", "inline":false
+    } ] } ] }'
 
 onPlayerJoin:
   # Available variables:
   # - %player% - player who joined
   # - %time% - server"s local time
   announce: true
-  messageJson: "15258703"
+  messageJson: '15258703'
 
 onPlayerQuit:
   # Available variables:
   # - %player% - player who left
   # - %time% - server's local time
   announce: true
-  messageJson: "{
-    \"embeds\": [
-      {
-        \"author\": {
-          \"name\": \"%player%\",
-          \"icon_url\": \"https://minotar.net/helm/%player%/512.png\"
-        },
-        \"description\": \"**%player%** left the game.\",
-        \"color\": 16711680,
-        \"fields\": [
-        {
-          \"name\":\"Time\",
-          \"value\":\"%time%\",
-          \"inline\":false
-        }
-      ]
-      }
-    ]
-  }
-"
+  messageJson: '{ "embeds": [ { "author": { "name": "%player%", "icon_url": "https://minotar.net/helm/%player%/512.png"
+    }, "description": "**%player%** left the game.", "color": 16711680, "fields":
+    [ { "name":"Time", "value":"%time%", "inline":false } ] } ] } '
 
 onPlayerKicked:
   # Available variables:
@@ -107,14 +77,8 @@ onPlayerKicked:
   # - %time% - server's local time
   # - %reason% - reason provided
   announce: true
-  messageJson: "{
-            \"embeds\": [
-              {
-                \"description\": \"[%time%] **%player%** was kicked: *%reason%*\",
-                \"color\": 16753920
-              }
-            ]
-          }"
+  messageJson: '{ "embeds": [ { "author": {"name": "%player%", "icon_url": "https://minotar.net/helm/%player%/512.png" }, "description": "**%player%** was kicked:
+    *%reason%*", "color": 16753920, "fields": [ { "name": "Time", "value": "%time%", "inline": false } ] } ] }'
 
 onPlayerDeath:
   # This event is different.
@@ -130,50 +94,16 @@ onPlayerDeath:
   # - %oldExp% - player's experience before dying
   playerKilledByNPC:
     announce: true
-    messageJson: "{
-    \"embeds\": [
-      {
-        \"author\": {
-          \"name\": \"%player%\",
-          \"icon_url\": \"https://minotar.net/helm/%player%/512.png\"
-        },
-        \"description\": \"**%player%** died.\",
-        \"color\": 16711680,
-        \"fields\": [
-        {
-          \"name\":\"Time\",
-          \"value\":\"%time%\",
-          \"inline\":false
-        }
-      ]
-      }
-    ]
-  }
-}"
+    messageJson: '{ "embeds": [ { "author": { "name": "%player%", "icon_url": "https://minotar.net/helm/%player%/512.png"
+      }, "description": "**%player%** died.", "color": 16711680, "fields": [ { "name":"Time",
+      "value":"%time%", "inline":false } ] } ] }'
   playerKilledByPlayer:
     # Additional variables:
     # - %killer% - killer's player name
     announce: true
-    messageJson: "{
-    \"embeds\": [
-      {
-        \"author\": {
-          \"name\": \"%player%\",
-          \"icon_url\": \"https://minotar.net/helm/%player%/512.png\"
-        },
-        \"description\": \"**%player%** was killed by **%killer%**.\",
-        \"color\": 16711680,
-        \"fields\": [
-        {
-          \"name\":\"Time\",
-          \"value\":\"%time%\",
-          \"inline\":false
-        }
-      ]
-      }
-    ]
-  }
-}"
+    messageJson: '{ "embeds": [ { "author": { "name": "%player%", "icon_url": "https://minotar.net/helm/%player%/512.png"
+      }, "description": "**%player%** was killed by **%killer%**.", "color": 16711680,
+      "fields": [ { "name":"Time", "value":"%time%", "inline":false } ] } ] } }'
 
 onPlayerChat:
   # Available variables:
@@ -182,25 +112,9 @@ onPlayerChat:
   # - %message% - message sent by player
   # - %worldName% - name of the world the player currently is
   announce: true
-  messageJson: "{
-\"embeds\":[
-  {
-    \"author\":{
-      \"name\": \"%player%\",
-      \"icon_url\":\"https://minotar.net/helm/%player%/512.png\"
-    },
-    \"description\":\"*%message%*\",
-    \"color\":3447003,
-      \"fields\": [
-        {
-          \"name\":\"Time\",
-          \"value\":\"%time%\",
-          \"inline\":false
-        }
-      ]
-    }
-  ]
-}"
+  messageJson: '{ "embeds":[ { "author":{ "name": "%player%", "icon_url":"https://minotar.net/helm/%player%/512.png"
+    }, "description":"*%message%*", "color":3447003, "fields": [ { "name":"Time",
+    "value":"%time%", "inline":false } ] } ] }'
 
 onPlayerAdvancementComplete:
   # Available variables:
@@ -208,24 +122,9 @@ onPlayerAdvancementComplete:
   # - %time% - server's local time
   # - %advancement% - full advancement message visible in chat
   announce: true
-  messageJson: "{
-            \"embeds\": [
-              {
-                \"author\":{
-                  \"name\": \"%player%\",
-                  \"icon_url\":\"https://minotar.net/helm/%player%/512.png\"
-                },
-                \"description\": \"**%player%** has made the advancement `[%advancement%]`\", 
-                \"color\": 16776960,
-                \"fields\": [
-                  {
-                    \"name\":\"Time\",
-                    \"value\":\"%time%\",
-                    \"inline\":false
-                  }
-                ]
-              }
-            ]
-          }"
+  messageJson: '{ "embeds": [ { "author":{ "name": "%player%", "icon_url":"https://minotar.net/helm/%player%/512.png"
+    }, "description": "**%player%** has made the advancement `[%advancement%]`", "color":
+    16776960, "fields": [ { "name":"Time", "value":"%time%", "inline":false } ] }
+    ] }'
 
 #END OF FILE
