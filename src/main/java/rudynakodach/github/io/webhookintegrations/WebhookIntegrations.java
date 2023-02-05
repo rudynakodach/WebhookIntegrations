@@ -20,7 +20,7 @@ import java.util.logging.Level;
 
 public final class WebhookIntegrations extends JavaPlugin {
 
-    public static int currentBuildNumber = 11;
+    public static int currentBuildNumber = 12;
     static String buildNumberUrl = "https://raw.githubusercontent.com/rudynakodach/WebhookIntegrations/master/buildnumber";
     public static String localeLang;
     public static FileConfiguration lang;

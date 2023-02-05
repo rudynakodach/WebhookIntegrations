@@ -1,7 +1,5 @@
 package rudynakodach.github.io.webhookintegrations.Events;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -31,6 +29,8 @@ public class onPlayerJoin implements Listener {
             return;
         }
 
+        json = json.replace("%playersOnline%",String.valueOf(plugin.getServer().getOnlinePlayers().size()));
+        json = json.replace("%maxPlayers%",String.valueOf(plugin.getServer().getMaxPlayers()));
         json = json.replace("%player%", event.getPlayer().getName());
         json = json.replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()));
 

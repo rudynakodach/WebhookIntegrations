@@ -33,6 +33,7 @@ public class onServerStart implements Listener {
 
             json = json.replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()));
             json = json.replace("%serverIp%",serverIp);
+            json = json.replace("%playersOnline%",String.valueOf(plugin.getServer().getOnlinePlayers().size()));
             json = json.replace("%maxPlayers%",String.valueOf(slots));
             json = json.replace("%serverMotd%",serverMotd);
             json = json.replace("%serverName%",serverName);

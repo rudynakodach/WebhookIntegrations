@@ -32,6 +32,8 @@ public class onPlayerKick implements Listener {
 
         String json = plugin.getConfig().getString("onPlayerKicked.messageJson");
 
+        json = json.replace("%playersOnline%",String.valueOf(plugin.getServer().getOnlinePlayers().size()));
+        json = json.replace("%maxPlayers%",String.valueOf(plugin.getServer().getMaxPlayers()));
         json = json.replace("%player%", playerName);
         json = json.replace("%reason%", reason);
         json = json.replace("%time%", time);

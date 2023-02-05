@@ -39,6 +39,7 @@ public class onPlayerAdvancementCompleted implements Listener {
 
         String json = plugin.getConfig().getString("onPlayerAdvancementComplete.messageJson");
 
+        json = json.replace("%playersOnline%",String.valueOf(plugin.getServer().getOnlinePlayers().size()));
         json = json.replace("%advancement%", advancement);
         json = json.replace("%player%", event.getPlayer().getName());
         json = json.replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()));

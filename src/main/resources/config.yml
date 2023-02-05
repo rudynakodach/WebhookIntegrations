@@ -2,6 +2,15 @@
 # This cannot be empty!
 webhookUrl: ""
 
+# Replaces every occurrence of every word to their corresponding values
+# e.g. "@everyone" to "everyone"
+censoring:
+  \@everyone:
+    to: "everyone"
+  \@here:
+    to: "here"
+
+
 # IF YOU DON'T KNOW ANYTHING ABOUT WEBHOOK STRUCTURE, PLEASE GO HERE: https://gist.github.com/Birdie0/78ee79402a4301b1faf412ab5f1cdcf9#structure-of-webhooks
 
 # API breaks json indentation :(
@@ -11,11 +20,11 @@ onServerStart:
   # - %time% - server's local time
   # - %serverIp% - IP address of your server.
   # - %maxPlayers% - slot count
+  # - %playersOnline% - the amount of players online
   # - %serverMotd% - MOTD of your server determined in server.properties
   # - %serverName% - name of your server
   # - %serverVersion% - version of your server. this isn't the minecraft version
   # - %isOnlineMode% - true if online-mode is enabled, false otherwise
-  # - %playerOnline% - the amount of players online
   # - %minecraftVersion% - minecraft version the server is running
   announce: true
   # I won't make this message for you.
@@ -43,11 +52,11 @@ onServerStop:
   # - %time% - server's local time
   # - %serverIp% - IP address of your server.
   # - %maxPlayers% - slot count
+  # - %playersOnline% - the amount of players online
   # - %serverMotd% - MOTD of your server determined in server.properties
   # - %serverName% - name of your server
   # - %serverVersion% - version of your server. this isn't the minecraft version
   # - %isOnlineMode% - true if online-mode is enabled, false otherwise
-  # - %playersOnline% - the amount of players online
   # - %minecraftVersion% - minecraft version the server is running
   announce: true
   # I won't make this message for you.
@@ -59,6 +68,8 @@ onPlayerJoin:
   # Available variables:
   # - %player% - player who joined
   # - %time% - server"s local time
+  # - %maxPlayers% - slot count
+  # - %playersOnline% - the amount of players online
   announce: true
   messageJson: '15258703'
 
@@ -66,6 +77,8 @@ onPlayerQuit:
   # Available variables:
   # - %player% - player who left
   # - %time% - server's local time
+  # - %maxPlayers% - slot count
+  # - %playersOnline% - the amount of players online
   announce: true
   messageJson: '{ "embeds": [ { "author": { "name": "%player%", "icon_url": "https://minotar.net/helm/%player%/512.png"
     }, "description": "**%player%** left the game.", "color": 16711680, "fields":
@@ -76,6 +89,9 @@ onPlayerKicked:
   # - %player% - player who left
   # - %time% - server's local time
   # - %reason% - reason provided
+  # - %maxPlayers% - slot count
+  # - %playersOnline% - the amount of players online
+
   announce: true
   messageJson: '{ "embeds": [ { "author": {"name": "%player%", "icon_url": "https://minotar.net/helm/%player%/512.png" }, "description": "**%player%** was kicked:
     *%reason%*", "color": 16753920, "fields": [ { "name": "Time", "value": "%time%", "inline": false } ] } ] }'
@@ -92,6 +108,8 @@ onPlayerDeath:
   # - %newExp% - player's experience after death
   # - %oldLevel% - player's level before dying
   # - %oldExp% - player's experience before dying
+  # - %maxPlayers% - slot count
+  # - %playersOnline% - the amount of players online
   playerKilledByNPC:
     announce: true
     messageJson: '{ "embeds": [ { "author": { "name": "%player%", "icon_url": "https://minotar.net/helm/%player%/512.png"
@@ -111,6 +129,8 @@ onPlayerChat:
   # - %time% - server's local time
   # - %message% - message sent by player
   # - %worldName% - name of the world the player currently is
+  # - %maxPlayers% - slot count
+  # - %playersOnline% - the amount of players online
   announce: true
   messageJson: '{ "embeds":[ { "author":{ "name": "%player%", "icon_url":"https://minotar.net/helm/%player%/512.png"
     }, "description":"*%message%*", "color":3447003, "fields": [ { "name":"Time",
@@ -121,6 +141,8 @@ onPlayerAdvancementComplete:
   # - %player% - player name
   # - %time% - server's local time
   # - %advancement% - full advancement message visible in chat
+  # - %maxPlayers% - slot count
+  # - %playersOnline% - the amount of players online
   announce: true
   messageJson: '{ "embeds": [ { "author":{ "name": "%player%", "icon_url":"https://minotar.net/helm/%player%/512.png"
     }, "description": "**%player%** has made the advancement `[%advancement%]`", "color":

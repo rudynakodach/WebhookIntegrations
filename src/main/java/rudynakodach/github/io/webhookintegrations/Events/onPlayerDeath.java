@@ -1,7 +1,6 @@
 package rudynakodach.github.io.webhookintegrations.Events;
 
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -34,6 +33,8 @@ public class onPlayerDeath implements Listener {
             String killerName = event.getEntity().getKiller().getName();
             String json = plugin.getConfig().getString("onPlayerDeath.playerKilledByPlayer.messageJson");
 
+            json = json.replace("%playersOnline%",String.valueOf(plugin.getServer().getOnlinePlayers().size()));
+            json = json.replace("%maxPlayers%",String.valueOf(plugin.getServer().getMaxPlayers()));
             json = json.replace("%time%",time);
             json = json.replace("%player%",playerName);
             json = json.replace("%killer%",killerName);

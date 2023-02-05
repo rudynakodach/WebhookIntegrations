@@ -30,6 +30,12 @@ public class onPlayerChat implements Listener {
 
         String json = plugin.getConfig().getString("onPlayerChat.messageJson");
 
+        for(String key : plugin.getConfig().getConfigurationSection("censoring").getKeys(false)) {
+            message = message.replace(key, plugin.getConfig().getString("censoring." + key + ".to"));
+        }
+
+        json = json.replace("%playersOnline%",String.valueOf(plugin.getServer().getOnlinePlayers().size()));
+        json = json.replace("%maxPlayers%",String.valueOf(plugin.getServer().getMaxPlayers()));
         json = json.replace("%player%", playerName);
         json = json.replace("%time%", time);
         json = json.replace("%message%", message);

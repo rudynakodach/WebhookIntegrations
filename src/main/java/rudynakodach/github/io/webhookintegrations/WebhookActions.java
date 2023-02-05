@@ -1,6 +1,5 @@
 package rudynakodach.github.io.webhookintegrations;
 
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import okhttp3.*;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -10,7 +9,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 public class WebhookActions {
-
     JavaPlugin plugin;
 
     public WebhookActions(JavaPlugin plugin) {
