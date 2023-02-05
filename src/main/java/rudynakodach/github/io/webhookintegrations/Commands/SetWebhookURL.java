@@ -41,7 +41,7 @@ public class SetWebhookURL implements CommandExecutor {
                     if(response.isSuccessful()) {
                         sender.sendMessage(ChatColor.GREEN + lang.getString(localeName + ".commands.seturl.verifySuccess"));
                     } else {
-                        sender.sendMessage(ChatColor.RED + lang.getString(localeName + ".commands.seturl.verifyFail"));
+                        sender.sendMessage(ChatColor.LIGHT_PURPLE + lang.getString(localeName + ".commands.seturl.verifyFail"));
                         return true;
                     }
                 } catch (IOException e) {
@@ -62,7 +62,6 @@ public class SetWebhookURL implements CommandExecutor {
     }
 
     private Response getResponse(String url) throws IOException {
-
         String json = "{\"content\": \"**Connected!**\"}";
 
         OkHttpClient client = new OkHttpClient();

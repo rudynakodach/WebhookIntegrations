@@ -1,6 +1,6 @@
 package rudynakodach.github.io.webhookintegrations.Events;
 
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
@@ -23,7 +23,7 @@ public class onPlayerKick implements Listener {
             return;
         }
         String playerName = event.getPlayer().getName();
-        String reason = PlainTextComponentSerializer.plainText().serialize(event.reason());
+        String reason = PlainComponentSerializer.plain().serialize(event.reason());
         String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
 
         if (reason.equals("")) {

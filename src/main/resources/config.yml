@@ -4,43 +4,76 @@ webhookUrl: ""
 
 # IF YOU DON'T KNOW ANYTHING ABOUT WEBHOOK STRUCTURE, PLEASE GO HERE: https://gist.github.com/Birdie0/78ee79402a4301b1faf412ab5f1cdcf9#structure-of-webhooks
 
-# TODO
 onServerStart:
-  announce: false
+  # Available variables:
+  # - %time% - server's local time
+  # - %serverIp% - IP address of your server.
+  # - %maxPlayers% - slot count
+  # - %serverMotd% - MOTD of your server determined in server.properties
+  # - %serverName% - name of your server
+  # - %serverVersion% - version of your server. this isn't the minecraft version
+  # - %isOnlineMode% - true if online-mode is enabled, false otherwise
+  # - %playerOnline% - the amount of players online
+  # - %minecraftVersion% - minecraft version the server is running
+  announce: true
+  # I won't make this message for you.
   messageJson: "{
-            \"embeds\": [
-              {
-                \"color\":,
-                \"description:\": \"\" 
-              }
-            ]
-          }"
+    \"embeds\": [
+      \"author\": {
+        \"name\": \"Server\"
+        },
+      {
+        \"description\": \"Server Started.\",
+        \"color\": 15258703,
+        \"fields\": [
+        {
+          \"name\":\"Time\",
+          \"value\":\"%time%\",
+          \"inline\":false
+        }
+      ]
+      }
+    ]
+  }"
 
-# TODO
 onServerStop:
-  announce: false
+  # Available variables:
+  # - %time% - server's local time
+  # - %serverIp% - IP address of your server.
+  # - %maxPlayers% - slot count
+  # - %serverMotd% - MOTD of your server determined in server.properties
+  # - %serverName% - name of your server
+  # - %serverVersion% - version of your server. this isn't the minecraft version
+  # - %isOnlineMode% - true if online-mode is enabled, false otherwise
+  # - %playersOnline% - the amount of players online
+  # - %minecraftVersion% - minecraft version the server is running
+  announce: true
+  # I won't make this message for you.
   messageJson: "{
-            \"embeds\": [
-              {
-                \"color\":,
-                \"description:\": \"\" 
-              }
-            ]
-          }"
+    \"embeds\": [
+      {
+        \"author\": {
+          \"name\": \"Server\"
+        },
+        \"description\": \"Server Stopped.\",
+        \"color\": 15258703,
+        \"fields\": [
+        {
+          \"name\":\"Time\",
+          \"value\":\"%time%\",
+          \"inline\":false
+        }
+      ]
+      }
+    ]
+  }"
 
 onPlayerJoin:
   # Available variables:
   # - %player% - player who joined
-  # - %time% - server's local time
+  # - %time% - server"s local time
   announce: true
-  messageJson: "{
-            \"embeds\": [
-              {
-                \"description\": \"[%time%] **%player%** joined the game.\", 
-                \"color\": 3066993
-              }
-            ]
-          }"
+  messageJson: "15258703"
 
 onPlayerQuit:
   # Available variables:
@@ -48,13 +81,25 @@ onPlayerQuit:
   # - %time% - server's local time
   announce: true
   messageJson: "{
-            \"embeds\": [
-              {
-                \"description\": \"[%time%] **%player%** left the game.\",
-                \"color\": 16711680
-              }
-            ]
-          }"
+    \"embeds\": [
+      {
+        \"author\": {
+          \"name\": \"%player%\",
+          \"icon_url\": \"https://minotar.net/helm/%player%/512.png\"
+        },
+        \"description\": \"**%player%** left the game.\",
+        \"color\": 16711680,
+        \"fields\": [
+        {
+          \"name\":\"Time\",
+          \"value\":\"%time%\",
+          \"inline\":false
+        }
+      ]
+      }
+    ]
+  }
+"
 
 onPlayerKicked:
   # Available variables:
@@ -86,48 +131,99 @@ onPlayerDeath:
   playerKilledByNPC:
     announce: true
     messageJson: "{
-              \"embeds\": [
-                {
-                  \"color\": 16711680,
-                  \"description:\": \"**%player%** died.\" 
-                }
-              ]
-            }"
+    \"embeds\": [
+      {
+        \"author\": {
+          \"name\": \"%player%\",
+          \"icon_url\": \"https://minotar.net/helm/%player%/512.png\"
+        },
+        \"description\": \"**%player%** died.\",
+        \"color\": 16711680,
+        \"fields\": [
+        {
+          \"name\":\"Time\",
+          \"value\":\"%time%\",
+          \"inline\":false
+        }
+      ]
+      }
+    ]
+  }
+}"
   playerKilledByPlayer:
     # Additional variables:
     # - %killer% - killer's player name
     announce: true
     messageJson: "{
-              \"embeds\": [
-                {
-                  \"color\": 16711680,
-                  \"description:\": \"[%time%] **%player%** was killed by **%killer%**\" 
-                }
-              ]
-            }"
+    \"embeds\": [
+      {
+        \"author\": {
+          \"name\": \"%player%\",
+          \"icon_url\": \"https://minotar.net/helm/%player%/512.png\"
+        },
+        \"description\": \"**%player%** was killed by **%killer%**.\",
+        \"color\": 16711680,
+        \"fields\": [
+        {
+          \"name\":\"Time\",
+          \"value\":\"%time%\",
+          \"inline\":false
+        }
+      ]
+      }
+    ]
+  }
+}"
 
 onPlayerChat:
+  # Available variables:
+  # - %player% - player who left
+  # - %time% - server's local time
+  # - %message% - message sent by player
+  # - %worldName% - name of the world the player currently is
   announce: true
   messageJson: "{
-            \"embeds\": [
-              {
-                \"description\": \"[%time%] ***%player%***: %message%\",
-                \"color\": 3447003
-              }
-            ]
-          }"
+\"embeds\":[
+  {
+    \"author\":{
+      \"name\": \"%player%\",
+      \"icon_url\":\"https://minotar.net/helm/%player%/512.png\"
+    },
+    \"description\":\"*%message%*\",
+    \"color\":3447003,
+      \"fields\": [
+        {
+          \"name\":\"Time\",
+          \"value\":\"%time%\",
+          \"inline\":false
+        }
+      ]
+    }
+  ]
+}"
 
 onPlayerAdvancementComplete:
   # Available variables:
   # - %player% - player name
   # - %time% - server's local time
-  # - %advancement% - advancement name visible in game
+  # - %advancement% - full advancement message visible in chat
   announce: true
   messageJson: "{
             \"embeds\": [
               {
-                \"description\": \"[%time%] **%player%** has made the advancement [**%advancement%**]\", 
-                \"color\": 16776960
+                \"author\":{
+                  \"name\": \"%player%\",
+                  \"icon_url\":\"https://minotar.net/helm/%player%/512.png\"
+                },
+                \"description\": \"**%player%** has made the advancement `[%advancement%]`\", 
+                \"color\": 16776960,
+                \"fields\": [
+                  {
+                    \"name\":\"Time\",
+                    \"value\":\"%time%\",
+                    \"inline\":false
+                  }
+                ]
               }
             ]
           }"

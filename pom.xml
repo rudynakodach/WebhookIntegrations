@@ -6,7 +6,7 @@
 
     <groupId>rudynakodach.github.io</groupId>
     <artifactId>WebhookIntegrations</artifactId>
-    <version>1.0</version>
+    <version>1.7</version>
     <packaging>jar</packaging>
 
     <name>WebhookIntegrations</name>
@@ -65,11 +65,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.papermc.paper</groupId>
+            <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.18.2-R0.1-SNAPSHOT</version>
+            <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
 
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>

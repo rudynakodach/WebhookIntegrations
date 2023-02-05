@@ -2,9 +2,9 @@ package rudynakodach.github.io.webhookintegrations;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
+import okhttp3.*;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -14,13 +14,15 @@ import rudynakodach.github.io.webhookintegrations.Events.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.logging.Level;
 
 public final class WebhookIntegrations extends JavaPlugin {
 
-    public static int currentBuildNumber = 8;
+    public static int currentBuildNumber = 9;
     static String buildNumberUrl = "https://raw.githubusercontent.com/rudynakodach/WebhookIntegrations/master/buildnumber";
     public static String localeLang;
     public static FileConfiguration lang;
@@ -51,11 +53,11 @@ public final class WebhookIntegrations extends JavaPlugin {
 
         int receivedBuildNumber = getVersion();
         if (currentBuildNumber < receivedBuildNumber && receivedBuildNumber != -1) {
-            Component text = Component.text(lang.getString(localeLang + ".update.updateFound"), NamedTextColor.GREEN);
-            getComponentLogger().info(text);
+            getLogger().log(Level.WARNING, "------------------------- WI -------------------------");
+            getLogger().log(Level.INFO,lang.getString(localeLang + ".update.updateFound"));
+            getLogger().log(Level.WARNING, "------------------------------------------------------");
         } else {
-            Component text = Component.text(lang.getString(localeLang + ".update.latest"), NamedTextColor.GREEN);
-            getComponentLogger().info(text);
+            getLogger().log(Level.INFO,lang.getString(localeLang + ".update.latest"));
         }
 
         this.saveDefaultConfig();
@@ -65,6 +67,9 @@ public final class WebhookIntegrations extends JavaPlugin {
         }
 
         getLogger().log(Level.INFO, lang.getString(localeLang + ".onStart.registeringEvents"));
+
+        onServerStart serverStart = new onServerStart(this);
+        getServer().getPluginManager().registerEvents(serverStart, this);
 
         onPlayerChat chatEvent = new onPlayerChat(this);
         getServer().getPluginManager().registerEvents(chatEvent, this);
@@ -98,6 +103,54 @@ public final class WebhookIntegrations extends JavaPlugin {
     //on shutdown
     @Override
     public void onDisable() {
+        if(Bukkit.isStopping()) {
+            if(getConfig().getBoolean("onServerStop.announce")) {
+                if(!getConfig().getString("webhookUrl").trim().equals("")) {
+                    String serverIp = getServer().getIp();
+                    int slots = getServer().getMaxPlayers();
+                    String serverMotd = PlainComponentSerializer.plain().serialize(getServer().motd());
+                    String serverName = getServer().getName();
+                    String serverVersion = getServer().getVersion();
+                    Boolean isOnlineMode = getServer().getOnlineMode();
+                    int playersOnline = getServer().getOnlinePlayers().size();
+                    String minecraftVersion = getServer().getMinecraftVersion();
+
+                    String json = getConfig().getString("onServerStop.messageJson");
+
+                    json = json.replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()));
+                    json = json.replace("%serverIp%",serverIp);
+                    json = json.replace("%maxPlayers%",String.valueOf(slots));
+                    json = json.replace("%serverMotd%",serverMotd);
+                    json = json.replace("%serverName%",serverName);
+                    json = json.replace("%serverVersion%", serverVersion);
+                    json = json.replace("%isOnlineMode%",String.valueOf(isOnlineMode));
+                    json = json.replace("%playersOnline%",String.valueOf(playersOnline));
+                    json = json.replace("%minecraftVersion%",minecraftVersion);
+
+                    getLogger().info(json);
+
+                    OkHttpClient client = new OkHttpClient();
+                    MediaType mediaType = MediaType.get("application/json");
+                    RequestBody body = RequestBody.create(json,mediaType);
+                    Request request = new Request.Builder()
+                            .url(getConfig().getString("webhookUrl"))
+                            .post(body)
+                            .build();
+                    try {
+                        Response response = client.newCall(request).execute();
+                        if(response.isSuccessful()) {
+                            getLogger().log(Level.INFO, "onServerStop message sent!");
+                        }
+                        else {
+                            getLogger().log(Level.INFO, "onServerStop message failed: " + response.body().string());
+                        }
+                    } catch (IOException e) {
+                        getLogger().log(Level.WARNING, "Failed to send server stop message: " + e.getMessage());
+                    }
+                }
+            }
+        }
+
         getLogger().log(Level.INFO, "this is my final message");
         getLogger().log(Level.INFO, "goodb ye");
     }

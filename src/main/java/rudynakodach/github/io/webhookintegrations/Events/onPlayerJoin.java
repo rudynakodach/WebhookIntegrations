@@ -28,9 +28,6 @@ public class onPlayerJoin implements Listener {
 
         assert json != null;
         if (json.trim().equals("")) {
-            Component warningMessage = Component.text("Attempted to send an empty JSON on " +
-                    NamedTextColor.GOLD + "onPlayerJoin");
-            plugin.getComponentLogger().warn(warningMessage);
             return;
         }
 

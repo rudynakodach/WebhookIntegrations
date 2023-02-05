@@ -51,16 +51,13 @@ public class SendToWebhook implements CommandExecutor {
                 Player player = (Player) sender;
                 String username = player.getName();
 
-                logger.log(Level.INFO, player + " used /send with the following message: " + message);
+                logger.log(Level.INFO, username + " used /send with the following message: " + message);
 
                 if (isEmbed) {
-
-                    int embedColor = config.getInt("onCommandForceMessageEmbedColor");
 
                     String json = "{" +
                             "\"embeds\": [" +
                             "{" +
-                            "\"color\": " + embedColor + "," +
                             "\"title\": \"" + username + "\"," +
                             "\"description\": \"" + message + "\"" +
                             "}" +
@@ -72,7 +69,7 @@ public class SendToWebhook implements CommandExecutor {
                 } else {
                     message = username + ": " + message;
 
-                    String json = "\"content\": \"" + message + "\"";
+                    String json = "{ \"content\": \"" + message + "\" }";
 
                     new WebhookActions(javaPlugin).Send(json);
                 }

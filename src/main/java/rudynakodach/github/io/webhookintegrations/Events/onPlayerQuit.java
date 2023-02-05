@@ -1,7 +1,5 @@
 package rudynakodach.github.io.webhookintegrations.Events;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -21,17 +19,12 @@ public class onPlayerQuit implements Listener {
 
     @EventHandler
     public void onPlayerQuitEvent(PlayerQuitEvent event) {
-        if (!plugin.getConfig().getBoolean("onPlayerQuit.announce")) {
-            return;
-        }
+        if (!plugin.getConfig().getBoolean("onPlayerQuit.announce")) {return;}
+        if(event.getReason().equals(PlayerQuitEvent.QuitReason.KICKED)) {return;}
 
         String json = plugin.getConfig().getString("onPlayerQuit.messageJson");
 
-        assert json != null;
         if (json.equals("")) {
-            Component warning = Component.text("Attempted to send an empty JSON on " +
-                    NamedTextColor.GOLD + "onPlayerQuit!");
-            plugin.getComponentLogger().warn(warning);
             return;
         }
 

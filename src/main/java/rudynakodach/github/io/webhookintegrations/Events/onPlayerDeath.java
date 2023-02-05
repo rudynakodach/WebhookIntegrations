@@ -1,6 +1,6 @@
 package rudynakodach.github.io.webhookintegrations.Events;
 
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,17 +21,17 @@ public class onPlayerDeath implements Listener {
     @EventHandler
     public void onPlayerDeathEvent(PlayerDeathEvent event) {
         String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
-        String playerName = event.getPlayer().getName();
-        String killerName = event.getEntity().getKiller().getName();
-        String deathMessage = PlainTextComponentSerializer.plainText().serialize(event.deathMessage());
+        String playerName = event.getEntity().getName();
+        String deathMessage = PlainComponentSerializer.plain().serialize(event.deathMessage());
 
         String newLevel = String.valueOf(event.getNewLevel());
         String newExp = String.valueOf(event.getNewExp());
-        String oldLevel = String.valueOf(event.getPlayer().getLevel());
-        String oldExp = String.valueOf((int) event.getPlayer().getExp());
+        String oldLevel = String.valueOf(event.getEntity().getLevel());
+        String oldExp = String.valueOf((int) event.getEntity().getExp());
 
         if(event.getEntity().getKiller() != null) {
             if(!plugin.getConfig().getBoolean("onPlayerDeath.playerKilledByPlayer.announce")) {return;}
+            String killerName = event.getEntity().getKiller().getName();
             String json = plugin.getConfig().getString("onPlayerDeath.playerKilledByPlayer.messageJson");
 
             json = json.replace("%time%",time);

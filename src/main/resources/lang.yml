@@ -3,7 +3,7 @@ en_US:
     checking: "Checking for updates..."
     checkFailed: "Failed to get build number: "
     latest: "Already running the latest version!"
-    updateFound: "New version available on the GitHub repository. Please update."
+    updateFound: "New version available! Please update from: GitHub: https://github.com/rudynakodach/WebhookIntegrations/releases/latest \nSpigotMC: https://www.spigotmc.org/resources/webhookintegrations-1-16-1-19-3.107688/\nBukkit: https://dev.bukkit.org/projects/webhookintegrations"
 
   onStart:
     webhookEmpty: "WebhookURL is empty and cannot be used! Set the value of webhookUrl inside the config.yml file and restart the server or use \"/seturl <url>\"!"
@@ -28,7 +28,7 @@ pl_PL:
     checking: "Sprawdzanie aktualizacji..."
     checkFailed: "Wystąpił błąd podczas sprawdzania aktualizacji: "
     latest: "Najnowsza wersja już zainstalowana!"
-    updateFound: "Nowa wersja dostępna na repozytorium!"
+    updateFound: "Nowa wersja dostępna! Zainstaluj nową wersje z:\nGitHuba: https://github.com/rudynakodach/WebhookIntegrations/releases/latest \nSpigotMC: https://www.spigotmc.org/resources/webhookintegrations-1-16-1-19-3.107688/\nBukkit: https://dev.bukkit.org/projects/webhookintegrations"
 
   onStart:
     webhookEmpty: "Adres Webhooka jest pusty i nie może zostać użyty! Ustaw wartość 'webhookUrl' w configu albo użyj \"seturl <url>\"!"
