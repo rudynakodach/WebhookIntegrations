@@ -31,7 +31,7 @@ jobs:
         URL: ${{ steps.latest_release.outputs.id }}
 
     - name: Commit and push changes
-      uses: git/github-action@main
+      uses: actions/git@v2
       with:
         args: commit -a -m "Update download URL"
       env:
