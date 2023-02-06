@@ -18,10 +18,17 @@ en_US:
       verifyFail: "Failed to verify."
       newUrlSet: "New webhook URL has been saved!"
       commandIncorrectUsage: "Incorrect usage."
+      notDiscord: "This URL does NOT lead to Discord!"
+      noHttps: "Expected \"https://\" URL format!"
 
     send:
       onEmptyUrl: "Webhook URL is &lEMPTY! Use &e/seturl&r first!"
       commandIncorrectUsage: "Incorrect usage."
+
+    config:
+      noConfirm: "&cUse &7/config reset confirm &cto reset plugin configuration."
+      resetFinish: "&aConfig reset successful!"
+      reloadFinish: "&aReloaded!"
 
 pl_PL:
   update:
@@ -32,7 +39,6 @@ pl_PL:
 
   onStart:
     webhookEmpty: "Adres Webhooka jest pusty i nie może zostać użyty! Ustaw wartość 'webhookUrl' w configu albo użyj \"seturl <url>\"!"
-
     registeringEvents: "Rejestrowanie wydarzeń..."
     eventRegisterFinish: "Wydarzenia zarejestrowane."
     commandRegisterFinish: "Komendy zarejestrowne."
@@ -44,9 +50,16 @@ pl_PL:
       verifyFail: "Nie udało się zweryfikować adresu URL."
       newUrlSet: "Nowy adres URL został zapisany!"
       commandIncorrectUsage: "Niepoprawne użycie komendy."
+      notDiscord: "URL nie prowadzi do Discorda!"
+      noHttps: "URL powinno zawierać \"https://\"!"
 
     send:
       onEmptyUrl: "Adres URL jest &lPUSTY! Najpierw użyj &e/seturl&r!"
       commandIncorrectUsage: "Niepoprawne użycie."
+
+    config:
+      noConfirm: "&cUżyj &7/config reset confirm &caby zresetować config."
+      resetFinish: "&aResetowanie configa zakończone."
+      reloadFinish: "&aOperacja zakończona sukcesem."
 
 # END OF FILE

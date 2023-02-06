@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import rudynakodach.github.io.webhookintegrations.Commands.ConfigActions;
 import rudynakodach.github.io.webhookintegrations.Commands.SendToWebhook;
 import rudynakodach.github.io.webhookintegrations.Commands.SetWebhookURL;
 import rudynakodach.github.io.webhookintegrations.Events.*;
@@ -94,6 +95,10 @@ public final class WebhookIntegrations extends JavaPlugin {
 
         SendToWebhook sendToWebhookCommand = new SendToWebhook(getConfig(), this, getLogger());
         Objects.requireNonNull(getCommand("send")).setExecutor(sendToWebhookCommand);
+
+        ConfigActions resetConfig = new ConfigActions(this);
+        Objects.requireNonNull(getCommand("wi")).setExecutor(resetConfig);
+
         getLogger().log(Level.INFO, lang.getString(localeLang + ".onStart.commandRegisterFinish"));
 
     }

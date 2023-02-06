@@ -5,7 +5,19 @@ api-version: 1.16
 commands:
   seturl:
     usage: /seturl <url>
-    permission: webhookintegration.setwebhookurl
+    permission: webhookintegrations.setwebhookurl
   send:
     usage: /send <isEmbed> <message>
-    permission: webhookintegration.send
+    permission: webhookintegrations.send
+
+  cfgreload:
+    usage: /wi config reset <confirm>
+    permission: webhookintegrations.config.reset
+
+  reload:
+    usage: /wi reload
+    permission: webhookintegrations.reload
+
+  wi:
+    usage: /wi
+    permission: webhookintegrations.wi

@@ -33,6 +33,15 @@ public class SetWebhookURL implements CommandExecutor {
         if (command.getName().equalsIgnoreCase("seturl")) {
             if (args.length == 1) {
                 String newUrl = args[0];
+
+                //checking URL validity
+                if(!newUrl.contains("discord")) {
+
+                }
+                else if(!newUrl.contains("https://")) {
+
+                }
+
                 sender.sendMessage(ChatColor.BLUE + lang.getString(localeName + ".commands.seturl.verifyStart"));
 
                 try {
