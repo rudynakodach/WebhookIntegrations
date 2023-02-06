@@ -1,4 +1,4 @@
-name: Update Download URL
+name: Auto-Update URL
 
 on:
   release:
