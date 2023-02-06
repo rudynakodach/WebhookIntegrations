@@ -8,6 +8,7 @@ The simpliest solution for Discord Webhook integration with your Minecraft serve
 - Player kick logging
 - Player death messages
 - Advancement logging
+- Server start/stop messages
 
 # Usage
 Download the .jar file from [here](https://github.com/rudynakodach/WebhookIntegrations/releases/latest) and drop it into your `Plugins` folder.
