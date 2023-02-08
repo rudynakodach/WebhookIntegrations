@@ -21,7 +21,7 @@ import java.util.logging.Level;
 
 public final class WebhookIntegrations extends JavaPlugin {
 
-    public static int currentBuildNumber = 14;
+    public static int currentBuildNumber = 15;
     static String buildNumberUrl = "https://raw.githubusercontent.com/rudynakodach/WebhookIntegrations/master/buildnumber";
     public static String localeLang;
     public static FileConfiguration lang;
@@ -57,8 +57,8 @@ public final class WebhookIntegrations extends JavaPlugin {
             getLogger().log(Level.WARNING, "------------------------------------------------------");
 
             if(getConfig().getBoolean("auto-update")) {
-                getLogger().log(Level.INFO,"Auto update in progress...");
-                new AutoUpdater(this).Update();
+                AutoUpdater updater = new AutoUpdater(this);
+                updater.Update();
             }
 
         } else {
@@ -107,11 +107,7 @@ public final class WebhookIntegrations extends JavaPlugin {
 
         getLogger().log(Level.INFO, lang.getString(localeLang + ".onStart.commandRegisterFinish"));
 
-        if(getConfig().getBoolean("auto-update")) {
-            AutoUpdater updater = new AutoUpdater(this);
 
-            updater.Update();
-        }
 
     }
 
