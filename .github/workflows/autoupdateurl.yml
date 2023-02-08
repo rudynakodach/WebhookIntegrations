@@ -1,0 +1,37 @@
+name: Latest File URL Update
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  update_url:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Get latest release
+      id: latest_release
+      run: |
+        const axios = require('axios');
+        const { data } = await axios.get(
+          'https://api.github.com/repos/rudynakodach/WebhookIntegrations/releases/latest'
+        );
+        const assets = data.assets;
+        const specificFile = assets[0].name;
+        console.log(`Asset URL: ${specificFile.browser_download_url}`);
+        return specificFile;
+    - name: Update download URL
+      run: |
+        echo "${{ steps.latest_release.outputs.id }}" > downloadurl
+      env:
+        URL: ${{ steps.latest_release.outputs.id }}
+
+    - name: Commit and push changes
+      uses: actions/git@v2
+      with:
+        args: commit -a -m "Update download URL"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
