@@ -1,4 +1,4 @@
-name: Update Download URL
+name: Latest File URL Update
 
 on:
   release:
@@ -23,7 +23,6 @@ jobs:
         const specificFile = assets[0].name;
         console.log(`Asset URL: ${specificFile.browser_download_url}`);
         return specificFile;
-
     - name: Update download URL
       run: |
         echo "${{ steps.latest_release.outputs.id }}" > downloadurl
