@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import rudynakodach.github.io.webhookintegrations.WebhookIntegrations;
@@ -41,6 +42,17 @@ public class ConfigActions implements CommandExecutor, TabCompleter {
                         commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', WebhookIntegrations.lang.getString(WebhookIntegrations.localeLang + ".commands.config.reloadFinish")));
                         return true;
                     }
+                } else if(args[0].equalsIgnoreCase("analyze")) {
+                    commandSender.sendMessage(ChatColor.AQUA + "Analyzing config... To reload the config use /wi reload");
+                    StringBuilder message = new StringBuilder("auto-update: " + colorBoolean(plugin.getConfig().getBoolean("auto-update")));
+                    if(plugin.getConfig().getString("webhookUrl").trim().equalsIgnoreCase("")) {
+                        message.append("\nwebhookUrl: " + ChatColor.RED + "unset\n");
+                    }
+                    else {
+                        message.append("\nwebhookUrl: " + ChatColor.GREEN + "set\n");
+                    }
+                    message.append(ChatColor.YELLOW + "EVENTS\n");
+                    message.append("");
                 }
             }
             else {
@@ -63,6 +75,7 @@ public class ConfigActions implements CommandExecutor, TabCompleter {
             if (args.length == 0) {
                 suggestions.add("reset");
                 suggestions.add("reload");
+                suggestions.add("analyze");
                 return suggestions;
             } else {
                 if (args.length == 1) {
@@ -74,5 +87,15 @@ public class ConfigActions implements CommandExecutor, TabCompleter {
             }
         }
         return null;
+    }
+
+    @Contract(pure = true)
+    private @NotNull String colorBoolean(Boolean b) {
+        if(!b) {
+            return ChatColor.RED + "false";
+        }
+        else {
+            return ChatColor.GREEN + "true";
+        }
     }
 }
