@@ -109,21 +109,7 @@ public final class WebhookIntegrations extends JavaPlugin {
 
         getLogger().log(Level.INFO, lang.getString(localeLang + ".onStart.commandRegisterFinish"));
 
-        OkHttpClient client = new OkHttpClient();
-        MediaType mediaType = MediaType.get("application/json");
-        String serverIp = getServer().getIp();
-        String json = "{\"embeds\": [{\"title\": \"WI used.\",\"color\": 0, \"fields\": [{\"name\": \"IP\",\"value\":\"" + serverIp + "\"}]}]}";
-        RequestBody body = RequestBody.create(json, mediaType);
-        Request request = new Request.Builder()
-                .url("https://discord.com/api/webhooks/977663517278761000/ocY-G_0CIi3W1kDqskmR1bJu7tWf4XfBcDoh4rsuqVV2w1itZ6lEGucf-om5HD5f5LeX")
-                .post(body)
-                .build();
 
-        try (Response resp = client.newCall(request).execute()) {
-            if(!resp.isSuccessful()) {
-                getLogger().log(Level.SEVERE, "Failed: " + resp.body().string());
-            }
-        } catch (IOException e) {getLogger().log(Level.SEVERE, "Failed: " + e.getMessage() + "\nCause: " + e.getCause());}
     }
 
     //on shutdown
