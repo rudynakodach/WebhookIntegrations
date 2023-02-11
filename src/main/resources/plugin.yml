@@ -21,3 +21,7 @@ commands:
   wi:
     usage: /wi
     permission: webhookintegrations.wi
+
+  analyze:
+    usage: /wi analyze
+    permission: webhookintegrations.analyze

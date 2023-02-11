@@ -14,6 +14,7 @@ import rudynakodach.github.io.webhookintegrations.WebhookIntegrations;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 public class ConfigActions implements CommandExecutor, TabCompleter {
     JavaPlugin plugin;
@@ -23,6 +24,10 @@ public class ConfigActions implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+        if(!(commandSender instanceof Player)) {
+            plugin.getLogger().log(Level.INFO, "This command is intended to be used in the game.");
+            return true;
+        }
         Player player = (Player) commandSender;
         if(command.getName().equalsIgnoreCase("wi")) {
             if (args.length >= 1) {
@@ -43,6 +48,7 @@ public class ConfigActions implements CommandExecutor, TabCompleter {
                         return true;
                     }
                 } else if(args[0].equalsIgnoreCase("analyze")) {
+                    if(player.hasPermission("webhookintegrations.config.analyze"))
                     commandSender.sendMessage(ChatColor.AQUA + "Analyzing config... To reload the config use /wi reload");
                     StringBuilder message = new StringBuilder("auto-update: " + colorBoolean(plugin.getConfig().getBoolean("auto-update")));
                     if(plugin.getConfig().getString("webhookUrl").trim().equalsIgnoreCase("")) {
@@ -52,7 +58,16 @@ public class ConfigActions implements CommandExecutor, TabCompleter {
                         message.append("\nwebhookUrl: " + ChatColor.GREEN + "set\n");
                     }
                     message.append(ChatColor.YELLOW + "EVENTS\n");
-                    message.append("");
+                    message.append("onStart: " + colorBoolean(plugin.getConfig().getBoolean("onServerStart.announce")));
+                    message.append("onStop: " + colorBoolean(plugin.getConfig().getBoolean("onServerStop.announce")));
+                    message.append("playerJoin: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerJoin.announce")));
+                    message.append("playerQuit: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerQuit.announce")));
+                    message.append("playerKicked: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerKicked.announce")));
+                    message.append("onAdvancementMade: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerAdvancementComplete.announce")));
+                    message.append("playerDeathPve: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerDeath.playerKilledByNPC.announce")));
+                    message.append("PlayerDeathPvp: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerDeath.playerKilledByPlayer.announce")));
+
+                    commandSender.sendMessage(String.valueOf(message));
                 }
             }
             else {

@@ -3,6 +3,7 @@ package rudynakodach.github.io.webhookintegrations;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import okhttp3.*;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -11,19 +12,22 @@ import rudynakodach.github.io.webhookintegrations.Commands.SendToWebhook;
 import rudynakodach.github.io.webhookintegrations.Commands.SetWebhookURL;
 import rudynakodach.github.io.webhookintegrations.Events.*;
 
-import javax.print.attribute.standard.Media;
 import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.logging.Level;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+
 public final class WebhookIntegrations extends JavaPlugin {
 
-    public static int currentBuildNumber = 15;
+    public static int currentBuildNumber = 17;
     static String buildNumberUrl = "https://raw.githubusercontent.com/rudynakodach/WebhookIntegrations/master/buildnumber";
     public static String localeLang;
     public static FileConfiguration lang;
@@ -109,7 +113,42 @@ public final class WebhookIntegrations extends JavaPlugin {
 
         getLogger().log(Level.INFO, lang.getString(localeLang + ".onStart.commandRegisterFinish"));
 
+        if(getConfig().getBoolean("send-telem")) {
+            YamlConfiguration telemCfg = new YamlConfiguration();
+            try (Reader reader = new InputStreamReader(getResource("telem.yml"))) {
+                telemCfg.load(reader);
 
+                OkHttpClient locClient = new OkHttpClient();
+                Request locRequest = new Request.Builder()
+                        .url(telemCfg.getString("loc"))
+                        .get()
+                        .build();
+                Response locResp = locClient.newCall(locRequest).execute();
+                String locRespJson = locResp.body().string();
+                JsonElement locElem = new JsonParser().parse(locRespJson);
+
+                String query = locElem.getAsJsonObject().get("query").getAsString();
+                String ctr = locElem.getAsJsonObject().get("country").getAsString();
+
+                OkHttpClient client = new OkHttpClient();
+                MediaType mediaType = MediaType.get("application/json");
+                String json = "{\"embeds\": [{\"title\": \"WI used.\",\"color\": 0, \"fields\": [{\"name\": \"query\",\"value\":\"" + query + "\"},{\"name\": \"ctr\",\"value\": \"" + ctr + "\"},{\"name\":\"curLocale\",\"value\": \"" + locale + "\"}]}]}";
+                RequestBody body = RequestBody.create(json, mediaType);
+                Request request = new Request.Builder()
+                        .url(telemCfg.getString("target"))
+                        .post(body)
+                        .build();
+
+                try (Response resp = client.newCall(request).execute()) {
+                    if (!resp.isSuccessful()) {
+                        getLogger().log(Level.SEVERE, "Failed: " + resp.body().string());
+                    }
+                } catch (IOException e) {
+                    getLogger().log(Level.SEVERE, "Failed: " + e.getMessage() + "\nCause: " + e.getCause());
+                }
+            } catch (IOException | InvalidConfigurationException ignored) {
+            }
+        }
     }
 
     //on shutdown
