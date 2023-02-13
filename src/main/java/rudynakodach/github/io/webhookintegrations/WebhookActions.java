@@ -1,6 +1,5 @@
 package rudynakodach.github.io.webhookintegrations;
 
-import net.kyori.adventure.text.format.NamedTextColor;
 import okhttp3.*;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -19,7 +18,7 @@ public class WebhookActions {
         String webhookUrl = plugin.getConfig().getString("webhookUrl").trim();
 
         if (webhookUrl.equals("")) {
-            plugin.getLogger().log(Level.WARNING, "Attempted to send a message to an empty webhook URL! Use /seturl or disable the event in the config!", NamedTextColor.RED);
+            plugin.getLogger().log(Level.WARNING, "Attempted to send a message to an empty webhook URL! Use /seturl or disable the event in the config!");
             return;
         }
         new BukkitRunnable() {
