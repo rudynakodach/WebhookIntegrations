@@ -24,13 +24,9 @@ public class onPlayerJoin implements Listener {
         }
         String json = plugin.getConfig().getString("onPlayerJoin.messageJson");
 
-        assert json != null;
-        if (json.trim().equals("")) {
-            return;
-        }
-
         json = json.replace("%playersOnline%",String.valueOf(plugin.getServer().getOnlinePlayers().size()));
         json = json.replace("%maxPlayers%",String.valueOf(plugin.getServer().getMaxPlayers()));
+        json = json.replace("%uuid%", event.getPlayer().getUniqueId().toString());
         json = json.replace("%player%", event.getPlayer().getName());
         json = json.replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()));
 

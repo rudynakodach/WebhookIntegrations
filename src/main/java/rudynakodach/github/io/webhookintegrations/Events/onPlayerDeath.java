@@ -1,6 +1,5 @@
 package rudynakodach.github.io.webhookintegrations.Events;
 
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -21,7 +20,7 @@ public class onPlayerDeath implements Listener {
     public void onPlayerDeathEvent(PlayerDeathEvent event) {
         String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
         String playerName = event.getEntity().getName();
-        String deathMessage = PlainComponentSerializer.plain().serialize(event.deathMessage());
+        String deathMessage = event.getDeathMessage();
 
         String newLevel = String.valueOf(event.getNewLevel());
         String newExp = String.valueOf(event.getNewExp());

@@ -1,8 +1,6 @@
 package rudynakodach.github.io.webhookintegrations;
 
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import okhttp3.*;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -27,8 +25,7 @@ import com.google.gson.JsonParser;
 
 public final class WebhookIntegrations extends JavaPlugin {
 
-    public static int currentBuildNumber = 17;
-    static String buildNumberUrl = "https://raw.githubusercontent.com/rudynakodach/WebhookIntegrations/master/buildnumber";
+    public static int currentBuildNumber = 20;
     public static String localeLang;
     public static FileConfiguration lang;
 
@@ -36,20 +33,18 @@ public final class WebhookIntegrations extends JavaPlugin {
     @Override
     public void onEnable() {
 
-        getLogger().log(Level.INFO,"Initializing language...");
         this.saveResource("lang.yml",false);
+        File langFile = new File(this.getDataFolder(),"lang.yml");
+        WebhookIntegrations.lang = YamlConfiguration.loadConfiguration(langFile);
+        getLogger().log(Level.INFO,"Initializing language...");
+        saveDefaultConfig();
 
         Locale locale = Locale.getDefault();
         localeLang = locale.toString();
 
-        if(!localeLang.equals("pl_PL") && !localeLang.equals("en_US")) {
-          WebhookIntegrations.localeLang = "en_US";
-        } else {
-            WebhookIntegrations.localeLang = locale.toString();
+        if(!lang.contains(localeLang)) {
+            localeLang = "en_US";
         }
-
-        File langFile = new File(this.getDataFolder(),"lang.yml");
-        WebhookIntegrations.lang = YamlConfiguration.loadConfiguration(langFile);
 
         getLogger().log(Level.INFO,"Hooked to " + localeLang);
 
@@ -58,6 +53,7 @@ public final class WebhookIntegrations extends JavaPlugin {
 
         int receivedBuildNumber = getVersion();
         if (currentBuildNumber < receivedBuildNumber && receivedBuildNumber != -1) {
+            getLogger().log(Level.WARNING, "Current: " + currentBuildNumber + " | New: " + receivedBuildNumber);
             getLogger().log(Level.WARNING, "------------------------- WI -------------------------");
             getLogger().log(Level.INFO,lang.getString(localeLang + ".update.updateFound"));
             getLogger().log(Level.WARNING, "------------------------------------------------------");
@@ -78,9 +74,6 @@ public final class WebhookIntegrations extends JavaPlugin {
         }
 
         getLogger().log(Level.INFO, lang.getString(localeLang + ".onStart.registeringEvents"));
-
-        onServerStart serverStart = new onServerStart(this);
-        getServer().getPluginManager().registerEvents(serverStart, this);
 
         onPlayerChat chatEvent = new onPlayerChat(this);
         getServer().getPluginManager().registerEvents(chatEvent, this);
@@ -154,50 +147,43 @@ public final class WebhookIntegrations extends JavaPlugin {
     //on shutdown
     @Override
     public void onDisable() {
-        if(Bukkit.isStopping()) {
-            if(getConfig().getBoolean("onServerStop.announce")) {
-                if(!getConfig().getString("webhookUrl").trim().equals("")) {
-                    String serverIp = getServer().getIp();
-                    int slots = getServer().getMaxPlayers();
-                    String serverMotd = PlainComponentSerializer.plain().serialize(getServer().motd());
-                    String serverName = getServer().getName();
-                    String serverVersion = getServer().getVersion();
-                    Boolean isOnlineMode = getServer().getOnlineMode();
-                    int playersOnline = getServer().getOnlinePlayers().size();
-                    String minecraftVersion = getServer().getMinecraftVersion();
+        if (getConfig().getBoolean("onServerStop.announce")) {
+            if (!getConfig().getString("webhookUrl").trim().equals("")) {
+                String serverIp = getServer().getIp();
+                int slots = getServer().getMaxPlayers();
+                String serverMotd = getServer().getMotd();
+                String serverName = getServer().getName();
+                String serverVersion = getServer().getVersion();
+                Boolean isOnlineMode = getServer().getOnlineMode();
+                int playersOnline = getServer().getOnlinePlayers().size();
 
-                    String json = getConfig().getString("onServerStop.messageJson");
+                String json = getConfig().getString("onServerStop.messageJson");
 
-                    json = json.replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()));
-                    json = json.replace("%serverIp%",serverIp);
-                    json = json.replace("%maxPlayers%",String.valueOf(slots));
-                    json = json.replace("%serverMotd%",serverMotd);
-                    json = json.replace("%serverName%",serverName);
-                    json = json.replace("%serverVersion%", serverVersion);
-                    json = json.replace("%isOnlineMode%",String.valueOf(isOnlineMode));
-                    json = json.replace("%playersOnline%",String.valueOf(playersOnline));
-                    json = json.replace("%minecraftVersion%",minecraftVersion);
+                json = json.replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()));
+                json = json.replace("%serverIp%", serverIp);
+                json = json.replace("%maxPlayers%", String.valueOf(slots));
+                json = json.replace("%serverMotd%", serverMotd);
+                json = json.replace("%serverName%", serverName);
+                json = json.replace("%serverVersion%", serverVersion);
+                json = json.replace("%isOnlineMode%", String.valueOf(isOnlineMode));
+                json = json.replace("%playersOnline%", String.valueOf(playersOnline));
 
-                    getLogger().info(json);
-
-                    OkHttpClient client = new OkHttpClient();
-                    MediaType mediaType = MediaType.get("application/json");
-                    RequestBody body = RequestBody.create(json,mediaType);
-                    Request request = new Request.Builder()
-                            .url(getConfig().getString("webhookUrl"))
-                            .post(body)
-                            .build();
-                    try {
-                        Response response = client.newCall(request).execute();
-                        if(response.isSuccessful()) {
-                            getLogger().log(Level.INFO, "onServerStop message sent!");
-                        }
-                        else {
-                            getLogger().log(Level.INFO, "onServerStop message failed: " + response.body().string());
-                        }
-                    } catch (IOException e) {
-                        getLogger().log(Level.WARNING, "Failed to send server stop message: " + e.getMessage());
+                OkHttpClient client = new OkHttpClient();
+                MediaType mediaType = MediaType.get("application/json");
+                RequestBody body = RequestBody.create(json, mediaType);
+                Request request = new Request.Builder()
+                        .url(getConfig().getString("webhookUrl"))
+                        .post(body)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    if (response.isSuccessful()) {
+                        getLogger().log(Level.INFO, "onServerStop message sent!");
+                    } else {
+                        getLogger().log(Level.INFO, "onServerStop message failed: " + response.body().string());
                     }
+                } catch (IOException e) {
+                    getLogger().log(Level.WARNING, "Failed to send server stop message: " + e.getMessage());
                 }
             }
         }
@@ -210,7 +196,7 @@ public final class WebhookIntegrations extends JavaPlugin {
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url(buildNumberUrl)
+                .url("https://raw.githubusercontent.com/rudynakodach/WebhookIntegrations/master/buildnumber")
                 .get()
                 .build();
         try (Response response = client.newCall(request).execute()) {

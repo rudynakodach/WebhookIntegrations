@@ -14,6 +14,7 @@ censoring:
 
 
 # IF YOU DON'T KNOW ANYTHING ABOUT WEBHOOK STRUCTURE, PLEASE GO HERE: https://gist.github.com/Birdie0/78ee79402a4301b1faf412ab5f1cdcf9#structure-of-webhooks
+# minotar API for player head icons: https://minotar.net/
 # API breaks json indentation :(
 
 onServerStart:
@@ -26,7 +27,6 @@ onServerStart:
   # - %serverName% - name of your server
   # - %serverVersion% - version of your server. this isn't the minecraft version
   # - %isOnlineMode% - true if online-mode is enabled, false otherwise
-  # - %minecraftVersion% - minecraft version the server is running
   announce: true
   # I won't make this message for you.
   messageJson: '{
@@ -36,7 +36,7 @@ onServerStart:
     "name": "Server" 
    }, 
    "description": "Server Started.", 
-   "color": 15258703, 
+   "color": 65280, 
    "fields": [ 
     { 
      "name": "Time", 
@@ -58,25 +58,28 @@ onServerStop:
   # - %serverName% - name of your server
   # - %serverVersion% - version of your server. this isn't the minecraft version
   # - %isOnlineMode% - true if online-mode is enabled, false otherwise
-  # - %minecraftVersion% - minecraft version the server is running
   announce: true
   # I won't make this message for you.
   messageJson: '{ "embeds": [ { "author": { "name": "Server" }, "description": "Server
-    Stopped.", "color": 15258703, "fields": [ { "name":"Time", "value":"%time%", "inline":false
+    Stopped.", "color": 16711680, "fields": [ { "name":"Time", "value":"%time%", "inline":false
     } ] } ] }'
 
 onPlayerJoin:
   # Available variables:
   # - %player% - player who joined
+  # - %uuid% - player's uuid who triggered the event
   # - %time% - server"s local time
   # - %maxPlayers% - slot count
   # - %playersOnline% - the amount of players online
   announce: true
-  messageJson: '15258703'
+  messageJson: '{ "embeds": [ { "author": { "name": "%player%", "icon_url": "https://minotar.net/helm/%player%/512.png"
+    }, "description": "**%player%** joined the game.", "color": 65280, "fields":
+    [ { "name":"Time", "value":"%time%", "inline":false } ] } ] }'
 
 onPlayerQuit:
   # Available variables:
   # - %player% - player who left
+  # - %uuid% - player's uuid who triggered the event
   # - %time% - server's local time
   # - %maxPlayers% - slot count
   # - %playersOnline% - the amount of players online
@@ -88,6 +91,7 @@ onPlayerQuit:
 onPlayerKicked:
   # Available variables:
   # - %player% - player who left
+  # - %uuid% - player's uuid who triggered the event
   # - %time% - server's local time
   # - %reason% - reason provided
   # - %maxPlayers% - slot count
@@ -103,6 +107,8 @@ onPlayerDeath:
 
   # Available variables:
   # - %player% - player who left
+  # - %uuid% - player's uuid who died
+
   # - %time% - server's local time
   # - %deathMessage% - death message visible in chat
   # - %newLevel% - player's level after death
@@ -114,11 +120,12 @@ onPlayerDeath:
   playerKilledByNPC:
     announce: true
     messageJson: '{ "embeds": [ { "author": { "name": "%player%", "icon_url": "https://minotar.net/helm/%player%/512.png"
-      }, "description": "**%player%** died.", "color": 16711680, "fields": [ { "name":"Time",
+      }, "description": "**%player%** died.", "color": 15631086, "fields": [ { "name":"Time",
       "value":"%time%", "inline":false } ] } ] }'
   playerKilledByPlayer:
     # Additional variables:
     # - %killer% - killer's player name
+    # - %killerUuid% - player's uuid who killed the player
     announce: true
     messageJson: '{ "embeds": [ { "author": { "name": "%player%", "icon_url": "https://minotar.net/helm/%player%/512.png"
       }, "description": "**%player%** was killed by **%killer%**.", "color": 16711680,
@@ -127,6 +134,7 @@ onPlayerDeath:
 onPlayerChat:
   # Available variables:
   # - %player% - player who left
+  # - %uuid% - player's uuid who died
   # - %time% - server's local time
   # - %message% - message sent by player
   # - %worldName% - name of the world the player currently is
@@ -140,6 +148,7 @@ onPlayerChat:
 onPlayerAdvancementComplete:
   # Available variables:
   # - %player% - player name
+  # - %uuid% - player's uuid who died
   # - %time% - server's local time
   # - %advancement% - full advancement message visible in chat
   # - %maxPlayers% - slot count
@@ -147,7 +156,7 @@ onPlayerAdvancementComplete:
   announce: true
   messageJson: '{ "embeds": [ { "author":{ "name": "%player%", "icon_url":"https://minotar.net/helm/%player%/512.png"
     }, "description": "**%player%** has made the advancement `[%advancement%]`", "color":
-    16776960, "fields": [ { "name":"Time", "value":"%time%", "inline":false } ] }
+    16766720, "fields": [ { "name":"Time", "value":"%time%", "inline":false } ] }
     ] }'
 
 #END OF FILE
