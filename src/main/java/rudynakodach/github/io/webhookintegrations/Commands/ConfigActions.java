@@ -48,34 +48,31 @@ public class ConfigActions implements CommandExecutor, TabCompleter {
                         return true;
                     }
                 } else if(args[0].equalsIgnoreCase("analyze")) {
-                    if(player.hasPermission("webhookintegrations.config.analyze"))
-                    commandSender.sendMessage(ChatColor.AQUA + "Analyzing config... To reload the config use /wi reload");
-                    StringBuilder message = new StringBuilder("auto-update: " + colorBoolean(plugin.getConfig().getBoolean("auto-update")));
-                    if(plugin.getConfig().getString("webhookUrl").trim().equalsIgnoreCase("")) {
-                        message.append("\nwebhookUrl: " + ChatColor.RED + "unset\n");
-                    }
-                    else {
-                        message.append("\nwebhookUrl: " + ChatColor.GREEN + "set\n");
-                    }
-                    message.append(ChatColor.YELLOW + "EVENTS\n");
-                    message.append("onStart: " + colorBoolean(plugin.getConfig().getBoolean("onServerStart.announce")));
-                    message.append("onStop: " + colorBoolean(plugin.getConfig().getBoolean("onServerStop.announce")));
-                    message.append("playerJoin: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerJoin.announce")));
-                    message.append("playerQuit: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerQuit.announce")));
-                    message.append("playerKicked: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerKicked.announce")));
-                    message.append("onAdvancementMade: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerAdvancementComplete.announce")));
-                    message.append("playerDeathPve: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerDeath.playerKilledByNPC.announce")));
-                    message.append("PlayerDeathPvp: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerDeath.playerKilledByPlayer.announce")));
+                    if(player.hasPermission("webhookintegrations.config.analyze")) {
+                        commandSender.sendMessage(ChatColor.AQUA + "Analyzing config... To reload the config use /wi reload");
+                        StringBuilder message = new StringBuilder("auto-update: " + colorBoolean(plugin.getConfig().getBoolean("auto-update")));
+                        if (plugin.getConfig().getString("webhookUrl").trim().equalsIgnoreCase("")) {
+                            message.append("\nwebhookUrl: " + ChatColor.RED + "unset\n");
+                        } else {
+                            message.append("\nwebhookUrl: " + ChatColor.GREEN + "set\n");
+                        }
+                        message.append(ChatColor.YELLOW + "EVENTS");
+                        message.append("\nonStart: " + colorBoolean(plugin.getConfig().getBoolean("onServerStart.announce")));
+                        message.append("\nonStop: " + colorBoolean(plugin.getConfig().getBoolean("onServerStop.announce")));
+                        message.append("\nplayerJoin: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerJoin.announce")));
+                        message.append("\nplayerQuit: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerQuit.announce")));
+                        message.append("\nplayerKicked: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerKicked.announce")));
+                        message.append("\nonAdvancementMade: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerAdvancementComplete.announce")));
+                        message.append("\nplayerDeathPve: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerDeath.playerKilledByNPC.announce")));
+                        message.append("\nPlayerDeathPvp: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerDeath.playerKilledByPlayer.announce")));
 
-                    commandSender.sendMessage(String.valueOf(message));
+                        commandSender.sendMessage(String.valueOf(message));
+                    }
                 }
             }
             else {
                 if(player.hasPermission("webhookintegrations.wi")) {
-                    String text = "/wi\n\treset\n\t\t&cconfirm&r\n\treload";
-                    text = text.replace("\n", "  ");
-                    commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                            text));
+                    String text = ChatColor.WHITE + "trest";
                 }
             }
         }

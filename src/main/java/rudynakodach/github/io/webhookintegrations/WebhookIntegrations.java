@@ -24,8 +24,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 public final class WebhookIntegrations extends JavaPlugin {
-
-    public static int currentBuildNumber = 20;
+    public static boolean isLatest = true;
+    public static int currentBuildNumber = 21;
     public static String localeLang;
     public static FileConfiguration lang;
 
@@ -53,12 +53,14 @@ public final class WebhookIntegrations extends JavaPlugin {
 
         int receivedBuildNumber = getVersion();
         if (currentBuildNumber < receivedBuildNumber && receivedBuildNumber != -1) {
+            isLatest = false;
             getLogger().log(Level.WARNING, "Current: " + currentBuildNumber + " | New: " + receivedBuildNumber);
             getLogger().log(Level.WARNING, "------------------------- WI -------------------------");
             getLogger().log(Level.INFO,lang.getString(localeLang + ".update.updateFound"));
             getLogger().log(Level.WARNING, "------------------------------------------------------");
 
             if(getConfig().getBoolean("auto-update")) {
+                isLatest = true;
                 AutoUpdater updater = new AutoUpdater(this);
                 updater.Update();
             }

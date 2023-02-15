@@ -40,7 +40,10 @@ public class AutoUpdater {
             fos.close();
             plugin.getLogger().log(Level.INFO, "New version downloaded to " + file.getPath());
 
-        } catch (ExecutionException | InterruptedException | IOException e) {plugin.getLogger().log(Level.SEVERE,"Update failed: " + e.getMessage());}
+        } catch (ExecutionException | InterruptedException | IOException e) {
+            plugin.getLogger().log(Level.SEVERE,"Update failed: " + e.getMessage());
+            WebhookIntegrations.isLatest = false;
+        }
     }
 
     private String getDownloadUrl() throws ExecutionException, InterruptedException {
@@ -59,7 +62,9 @@ public class AutoUpdater {
                 }
                 response.close();
             }
-            catch (IOException ignored) {}
+            catch (IOException ignored) {
+                WebhookIntegrations.isLatest = false;
+            }
             return "";
         });
         return future.get();
@@ -79,6 +84,7 @@ public class AutoUpdater {
                 return resp.trim();
             } catch (IOException | IllegalStateException e) {
                 plugin.getLogger().log(Level.SEVERE, "Getting filename failed: " + e.getMessage());
+                WebhookIntegrations.isLatest = false;
                 return "";
             }
         });
@@ -96,7 +102,9 @@ public class AutoUpdater {
                 Response response = client.newCall(request).execute();
                 return response.body().bytes();
             }
-            catch (IOException ignored) {}
+            catch (IOException ignored) {
+                WebhookIntegrations.isLatest = false;
+            }
             return null;
         });
         return future.get();
