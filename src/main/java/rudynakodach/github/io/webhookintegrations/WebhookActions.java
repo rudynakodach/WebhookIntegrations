@@ -18,7 +18,7 @@ public class WebhookActions {
         String webhookUrl = plugin.getConfig().getString("webhookUrl").trim();
 
         if (webhookUrl.equals("")) {
-            plugin.getLogger().log(Level.WARNING, "Attempted to send a message to an empty webhook URL! Use /seturl or disable the event in the config!");
+            plugin.getLogger().log(Level.WARNING, "Attempted to send a message to an empty webhook URL! Use /setUrl or disable the event in the config!");
             return;
         }
         new BukkitRunnable() {

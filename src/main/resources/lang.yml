@@ -1,3 +1,4 @@
+#file: noinspection SpellCheckingInspection
 en_US:
   update:
     checking: "Checking for updates..."
@@ -7,13 +8,13 @@ en_US:
 
   onStart:
     message: "Thank you for using WebhookIntegrations <3"
-    webhookEmpty: "WebhookURL is empty and cannot be used! Set the value of webhookUrl inside the config.yml file and restart the server or use \"/seturl <url>\"!"
+    webhookEmpty: "WebhookURL is empty and cannot be used! Set the value of webhookUrl inside the config.yml file and restart the server or use \"/setUrl <url>\"!"
     registeringEvents: "Registering events..."
     eventRegisterFinish: "Events registered."
     commandRegisterFinish: "Commands registered."
 
   commands:
-    seturl:
+    setUrl:
       verifyStart: "Verifying URL..."
       verifySuccess: "URL verified!"
       verifyFail: "Failed to verify."
@@ -23,13 +24,17 @@ en_US:
       noHttps: "Expected \"https://\" URL format!"
 
     send:
-      onEmptyUrl: "Webhook URL is &lEMPTY! Use &e/seturl&r first!"
+      onEmptyUrl: "Webhook URL is &lEMPTY! Use &e/setUrl&r first!"
       commandIncorrectUsage: "Incorrect usage."
 
     config:
       noConfirm: "&cUse &7/config reset confirm &cto reset plugin configuration."
       resetFinish: "&aConfig reset successful!"
       reloadFinish: "&aReloaded!"
+
+    update:
+      success: "Later version downloaded!"
+      failed: "Download failed!"
 
 pl_PL:
   update:
@@ -40,7 +45,7 @@ pl_PL:
 
   onStart:
     message: "Dziękuje za korzystanie z WebhookIntegrations <3"
-    webhookEmpty: "Adres Webhooka jest pusty i nie może zostać użyty! Ustaw wartość 'webhookUrl' w configu albo użyj \"seturl <url>\"!"
+    webhookEmpty: "Adres Webhooka jest pusty i nie może zostać użyty! Ustaw wartość 'webhookUrl' w configu albo użyj \"setUrl <url>\"!"
     registeringEvents: "Rejestrowanie wydarzeń..."
     eventRegisterFinish: "Wydarzenia zarejestrowane."
     commandRegisterFinish: "Komendy zarejestrowne."
@@ -56,12 +61,16 @@ pl_PL:
       noHttps: "URL powinno zawierać \"https://\"!"
 
     send:
-      onEmptyUrl: "Adres URL jest &lPUSTY! Najpierw użyj &e/seturl&r!"
+      onEmptyUrl: "Adres URL jest &lPUSTY! Najpierw użyj &e/setUrl&r!"
       commandIncorrectUsage: "Niepoprawne użycie."
 
     config:
       noConfirm: "&cUżyj &7/config reset confirm &caby zresetować config."
       resetFinish: "&aResetowanie configa zakończone."
       reloadFinish: "&aOperacja zakończona sukcesem."
+
+    update:
+      success: "Pobrano najnowszą wersje!"
+      failed: "Nie udało się pobrać najnowszej wersji!"
 
 # END OF FILE

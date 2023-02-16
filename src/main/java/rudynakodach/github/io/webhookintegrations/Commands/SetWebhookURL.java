@@ -30,7 +30,7 @@ public class SetWebhookURL implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String label, String[] args) {
-        if (command.getName().equalsIgnoreCase("seturl")) {
+        if (command.getName().equalsIgnoreCase("setUrl")) {
             if (args.length == 1) {
                 String newUrl = args[0];
 
@@ -42,28 +42,28 @@ public class SetWebhookURL implements CommandExecutor {
 
                 }
 
-                sender.sendMessage(ChatColor.BLUE + lang.getString(localeName + ".commands.seturl.verifyStart"));
+                sender.sendMessage(ChatColor.BLUE + lang.getString(localeName + ".commands.setUrl.verifyStart"));
 
                 try {
                     Response response = getResponse(newUrl);
 
                     if(response.isSuccessful()) {
-                        sender.sendMessage(ChatColor.GREEN + lang.getString(localeName + ".commands.seturl.verifySuccess"));
+                        sender.sendMessage(ChatColor.GREEN + lang.getString(localeName + ".commands.setUrl.verifySuccess"));
                     } else {
-                        sender.sendMessage(ChatColor.LIGHT_PURPLE + lang.getString(localeName + ".commands.seturl.verifyFail"));
+                        sender.sendMessage(ChatColor.LIGHT_PURPLE + lang.getString(localeName + ".commands.setUrl.verifyFail"));
                         return true;
                     }
                 } catch (IOException e) {
-                    sender.sendMessage(ChatColor.RED + lang.getString(localeName + ".commands.seturl.verifyFail"));
+                    sender.sendMessage(ChatColor.RED + lang.getString(localeName + ".commands.setUrl.verifyFail"));
                     return true;
                 }
 
                 config.set("webhookUrl", newUrl);
                 javaPlugin.saveConfig();
-                sender.sendMessage(ChatColor.GREEN + lang.getString(localeName + ".commands.seturl.newUrlSet"));
+                sender.sendMessage(ChatColor.GREEN + lang.getString(localeName + ".commands.setUrl.newUrlSet"));
                 return true;
             } else {
-                sender.sendMessage(ChatColor.RED + lang.getString(localeName + ".commands.seturl.commandIncorrectUsage"));
+                sender.sendMessage(ChatColor.RED + lang.getString(localeName + ".commands.setUrl.commandIncorrectUsage"));
                 return false;
             }
         }

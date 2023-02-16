@@ -5,7 +5,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import rudynakodach.github.io.webhookintegrations.Commands.ConfigActions;
+import rudynakodach.github.io.webhookintegrations.Commands.WIActions;
 import rudynakodach.github.io.webhookintegrations.Commands.SendToWebhook;
 import rudynakodach.github.io.webhookintegrations.Commands.SetWebhookURL;
 import rudynakodach.github.io.webhookintegrations.Events.*;
@@ -25,13 +25,14 @@ import com.google.gson.JsonParser;
 
 public final class WebhookIntegrations extends JavaPlugin {
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 21;
+    public static int currentBuildNumber = 22;
     public static String localeLang;
     public static FileConfiguration lang;
 
     //on startup
     @Override
     public void onEnable() {
+        getLogger().log(Level.INFO, "Hello, World!");
 
         this.saveResource("lang.yml",false);
         File langFile = new File(this.getDataFolder(),"lang.yml");
@@ -48,7 +49,6 @@ public final class WebhookIntegrations extends JavaPlugin {
 
         getLogger().log(Level.INFO,"Hooked to " + localeLang);
 
-        getLogger().log(Level.INFO, "Hello, World!");
         getLogger().log(Level.INFO, lang.getString(localeLang + ".update.checking"));
 
         int receivedBuildNumber = getVersion();
@@ -98,12 +98,12 @@ public final class WebhookIntegrations extends JavaPlugin {
         getLogger().log(Level.INFO, lang.getString(localeLang + ".onStart.eventRegisterFinish"));
 
         SetWebhookURL setWebhookUrlCommand = new SetWebhookURL(getConfig(), this);
-        Objects.requireNonNull(getCommand("seturl")).setExecutor(setWebhookUrlCommand);
+        Objects.requireNonNull(getCommand("setUrl")).setExecutor(setWebhookUrlCommand);
 
         SendToWebhook sendToWebhookCommand = new SendToWebhook(getConfig(), this, getLogger());
         Objects.requireNonNull(getCommand("send")).setExecutor(sendToWebhookCommand);
 
-        ConfigActions resetConfig = new ConfigActions(this);
+        WIActions resetConfig = new WIActions(this);
         Objects.requireNonNull(getCommand("wi")).setExecutor(resetConfig);
 
         getLogger().log(Level.INFO, lang.getString(localeLang + ".onStart.commandRegisterFinish"));

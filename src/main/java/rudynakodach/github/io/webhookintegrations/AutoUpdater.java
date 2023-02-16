@@ -18,7 +18,7 @@ public class AutoUpdater {
         this.plugin = plugin;
     }
 
-    void Update() {
+    public boolean Update() {
         try {
             String downloadUrl = getDownloadUrl();
             plugin.getLogger().log(Level.INFO, "Release URL: " + downloadUrl);
@@ -39,10 +39,11 @@ public class AutoUpdater {
             fos.write(data);
             fos.close();
             plugin.getLogger().log(Level.INFO, "New version downloaded to " + file.getPath());
-
+            return true;
         } catch (ExecutionException | InterruptedException | IOException e) {
             plugin.getLogger().log(Level.SEVERE,"Update failed: " + e.getMessage());
             WebhookIntegrations.isLatest = false;
+            return false;
         }
     }
 
@@ -108,5 +109,29 @@ public class AutoUpdater {
             return null;
         });
         return future.get();
+    }
+
+    public Integer getVersion() {
+
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url("https://raw.githubusercontent.com/rudynakodach/WebhookIntegrations/master/buildnumber")
+                .get()
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+
+            if (response.isSuccessful()) {
+                String body = response.body().string();
+                body = body.trim();
+                body = body.replaceAll("[\r\n\t]", "");
+                int receivedBuildNumber = Integer.parseInt(body);
+                response.close();
+                return receivedBuildNumber;
+            }
+
+        } catch (IOException e) {
+            plugin.getLogger().log(Level.WARNING, plugin.getConfig().getString(WebhookIntegrations.localeLang + ".update.checkFailed") + e.getMessage());
+        }
+        return -1;
     }
 }

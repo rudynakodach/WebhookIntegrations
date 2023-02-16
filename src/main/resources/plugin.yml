@@ -4,7 +4,7 @@ main: rudynakodach.github.io.webhookintegrations.WebhookIntegrations
 api-version: 1.13
 commands:
   seturl:
-    usage: /seturl <url>
+    usage: /setUrl <url>
     permission: webhookintegrations.setwebhookurl
   send:
     usage: /send <isEmbed> <message>

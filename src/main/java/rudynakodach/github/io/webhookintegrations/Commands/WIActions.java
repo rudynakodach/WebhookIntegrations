@@ -10,15 +10,16 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import rudynakodach.github.io.webhookintegrations.AutoUpdater;
 import rudynakodach.github.io.webhookintegrations.WebhookIntegrations;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-public class ConfigActions implements CommandExecutor, TabCompleter {
+public class WIActions implements CommandExecutor, TabCompleter {
     JavaPlugin plugin;
-    public ConfigActions(JavaPlugin plugin) {
+    public WIActions(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -67,12 +68,19 @@ public class ConfigActions implements CommandExecutor, TabCompleter {
                         message.append("\nPlayerDeathPvp: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerDeath.playerKilledByPlayer.announce")));
 
                         commandSender.sendMessage(String.valueOf(message));
+                        return true;
                     }
-                }
-            }
-            else {
-                if(player.hasPermission("webhookintegrations.wi")) {
-                    String text = ChatColor.WHITE + "trest";
+                } else if (args[0].equalsIgnoreCase("update")) {
+                    AutoUpdater updater = new AutoUpdater(plugin);
+
+                    if(updater.getVersion() > WebhookIntegrations.currentBuildNumber) {
+                        boolean success = updater.Update();
+                        if(success) {
+                            commandSender.sendMessage(WebhookIntegrations.lang.getString(WebhookIntegrations.localeLang + ".commands.update.success"));
+                        } else {
+                            commandSender.sendMessage(WebhookIntegrations.lang.getString(WebhookIntegrations.localeLang + ".commands.update.failed"));
+                        }
+                    }
                 }
             }
         }
