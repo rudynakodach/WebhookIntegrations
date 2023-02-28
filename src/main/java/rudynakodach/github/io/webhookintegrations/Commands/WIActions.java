@@ -73,7 +73,7 @@ public class WIActions implements CommandExecutor, TabCompleter {
                 } else if (args[0].equalsIgnoreCase("update")) {
                     AutoUpdater updater = new AutoUpdater(plugin);
 
-                    if(updater.getVersion() > WebhookIntegrations.currentBuildNumber) {
+                    if(updater.getLatestVersion() > WebhookIntegrations.currentBuildNumber) {
                         boolean success = updater.Update();
                         if(success) {
                             commandSender.sendMessage(WebhookIntegrations.lang.getString(WebhookIntegrations.localeLang + ".commands.update.success"));

@@ -25,7 +25,7 @@ import com.google.gson.JsonParser;
 
 public final class WebhookIntegrations extends JavaPlugin {
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 23;
+    public static int currentBuildNumber = 24;
     public static String localeLang;
     public static FileConfiguration lang;
 
@@ -51,7 +51,7 @@ public final class WebhookIntegrations extends JavaPlugin {
 
         getLogger().log(Level.INFO, lang.getString(localeLang + ".update.checking"));
 
-        int receivedBuildNumber = getVersion();
+        int receivedBuildNumber = new AutoUpdater(this).getLatestVersion();
         if (currentBuildNumber < receivedBuildNumber && receivedBuildNumber != -1) {
             isLatest = false;
             getLogger().log(Level.WARNING, "Current: " + currentBuildNumber + " | New: " + receivedBuildNumber);
@@ -192,29 +192,5 @@ public final class WebhookIntegrations extends JavaPlugin {
 
         getLogger().log(Level.INFO, "this is my final message");
         getLogger().log(Level.INFO, "goodb ye");
-    }
-
-    public Integer getVersion() {
-
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url("https://raw.githubusercontent.com/rudynakodach/WebhookIntegrations/master/buildnumber")
-                .get()
-                .build();
-        try (Response response = client.newCall(request).execute()) {
-
-            if (response.isSuccessful()) {
-                String body = response.body().string();
-                body = body.trim();
-                body = body.replaceAll("[\r\n\t]", "");
-                int receivedBuildNumber = Integer.parseInt(body);
-                response.close();
-                return receivedBuildNumber;
-            }
-
-        } catch (IOException e) {
-            getLogger().log(Level.WARNING, getConfig().getString(localeLang + ".update.checkFailed") + e.getMessage());
-        }
-        return -1;
     }
 }

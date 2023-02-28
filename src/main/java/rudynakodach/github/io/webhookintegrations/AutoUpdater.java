@@ -111,8 +111,7 @@ public class AutoUpdater {
         return future.get();
     }
 
-    public Integer getVersion() {
-
+    public Integer getLatestVersion() {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url("https://raw.githubusercontent.com/rudynakodach/WebhookIntegrations/master/buildnumber")

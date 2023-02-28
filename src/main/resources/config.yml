@@ -12,10 +12,13 @@ censoring:
   \@here:
     to: "here"
 
+# you can ping someone using their id like this: <@id> (for instance <@795241041753014272>)
+remove-force-pings: true
+# the same thing as in user pings but for channels: <#id> (for instance <#4832407155909>)
+remove-force-channel-references: true
 
 # IF YOU DON'T KNOW ANYTHING ABOUT WEBHOOK STRUCTURE, PLEASE GO HERE: https://gist.github.com/Birdie0/78ee79402a4301b1faf412ab5f1cdcf9#structure-of-webhooks
 # minotar API for player head icons: https://minotar.net/
-# API breaks json indentation :(
 
 onServerStart:
   # Available variables:

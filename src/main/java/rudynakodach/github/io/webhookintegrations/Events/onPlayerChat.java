@@ -7,6 +7,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 public class onPlayerChat implements Listener {
@@ -32,6 +34,25 @@ public class onPlayerChat implements Listener {
         for(String key : plugin.getConfig().getConfigurationSection("censoring").getKeys(false)) {
             message = message.replace(key, plugin.getConfig().getString("censoring." + key + ".to"));
         }
+
+        Collection<String> finalMessage = new ArrayList<>();
+        String[] splitMessage = message.split(" ");
+
+        for(String s : splitMessage) {
+            if(plugin.getConfig().getBoolean("remove-force-pings")) {
+                if(s.matches("<@[0-9]+>")) {
+                    continue;
+                }
+            }
+            if(plugin.getConfig().getBoolean("remove-force-channel-references")) {
+                if(s.matches("<#[0-9]+>")) {
+                    continue;
+                }
+            }
+            finalMessage.add(s);
+        }
+
+        message = String.join(" ", finalMessage);
 
         json = json.replace("%playersOnline%",String.valueOf(plugin.getServer().getOnlinePlayers().size()));
         json = json.replace("%maxPlayers%",String.valueOf(plugin.getServer().getMaxPlayers()));
