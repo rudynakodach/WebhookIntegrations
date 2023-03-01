@@ -7,6 +7,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import rudynakodach.github.io.webhookintegrations.AutoUpdater;
 import rudynakodach.github.io.webhookintegrations.WebhookIntegrations;
 
@@ -22,7 +25,7 @@ public class WIActions implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         if(!(commandSender instanceof Player)) {
             plugin.getLogger().log(Level.INFO, "This command is intended to be used in the game.");
             return true;
@@ -87,7 +90,7 @@ public class WIActions implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         List<String> suggestions = new ArrayList<>();
         if(command.getName().equalsIgnoreCase("wi")) {
 
@@ -107,7 +110,9 @@ public class WIActions implements CommandExecutor, TabCompleter {
         }
         return null;
     }
-    private String colorBoolean(Boolean b) {
+
+    @Contract(pure = true)
+    private @NotNull String colorBoolean(Boolean b) {
         if(!b) {
             return ChatColor.RED + String.valueOf(false);
         }
