@@ -1,3 +1,4 @@
+check-for-updates: true
 auto-update: true
 send-telem: true
 # The URL for your Discord Webhook.
@@ -12,7 +13,7 @@ censoring:
   \@here:
     to: "here"
 
-# you can ping someone using their id like this: <@id> (for instance <@795241041753014272>)
+# you can ping someone using their id like this: <@id> (for instance <@795204175314272>)
 remove-force-pings: true
 # the same thing as in user pings but for channels: <#id> (for instance <#4832407155909>)
 remove-force-channel-references: true

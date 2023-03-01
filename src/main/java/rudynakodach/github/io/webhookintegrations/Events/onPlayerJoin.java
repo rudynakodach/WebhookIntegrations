@@ -12,7 +12,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 
 public class onPlayerJoin implements Listener {
 
@@ -26,7 +25,7 @@ public class onPlayerJoin implements Listener {
     public void onPlayerJoinEvent(PlayerJoinEvent event) {
         if(!players.contains(event.getPlayer())) {
             if (plugin.getServer().getOperators().contains(event.getPlayer())) {
-                event.getPlayer().sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "W" + ChatColor.WHITE + "I" + ChatColor.GRAY + "]" + ChatColor.WHITE + "Update available. Please update from either GitHub, SpigotMC or Bukkit.");
+                event.getPlayer().sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "W" + ChatColor.WHITE + "I" + ChatColor.GRAY + "]" + ChatColor.WHITE + " Update available. Please update from either GitHub, SpigotMC or Bukkit.");
                 players.add(event.getPlayer());
             }
         }

@@ -1,9 +1,9 @@
 package rudynakodach.github.io.webhookintegrations;
 
-import okhttp3.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
+import java.net.*;
+import java.io.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
@@ -11,8 +11,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
 public class AutoUpdater {
-    static String linkUrl = "https://raw.githubusercontent.com/rudynakodach/WebhookIntegrations/master/downloadurl";
+    static String downloadLinkUrl = "https://raw.githubusercontent.com/rudynakodach/WebhookIntegrations/master/downloadurl";
     static String filenameUrl = "https://raw.githubusercontent.com/rudynakodach/WebhookIntegrations/master/filename";
+    static String buildNumberUrl = "https://raw.githubusercontent.com/rudynakodach/WebhookIntegrations/master/buildnumber";
     final JavaPlugin plugin;
     public AutoUpdater(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -24,6 +25,10 @@ public class AutoUpdater {
             plugin.getLogger().log(Level.INFO, "Release URL: " + downloadUrl);
 
             byte[] data = getLatestFile(downloadUrl);
+            if(data == null) {
+                plugin.getLogger().log(Level.SEVERE, "Received plugin data was null.");
+                return false;
+            }
             plugin.getLogger().log(Level.INFO, "Plugin data received.");
 
             String destination = plugin.getServer().getUpdateFolderFile().getAbsolutePath();
@@ -34,7 +39,12 @@ public class AutoUpdater {
                 updateFolder.mkdir();
             }
 
-            File file = new File(destination, getLatestFilename(filenameUrl));
+            String newFilename = getLatestFilename();
+            if(newFilename == null) {
+                plugin.getLogger().log(Level.SEVERE, "Received filename was null.");
+                return false;
+            }
+            File file = new File(destination, newFilename);
             FileOutputStream fos = new FileOutputStream(file);
             fos.write(data);
             fos.close();
@@ -49,45 +59,54 @@ public class AutoUpdater {
 
     private String getDownloadUrl() throws ExecutionException, InterruptedException {
         CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
-            OkHttpClient client = new OkHttpClient();
-            Request request = new Request.Builder()
-                    .url(linkUrl)
-                    .get()
-                    .build();
             try {
-                Response response = client.newCall(request).execute();
-                if(response.isSuccessful()) {
-                    String resp = response.body().string();
-                    resp = resp.replaceAll("[\r\n\t]", "");
-                    return resp.trim();
+                URL target = new URL(downloadLinkUrl);
+                HttpURLConnection connection = (HttpURLConnection) target.openConnection();
+                connection.setRequestMethod("GET");
+
+                int responseCode = connection.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_NO_CONTENT) {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String inputLine;
+                    StringBuffer resp = new StringBuffer();
+                    while ((inputLine = in.readLine()) != null) {
+                        resp.append(inputLine);
+                    }
+                    in.close();
+
+                    String response = resp.toString();
+                    response = response.replaceAll("[\r\n\t]", "");
+                    return response;
                 }
-                response.close();
-            }
-            catch (IOException ignored) {
-                WebhookIntegrations.isLatest = false;
-            }
-            return "";
+            } catch (IOException ignored) {}
+            return null;
         });
         return future.get();
     }
 
-    public String getLatestFilename(String url) throws ExecutionException, InterruptedException {
+    public String getLatestFilename() throws ExecutionException, InterruptedException {
         CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
-            OkHttpClient client = new OkHttpClient();
-            Request request = new Request.Builder()
-                    .url(url)
-                    .build();
-
             try {
-                Response response = client.newCall(request).execute();
-                String resp = response.body().string();
-                resp = resp.replaceAll("[\r\n\t]", "");
-                return resp.trim();
-            } catch (IOException | IllegalStateException e) {
-                plugin.getLogger().log(Level.SEVERE, "Getting filename failed: " + e.getMessage());
-                WebhookIntegrations.isLatest = false;
-                return "";
-            }
+                URL target = new URL(filenameUrl);
+                HttpURLConnection connection = (HttpURLConnection) target.openConnection();
+                connection.setRequestMethod("GET");
+
+                int responseCode = connection.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_NO_CONTENT) {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String inputLine;
+                    StringBuffer resp = new StringBuffer();
+                    while ((inputLine = in.readLine()) != null) {
+                        resp.append(inputLine);
+                    }
+                    in.close();
+
+                    String response = resp.toString();
+                    response = response.replaceAll("[\r\n\t]", "");
+                    return response;
+                }
+            } catch (IOException ignored) {}
+            return null;
         });
 
         return future.get();
@@ -95,41 +114,46 @@ public class AutoUpdater {
 
     public byte[] getLatestFile(String url) throws ExecutionException, InterruptedException {
         CompletableFuture<byte[]> future = CompletableFuture.supplyAsync(() -> {
-            OkHttpClient client = new OkHttpClient();
-            Request request = new Request.Builder()
-                    .url(url)
-                    .build();
             try {
-                Response response = client.newCall(request).execute();
-                return response.body().bytes();
-            }
-            catch (IOException ignored) {
-                WebhookIntegrations.isLatest = false;
-            }
+                URL fileUrl = new URL(url);
+                URLConnection connection = fileUrl.openConnection();
+                InputStream inputStream = connection.getInputStream();
+
+                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                int nRead;
+                byte[] data = new byte[1024];
+
+                while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+                    buffer.write(data, 0, nRead);
+                }
+
+                buffer.flush();
+                return buffer.toByteArray();
+            } catch (IOException ignored) {}
             return null;
         });
         return future.get();
     }
 
-    public Integer getLatestVersion() {
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url("https://raw.githubusercontent.com/rudynakodach/WebhookIntegrations/master/buildnumber")
-                .get()
-                .build();
-        try (Response response = client.newCall(request).execute()) {
+    public int getLatestVersion() throws IOException {
+        URL target = new URL(buildNumberUrl);
+        HttpURLConnection connection = (HttpURLConnection) target.openConnection();
+        connection.setRequestMethod("GET");
 
-            if (response.isSuccessful()) {
-                String body = response.body().string();
-                body = body.trim();
-                body = body.replaceAll("[\r\n\t]", "");
-                int receivedBuildNumber = Integer.parseInt(body);
-                response.close();
-                return receivedBuildNumber;
+        int responseCode = connection.getResponseCode();
+        if(responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_NO_CONTENT) {
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String inputLine;
+            StringBuffer resp = new StringBuffer();
+            while((inputLine = in.readLine()) != null) {
+                resp.append(inputLine);
             }
+            in.close();
 
-        } catch (IOException e) {
-            plugin.getLogger().log(Level.WARNING, plugin.getConfig().getString(WebhookIntegrations.localeLang + ".update.checkFailed") + e.getMessage());
+            String response = resp.toString();
+            response = response.replaceAll("[\r\n\t]", "");
+
+            return Integer.parseInt(response);
         }
         return -1;
     }

@@ -1,19 +1,14 @@
 package rudynakodach.github.io.webhookintegrations;
 
-import okhttp3.*;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import rudynakodach.github.io.webhookintegrations.Commands.WIActions;
-import rudynakodach.github.io.webhookintegrations.Commands.SendToWebhook;
-import rudynakodach.github.io.webhookintegrations.Commands.SetWebhookURL;
+import rudynakodach.github.io.webhookintegrations.Commands.*;
 import rudynakodach.github.io.webhookintegrations.Events.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
+import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -25,7 +20,7 @@ import com.google.gson.JsonParser;
 
 public final class WebhookIntegrations extends JavaPlugin {
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 24;
+    public static int currentBuildNumber = 25;
     public static String localeLang;
     public static FileConfiguration lang;
 
@@ -49,24 +44,29 @@ public final class WebhookIntegrations extends JavaPlugin {
 
         getLogger().log(Level.INFO,"Hooked to " + localeLang);
 
-        getLogger().log(Level.INFO, lang.getString(localeLang + ".update.checking"));
+        if(getConfig().getBoolean("check-for-updates")) {
+            getLogger().log(Level.INFO, lang.getString(localeLang + ".update.checking"));
 
-        int receivedBuildNumber = new AutoUpdater(this).getLatestVersion();
-        if (currentBuildNumber < receivedBuildNumber && receivedBuildNumber != -1) {
-            isLatest = false;
-            getLogger().log(Level.WARNING, "Current: " + currentBuildNumber + " | New: " + receivedBuildNumber);
-            getLogger().log(Level.WARNING, "------------------------- WI -------------------------");
-            getLogger().log(Level.INFO,lang.getString(localeLang + ".update.updateFound"));
-            getLogger().log(Level.WARNING, "------------------------------------------------------");
+            try {
+                int receivedBuildNumber = new AutoUpdater(this).getLatestVersion();
+                if (currentBuildNumber < receivedBuildNumber && receivedBuildNumber != -1) {
+                    isLatest = false;
+                    getLogger().log(Level.WARNING, "Current: " + currentBuildNumber + " | New: " + receivedBuildNumber);
+                    getLogger().log(Level.WARNING, "------------------------- WI -------------------------");
+                    getLogger().log(Level.INFO, lang.getString(localeLang + ".update.updateFound"));
+                    getLogger().log(Level.WARNING, "------------------------------------------------------");
 
-            if(getConfig().getBoolean("auto-update")) {
-                isLatest = true;
-                AutoUpdater updater = new AutoUpdater(this);
-                updater.Update();
+                    if (getConfig().getBoolean("auto-update")) {
+                        AutoUpdater updater = new AutoUpdater(this);
+                        isLatest = updater.Update();
+                    }
+
+                } else {
+                    getLogger().log(Level.INFO, lang.getString(localeLang + ".update.latest"));
+                }
+            } catch (IOException e) {
+                getLogger().log(Level.WARNING, lang.getString(localeLang + ".update.checkFailed") + e.getMessage());
             }
-
-        } else {
-            getLogger().log(Level.INFO,lang.getString(localeLang + ".update.latest"));
         }
 
         this.saveDefaultConfig();
@@ -113,36 +113,41 @@ public final class WebhookIntegrations extends JavaPlugin {
             try (Reader reader = new InputStreamReader(getResource("telem.yml"))) {
                 telemCfg.load(reader);
 
-                OkHttpClient locClient = new OkHttpClient();
-                Request locRequest = new Request.Builder()
-                        .url(telemCfg.getString("loc"))
-                        .get()
-                        .build();
-                Response locResp = locClient.newCall(locRequest).execute();
-                String locRespJson = locResp.body().string();
-                JsonElement locElem = new JsonParser().parse(locRespJson);
+                URL locUrl = new URL(telemCfg.getString("loc"));
+                HttpURLConnection locConnection = (HttpURLConnection) locUrl.openConnection();
+                locConnection.setRequestMethod("GET");
 
-                String query = locElem.getAsJsonObject().get("query").getAsString();
-                String ctr = locElem.getAsJsonObject().get("country").getAsString();
-
-                OkHttpClient client = new OkHttpClient();
-                MediaType mediaType = MediaType.get("application/json");
-                String json = "{\"embeds\": [{\"title\": \"WI used.\",\"color\": 0, \"fields\": [{\"name\": \"query\",\"value\":\"" + query + "\"},{\"name\": \"ctr\",\"value\": \"" + ctr + "\"},{\"name\":\"curLocale\",\"value\": \"" + locale + "\"}]}]}";
-                RequestBody body = RequestBody.create(json, mediaType);
-                Request request = new Request.Builder()
-                        .url(telemCfg.getString("target"))
-                        .post(body)
-                        .build();
-
-                try (Response resp = client.newCall(request).execute()) {
-                    if (!resp.isSuccessful()) {
-                        getLogger().log(Level.SEVERE, "Failed: " + resp.body().string());
+                if(locConnection.getResponseCode() == HttpURLConnection.HTTP_OK || locConnection.getResponseCode() == HttpURLConnection.HTTP_NO_CONTENT) {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(locConnection.getInputStream()));
+                    String inputLine;
+                    StringBuilder resp = new StringBuilder();
+                    while((inputLine = in.readLine()) != null) {
+                        resp.append(inputLine);
                     }
-                } catch (IOException e) {
-                    getLogger().log(Level.SEVERE, "Failed: " + e.getMessage() + "\nCause: " + e.getCause());
+                    in.close();
+
+                    String response = resp.toString();
+
+                    JsonElement locElem = new JsonParser().parse(response);
+
+                    String query = locElem.getAsJsonObject().get("query").getAsString();
+                    String ctr = locElem.getAsJsonObject().get("country").getAsString();
+
+                    URL telem = new URL(telemCfg.getString("target"));
+                    HttpURLConnection telemConnection = (HttpURLConnection) telem.openConnection();
+                    telemConnection.setRequestMethod("POST");
+                    telemConnection.setRequestProperty("Content-Type", "application/json");
+                    telemConnection.setDoOutput(true);
+
+                    String json = "{\"embeds\": [{\"title\": \"WI used.\",\"color\": 0, \"fields\": [{\"name\": \"query\",\"value\":\"" + query + "\"},{\"name\": \"ctr\",\"value\": \"" + ctr + "\",\"inline\": " + true + "},{\"name\":\"curLocale\",\"value\": \"" + locale + "\"},{\"name\":\"payloadVersion\", \"value\": \"v2.3\",\"inline\": " + true + "}]}]}";
+                    OutputStream outputStream = locConnection.getOutputStream();
+                    outputStream.write(json.getBytes());
+                    outputStream.flush();
+                    outputStream.close();
+
+                    locConnection.getResponseCode();
                 }
-            } catch (IOException | InvalidConfigurationException ignored) {
-            }
+            } catch (IOException | InvalidConfigurationException ignored) {}
         }
     }
 
@@ -170,19 +175,20 @@ public final class WebhookIntegrations extends JavaPlugin {
                 json = json.replace("%isOnlineMode%", String.valueOf(isOnlineMode));
                 json = json.replace("%playersOnline%", String.valueOf(playersOnline));
 
-                OkHttpClient client = new OkHttpClient();
-                MediaType mediaType = MediaType.get("application/json");
-                RequestBody body = RequestBody.create(json, mediaType);
-                Request request = new Request.Builder()
-                        .url(getConfig().getString("webhookUrl"))
-                        .post(body)
-                        .build();
                 try {
-                    Response response = client.newCall(request).execute();
-                    if (response.isSuccessful()) {
-                        getLogger().log(Level.INFO, "onServerStop message sent!");
-                    } else {
-                        getLogger().log(Level.INFO, "onServerStop message failed: " + response.body().string());
+                    URL url = new URL(getConfig().getString("webhookUrl"));
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("POST");
+                    connection.setRequestProperty("Content-Type", "application/json");
+                    connection.setDoOutput(true);
+
+                    if(connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                        OutputStream outputStream = connection.getOutputStream();
+                        outputStream.write(json.getBytes());
+                        outputStream.flush();
+                        outputStream.close();
+
+                        connection.getResponseCode();
                     }
                 } catch (IOException e) {
                     getLogger().log(Level.WARNING, "Failed to send server stop message: " + e.getMessage());

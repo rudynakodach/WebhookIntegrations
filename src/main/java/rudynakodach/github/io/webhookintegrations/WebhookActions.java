@@ -1,10 +1,11 @@
 package rudynakodach.github.io.webhookintegrations;
 
-import okhttp3.*;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.*;
 import java.util.logging.Level;
 
 public class WebhookActions {
@@ -23,17 +24,21 @@ public class WebhookActions {
         }
         new BukkitRunnable() {
             public void run() {
-                OkHttpClient client = new OkHttpClient();
-                MediaType mediaType = MediaType.get("application/json");
-                RequestBody requestBody = RequestBody.create(json, mediaType);
+                try {
+                    URL url = new URL(webhookUrl);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("POST");
+                    connection.setRequestProperty("Content-Type", "application/json");
+                    connection.setDoOutput(true);
 
-                Request request = new Request.Builder()
-                        .url(webhookUrl)
-                        .post(requestBody)
-                        .build();
-                try (Response response = client.newCall(request).execute()) {
-                    if (!response.isSuccessful()) {
-                        plugin.getLogger().log(Level.WARNING, "Failed to send eventMessage to Discord webhook: " + response.body().string());
+                    OutputStream outputStream = connection.getOutputStream();
+                    outputStream.write(json.getBytes());
+                    outputStream.flush();
+                    outputStream.close();
+
+                    int responseCode = connection.getResponseCode();
+                    if (responseCode >= 400) {
+                        plugin.getLogger().log(Level.WARNING, "Failed to send eventMessage to Discord webhook: " + connection.getResponseMessage());
                         plugin.getLogger().log(Level.INFO, json);
                     }
                 } catch (IOException e) {

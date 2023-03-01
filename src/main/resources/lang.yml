@@ -45,7 +45,7 @@ pl_PL:
 
   onStart:
     message: "Dziękuje za korzystanie z WebhookIntegrations <3"
-    webhookEmpty: "Adres Webhooka jest pusty i nie może zostać użyty! Ustaw wartość 'webhookUrl' w configu albo użyj \"setUrl <url>\"!"
+    webhookEmpty: "Adres Webhooka jest pusty i nie może zostać użyty! Ustaw wartość 'webhookUrl' w configu albo użyj \"/seturl <url>\"!"
     registeringEvents: "Rejestrowanie wydarzeń..."
     eventRegisterFinish: "Wydarzenia zarejestrowane."
     commandRegisterFinish: "Komendy zarejestrowne."
