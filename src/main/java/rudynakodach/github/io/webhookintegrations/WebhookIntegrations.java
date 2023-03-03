@@ -29,7 +29,13 @@ public final class WebhookIntegrations extends JavaPlugin {
     public void onEnable() {
         getLogger().log(Level.INFO, "Hello, World!");
 
-        this.saveResource("lang.yml",false);
+        if(!new File(getDataFolder(), "lang.yml").exists()) {
+            this.saveResource("lang.yml",false);
+        }
+        if(!new File(getDataFolder(), "advancements.yml").exists()) {
+            this.saveResource("advancements.yml", false);
+        }
+
         File langFile = new File(this.getDataFolder(),"lang.yml");
         WebhookIntegrations.lang = YamlConfiguration.loadConfiguration(langFile);
         getLogger().log(Level.INFO,"Initializing language...");

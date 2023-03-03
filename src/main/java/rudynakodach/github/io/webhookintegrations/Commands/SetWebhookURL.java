@@ -30,17 +30,16 @@ public class SetWebhookURL implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equalsIgnoreCase("seturl")) {
             if (args.length == 1) {
-                String newUrl = args[0];
+                String newUrl = args[0].trim();
 
                 //checking URL validity
-                if(!newUrl.contains("https://")) {
+                if(!newUrl.startsWith("https://")) {
                     sender.sendMessage(ChatColor.RED + WebhookIntegrations.lang.getString(WebhookIntegrations.localeLang + ".commands.seturl.noHttps"));
                     return true;
                 } else if(!newUrl.contains("discord")) {
                     sender.sendMessage(ChatColor.RED + WebhookIntegrations.lang.getString(WebhookIntegrations.localeLang + ".commands.seturl.notDiscord"));
                     return true;
                 }
-
 
                 sender.sendMessage(ChatColor.BLUE + WebhookIntegrations.lang.getString(WebhookIntegrations.localeLang + ".commands.seturl.verifyStart"));
 
