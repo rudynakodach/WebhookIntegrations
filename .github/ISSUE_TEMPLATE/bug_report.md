@@ -13,9 +13,10 @@ Please answer all the questions below to give me clear understanding of what mig
 ## Describe the bug
 What happened?
 Did you get any errors in the console (if yes, send **the entire stack**)?
+What version of the plugin are you using?
 
 ## To Reproduce
-Steps to reproduce the behavior:
+Steps to reproduce the behavior (example):
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
