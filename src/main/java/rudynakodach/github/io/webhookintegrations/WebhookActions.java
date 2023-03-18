@@ -10,7 +10,6 @@ import java.util.logging.Level;
 
 public class WebhookActions {
     JavaPlugin plugin;
-
     public WebhookActions(JavaPlugin plugin) {
         this.plugin = plugin;
     }

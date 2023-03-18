@@ -63,8 +63,7 @@ public final class WebhookIntegrations extends JavaPlugin {
                     getLogger().log(Level.WARNING, "------------------------------------------------------");
 
                     if (getConfig().getBoolean("auto-update")) {
-                        AutoUpdater updater = new AutoUpdater(this);
-                        isLatest = updater.Update();
+                        isLatest = new AutoUpdater(this).Update();
                     }
 
                 } else {
