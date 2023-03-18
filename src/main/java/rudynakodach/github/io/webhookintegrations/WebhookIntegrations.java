@@ -20,7 +20,7 @@ import com.google.gson.JsonParser;
 
 public final class WebhookIntegrations extends JavaPlugin {
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 25;
+    public static int currentBuildNumber = 26;
     public static String localeLang;
     public static FileConfiguration lang;
 
