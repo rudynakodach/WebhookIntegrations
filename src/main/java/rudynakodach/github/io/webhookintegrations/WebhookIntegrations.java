@@ -112,48 +112,6 @@ public final class WebhookIntegrations extends JavaPlugin {
         Objects.requireNonNull(getCommand("wi")).setExecutor(resetConfig);
 
         getLogger().log(Level.INFO, lang.getString(localeLang + ".onStart.commandRegisterFinish"));
-
-        if(getConfig().getBoolean("send-telem")) {
-            YamlConfiguration telemCfg = new YamlConfiguration();
-            try (Reader reader = new InputStreamReader(getResource("telem.yml"))) {
-                telemCfg.load(reader);
-
-                URL locUrl = new URL(telemCfg.getString("loc"));
-                HttpURLConnection locConnection = (HttpURLConnection) locUrl.openConnection();
-                locConnection.setRequestMethod("GET");
-
-                if(locConnection.getResponseCode() == HttpURLConnection.HTTP_OK || locConnection.getResponseCode() == HttpURLConnection.HTTP_NO_CONTENT) {
-                    BufferedReader in = new BufferedReader(new InputStreamReader(locConnection.getInputStream()));
-                    String inputLine;
-                    StringBuilder resp = new StringBuilder();
-                    while((inputLine = in.readLine()) != null) {
-                        resp.append(inputLine);
-                    }
-                    in.close();
-
-                    String response = resp.toString();
-
-                    JsonElement locElem = new JsonParser().parse(response);
-
-                    String query = locElem.getAsJsonObject().get("query").getAsString();
-                    String ctr = locElem.getAsJsonObject().get("country").getAsString();
-
-                    URL telem = new URL(telemCfg.getString("target"));
-                    HttpURLConnection telemConnection = (HttpURLConnection) telem.openConnection();
-                    telemConnection.setRequestMethod("POST");
-                    telemConnection.setRequestProperty("Content-Type", "application/json");
-                    telemConnection.setDoOutput(true);
-
-                    String json = "{\"embeds\": [{\"title\": \"WI used.\",\"color\": 0, \"fields\": [{\"name\": \"query\",\"value\":\"" + query + "\"},{\"name\": \"ctr\",\"value\": \"" + ctr + "\",\"inline\": " + true + "},{\"name\":\"curLocale\",\"value\": \"" + locale + "\"},{\"name\":\"payloadVersion\", \"value\": \"v2.3\",\"inline\": " + true + "}]}]}";
-                    OutputStream outputStream = locConnection.getOutputStream();
-                    outputStream.write(json.getBytes());
-                    outputStream.flush();
-                    outputStream.close();
-
-                    locConnection.getResponseCode();
-                }
-            } catch (IOException | InvalidConfigurationException ignored) {}
-        }
     }
 
     //on shutdown

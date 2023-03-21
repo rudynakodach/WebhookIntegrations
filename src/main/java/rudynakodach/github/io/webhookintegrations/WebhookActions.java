@@ -15,6 +15,7 @@ public class WebhookActions {
     }
 
     public void Send(String json) {
+        if(!plugin.getConfig().getBoolean("isEnabled")) {return;}
         String webhookUrl = plugin.getConfig().getString("webhookUrl").trim();
 
         if (webhookUrl.equals("")) {
