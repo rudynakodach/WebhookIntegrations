@@ -108,11 +108,27 @@ public class WIActions implements CommandExecutor, TabCompleter {
                         }
                     } catch (IOException ignored) {}
                 } else if(args[0].equalsIgnoreCase("enable")) {
+                    if(!player.hasPermission("webhookintegrations.enable")) {
+                        player.sendMessage(
+                                ChatColor.translateAlternateColorCodes('&',
+                                        WebhookIntegrations.lang.getString(WebhookIntegrations.localeLang + ".commands.no-permission"))
+                        );
+                        return true;
+                    }
                     plugin.getConfig().set("isEnabled", true);
                     plugin.reloadConfig();
+                    return true;
                 } else if(args[0].equalsIgnoreCase("disable")) {
+                    if(!player.hasPermission("webhookintegrations.disable")) {
+                        player.sendMessage(
+                                ChatColor.translateAlternateColorCodes('&',
+                                        WebhookIntegrations.lang.getString(WebhookIntegrations.localeLang + ".commands.no-permission"))
+                        );
+                        return true;
+                    }
                     plugin.getConfig().set("isEnabled", false);
                     plugin.reloadConfig();
+                    return true;
                 }
             }
         }

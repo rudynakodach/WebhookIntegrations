@@ -3,6 +3,7 @@ version: '${project.version}'
 main: rudynakodach.github.io.webhookintegrations.WebhookIntegrations
 api-version: 1.13
 commands:
+
   seturl:
     usage: /setUrl <url>
     permission: webhookintegrations.setwebhookurl
@@ -29,3 +30,11 @@ commands:
   analyze:
     usage: /wi analyze
     permission: webhookintegrations.analyze
+
+  disable:
+    usage: /wi disable
+    permission: webhookintegrations.disable
+
+  enable:
+    usage: /wi enable
+    permission: webhookintegrations.enable
