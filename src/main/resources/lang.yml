@@ -1,5 +1,7 @@
 #file: noinspection SpellCheckingInspection
 en_US:
+  no-permission: "&cYou don't have permission to do that."
+
   update:
     checking: "Checking for updates..."
     checkFailed: "Failed to get build number: "
@@ -37,6 +39,8 @@ en_US:
       failed: "Download failed!"
 
 pl_PL:
+  no-permission: "&cNie masz uprawnień."
+
   update:
     checking: "Sprawdzanie aktualizacji..."
     checkFailed: "Wystąpił błąd podczas sprawdzania aktualizacji: "

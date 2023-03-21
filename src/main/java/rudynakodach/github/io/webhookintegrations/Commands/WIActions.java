@@ -35,43 +35,65 @@ public class WIActions implements CommandExecutor, TabCompleter {
             if (args.length >= 1) {
                 if (args[0].equalsIgnoreCase("reset")) {
                     if (args[1].equalsIgnoreCase("confirm")) {
-                        if (player.hasPermission("webhookintegrations.config.reset")) {
-                            plugin.saveResource("config.yml", true);
-                            plugin.reloadConfig();
+                        if (!player.hasPermission("webhookintegrations.config.reset")) {
+                            player.sendMessage(
+                                    ChatColor.translateAlternateColorCodes('&',
+                                            WebhookIntegrations.lang.getString(WebhookIntegrations.localeLang + ".commands.no-permission"))
+                            );
                             return true;
                         }
+                        plugin.saveResource("config.yml", true);
+                        plugin.reloadConfig();
+                        return true;
                     } else {
                         commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', WebhookIntegrations.lang.getString(WebhookIntegrations.localeLang + ".commands.config.noConfirm")));
                     }
                 } else if (args[0].equalsIgnoreCase("reload")) {
-                    if (player.hasPermission("webhookintegrations.reload")) {
-                        plugin.reloadConfig();
-                        commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', WebhookIntegrations.lang.getString(WebhookIntegrations.localeLang + ".commands.config.reloadFinish")));
+                    if (!player.hasPermission("webhookintegrations.reload")) {
+                        player.sendMessage(
+                                ChatColor.translateAlternateColorCodes('&',
+                                        WebhookIntegrations.lang.getString(WebhookIntegrations.localeLang + ".commands.no-permission"))
+                        );
                         return true;
                     }
+                    plugin.reloadConfig();
+                    commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', WebhookIntegrations.lang.getString(WebhookIntegrations.localeLang + ".commands.config.reloadFinish")));
+                    return true;
                 } else if(args[0].equalsIgnoreCase("analyze")) {
-                    if(player.hasPermission("webhookintegrations.config.analyze")) {
-                        commandSender.sendMessage(ChatColor.AQUA + "Analyzing config... To reload the config use /wi reload");
-                        StringBuilder message = new StringBuilder("auto-update: " + colorBoolean(plugin.getConfig().getBoolean("auto-update")));
-                        if (plugin.getConfig().getString("webhookUrl").trim().equalsIgnoreCase("")) {
-                            message.append("\nwebhookUrl: " + ChatColor.RED + "unset\n");
-                        } else {
-                            message.append("\nwebhookUrl: " + ChatColor.GREEN + "set\n");
-                        }
-                        message.append(ChatColor.YELLOW + "EVENTS");
-                        message.append("\nonStart: " + colorBoolean(plugin.getConfig().getBoolean("onServerStart.announce")));
-                        message.append("\nonStop: " + colorBoolean(plugin.getConfig().getBoolean("onServerStop.announce")));
-                        message.append("\nplayerJoin: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerJoin.announce")));
-                        message.append("\nplayerQuit: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerQuit.announce")));
-                        message.append("\nplayerKicked: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerKicked.announce")));
-                        message.append("\nonAdvancementMade: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerAdvancementComplete.announce")));
-                        message.append("\nplayerDeathPve: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerDeath.playerKilledByNPC.announce")));
-                        message.append("\nPlayerDeathPvp: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerDeath.playerKilledByPlayer.announce")));
-
-                        commandSender.sendMessage(String.valueOf(message));
+                    if (!player.hasPermission("webhookintegrations.analyze")) {
+                        player.sendMessage(
+                                ChatColor.translateAlternateColorCodes('&',
+                                        WebhookIntegrations.lang.getString(WebhookIntegrations.localeLang + ".commands.no-permission"))
+                        );
                         return true;
                     }
+                    commandSender.sendMessage(ChatColor.AQUA + "Analyzing config... To reload the config use /wi reload");
+                    StringBuilder message = new StringBuilder("auto-update: " + colorBoolean(plugin.getConfig().getBoolean("auto-update")));
+                    if (plugin.getConfig().getString("webhookUrl").trim().equalsIgnoreCase("")) {
+                        message.append("\nwebhookUrl: " + ChatColor.RED + "unset\n");
+                    } else {
+                        message.append("\nwebhookUrl: " + ChatColor.GREEN + "set\n");
+                    }
+                    message.append(ChatColor.YELLOW + "EVENTS")
+                        .append("\nonStart: " + colorBoolean(plugin.getConfig().getBoolean("onServerStart.announce")))
+                        .append("\nonStop: " + colorBoolean(plugin.getConfig().getBoolean("onServerStop.announce")))
+                        .append("\nplayerJoin: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerJoin.announce")))
+                        .append("\nplayerQuit: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerQuit.announce")))
+                        .append("\nplayerKicked: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerKicked.announce")))
+                        .append("\nonAdvancementMade: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerAdvancementComplete.announce")))
+                        .append("\nplayerDeathPve: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerDeath.playerKilledByNPC.announce")))
+                        .append("\nPlayerDeathPvp: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerDeath.playerKilledByPlayer.announce")));
+
+                    commandSender.sendMessage(String.valueOf(message));
+                    return true;
                 } else if (args[0].equalsIgnoreCase("update")) {
+                    if(!player.hasPermission("webhookintegrations.update")) {
+                        player.sendMessage(
+                                ChatColor.translateAlternateColorCodes('&',
+                                                WebhookIntegrations.lang.getString(WebhookIntegrations.localeLang + ".commands.no-permission"))
+                        );
+                        return true;
+                    }
                     AutoUpdater updater = new AutoUpdater(plugin);
                     try {
                         if (updater.getLatestVersion() > WebhookIntegrations.currentBuildNumber) {
@@ -81,8 +103,16 @@ public class WIActions implements CommandExecutor, TabCompleter {
                             } else {
                                 commandSender.sendMessage(WebhookIntegrations.lang.getString(WebhookIntegrations.localeLang + ".commands.update.failed"));
                             }
+                        } else {
+                            commandSender.sendMessage(WebhookIntegrations.lang.getString(WebhookIntegrations.localeLang + ".update.latest"));
                         }
                     } catch (IOException ignored) {}
+                } else if(args[0].equalsIgnoreCase("enable")) {
+                    plugin.getConfig().set("isEnabled", true);
+                    plugin.reloadConfig();
+                } else if(args[0].equalsIgnoreCase("disable")) {
+                    plugin.getConfig().set("isEnabled", false);
+                    plugin.reloadConfig();
                 }
             }
         }

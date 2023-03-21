@@ -22,6 +22,10 @@ commands:
     usage: /wi
     permission: webhookintegrations.wi
 
+  update:
+    usage: /wi update
+    permission: webhookintegrations.update
+
   analyze:
     usage: /wi analyze
     permission: webhookintegrations.analyze

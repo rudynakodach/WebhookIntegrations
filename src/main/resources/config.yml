@@ -5,6 +5,9 @@ send-telem: true
 # This cannot be empty!
 webhookUrl: ""
 
+# set this to false if you don't want to send messages to the webhook
+isEnabled: true
+
 # Replaces every occurrence of every word to their corresponding values
 # e.g. "@everyone" to "everyone"
 censoring:
