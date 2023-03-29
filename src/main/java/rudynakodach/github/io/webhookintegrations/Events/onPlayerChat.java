@@ -52,6 +52,6 @@ public class onPlayerChat implements Listener {
         json = json.replace("%message%", message);
         json = json.replace("%world%", playerWorldName);
 
-        new WebhookActions(plugin).Send(json);
+        new WebhookActions(plugin).SendAsync(json);
     }
 }

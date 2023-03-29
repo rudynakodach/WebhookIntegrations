@@ -109,6 +109,29 @@ public final class WebhookIntegrations extends JavaPlugin {
         Objects.requireNonNull(getCommand("wi")).setExecutor(resetConfig);
 
         getLogger().log(Level.INFO, lang.getString(localeLang + ".onStart.commandRegisterFinish"));
+
+        if(getConfig().getBoolean("onServerStart.announce")) {
+            String json = getConfig().getString("onServerStart.messageJson");
+
+            String serverIp = getServer().getIp();
+            int slots = getServer().getMaxPlayers();
+            String serverMotd = getServer().getMotd();
+            String serverName = getServer().getName();
+            String serverVersion = getServer().getVersion();
+            Boolean isOnlineMode = getServer().getOnlineMode();
+            int playersOnline = getServer().getOnlinePlayers().size();
+
+            json = json.replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()));
+            json = json.replace("%serverIp%", serverIp);
+            json = json.replace("%maxPlayers%", String.valueOf(slots));
+            json = json.replace("%serverMotd%", serverMotd);
+            json = json.replace("%serverName%", serverName);
+            json = json.replace("%serverVersion%", serverVersion);
+            json = json.replace("%isOnlineMode%", String.valueOf(isOnlineMode));
+            json = json.replace("%playersOnline%", String.valueOf(playersOnline));
+
+            new WebhookActions(this).SendSync(json);
+        }
     }
 
     //on shutdown
@@ -135,24 +158,7 @@ public final class WebhookIntegrations extends JavaPlugin {
                 json = json.replace("%isOnlineMode%", String.valueOf(isOnlineMode));
                 json = json.replace("%playersOnline%", String.valueOf(playersOnline));
 
-                try {
-                    URL url = new URL(getConfig().getString("webhookUrl"));
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.setRequestMethod("POST");
-                    connection.setRequestProperty("Content-Type", "application/json");
-                    connection.setDoOutput(true);
-
-                    if(connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                        OutputStream outputStream = connection.getOutputStream();
-                        outputStream.write(json.getBytes());
-                        outputStream.flush();
-                        outputStream.close();
-
-                        connection.getResponseCode();
-                    }
-                } catch (IOException e) {
-                    getLogger().log(Level.WARNING, "Failed to send server stop message: " + e.getMessage());
-                }
+                new WebhookActions(this).SendSync(json);
             }
         }
 

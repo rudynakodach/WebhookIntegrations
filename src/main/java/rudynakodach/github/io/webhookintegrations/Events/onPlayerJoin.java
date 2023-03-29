@@ -40,7 +40,7 @@ public class onPlayerJoin implements Listener {
             json = json.replace("%player%", event.getPlayer().getName());
             json = json.replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()));
 
-            new WebhookActions(plugin).Send(json);
+            new WebhookActions(plugin).SendAsync(json);
         }
     }
 }

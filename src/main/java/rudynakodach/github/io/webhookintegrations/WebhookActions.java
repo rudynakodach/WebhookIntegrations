@@ -14,7 +14,7 @@ public class WebhookActions {
         this.plugin = plugin;
     }
 
-    public void Send(String json) {
+    public void SendAsync(String json) {
         if(!plugin.getConfig().getBoolean("isEnabled")) {return;}
         String webhookUrl = plugin.getConfig().getString("webhookUrl").trim();
 
@@ -46,5 +46,36 @@ public class WebhookActions {
                 }
             }
         }.runTaskAsynchronously(plugin);
+    }
+
+    public void SendSync(String json) {
+        if(!plugin.getConfig().getBoolean("isEnabled")) {return;}
+        String webhookUrl = plugin.getConfig().getString("webhookUrl").trim();
+
+        if (webhookUrl.equals("")) {
+            plugin.getLogger().log(Level.WARNING, "Attempted to send a message to an empty webhook URL! Use /setUrl or disable the event in the config!");
+            return;
+        }
+
+        try {
+            URL url = new URL(webhookUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+
+            OutputStream outputStream = connection.getOutputStream();
+            outputStream.write(json.getBytes());
+            outputStream.flush();
+            outputStream.close();
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode >= 400) {
+                plugin.getLogger().log(Level.WARNING, "Failed to send eventMessage to Discord webhook: " + connection.getResponseMessage());
+                plugin.getLogger().log(Level.INFO, json);
+            }
+        } catch (IOException e) {
+            plugin.getLogger().warning("Failed to POST json to URL: " + e.getMessage());
+        }
     }
 }

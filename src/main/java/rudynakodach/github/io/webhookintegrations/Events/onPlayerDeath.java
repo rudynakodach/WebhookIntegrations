@@ -43,7 +43,7 @@ public class onPlayerDeath implements Listener {
             json = json.replace("%oldLevel%",oldLevel);
             json = json.replace("%oldExp%",oldExp);
 
-            new WebhookActions(plugin).Send(json);
+            new WebhookActions(plugin).SendAsync(json);
         }
         else {
             if(!plugin.getConfig().getBoolean("onPlayerDeath.playerKilledByNPC.announce")) {return;}
@@ -57,7 +57,7 @@ public class onPlayerDeath implements Listener {
             json = json.replace("%oldLevel%",oldLevel);
             json = json.replace("%oldExp%",oldExp);
 
-            new WebhookActions(plugin).Send(json);
+            new WebhookActions(plugin).SendAsync(json);
         }
     }
 }

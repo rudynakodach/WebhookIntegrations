@@ -38,6 +38,6 @@ public class onPlayerKick implements Listener {
         json = json.replace("%reason%", reason);
         json = json.replace("%time%", time);
 
-        new WebhookActions(plugin).Send(json);
+        new WebhookActions(plugin).SendAsync(json);
     }
 }

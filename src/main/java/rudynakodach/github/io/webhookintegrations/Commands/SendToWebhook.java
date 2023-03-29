@@ -64,14 +64,14 @@ public class SendToWebhook implements CommandExecutor {
                             "]" +
                             "}";
 
-                    new WebhookActions(javaPlugin).Send(json);
+                    new WebhookActions(javaPlugin).SendAsync(json);
 
                 } else {
                     message = username + ": " + message;
 
                     String json = "{ \"content\": \"" + message + "\" }";
 
-                    new WebhookActions(javaPlugin).Send(json);
+                    new WebhookActions(javaPlugin).SendAsync(json);
                 }
                 return true;
 
