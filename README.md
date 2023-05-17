@@ -1,7 +1,7 @@
 # WebhookIntegrations
 The simpliest solution for Discord Webhook integration with your Minecraft server.
 ## WARNING
-**THIS PLUGIN WILL NO LONGER SUPPORT LEGACY MINECRAFT VERSIONS. IF YOUR SERVER's VERSION IS OUTDATED, PLEASE USE __ViaRewind__, __ViaBackwards__ or __ViaVersion__ DEPENDING ON YOUR NEEDS.**
+**THIS PLUGIN WILL NO LONGER SUPPORT LEGACY MINECRAFT VERSIONS. IF YOUR SERVER'S VERSION IS OUTDATED, PLEASE USE __ViaRewind__, __ViaBackwards__ or __ViaVersion__ DEPENDING ON YOUR NEEDS.**
 # Features
 
 - Chat logging
