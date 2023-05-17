@@ -5,6 +5,11 @@ send-telem: true
 # This cannot be empty!
 webhookUrl: ""
 
+# The plugin selects the language of the system the plugin is running on.
+# Set this to your language you want the plugin to be in, false otherwise. Should be formatted like this: "en_US"
+# NOTE: The language you will set it to MUST be in the lang.yml file. You can easily add new languages by copying existing ones and changing texts.
+language-override: false
+
 # set this to false if you don't want to send messages to the webhook
 isEnabled: true
 

@@ -1,6 +1,6 @@
 package rudynakodach.github.io.webhookintegrations;
 
-import org.bukkit.configuration.InvalidConfigurationException;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -8,7 +8,6 @@ import rudynakodach.github.io.webhookintegrations.Commands.*;
 import rudynakodach.github.io.webhookintegrations.Events.*;
 
 import java.io.*;
-import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -17,7 +16,7 @@ import java.util.logging.Level;
 
 public final class WebhookIntegrations extends JavaPlugin {
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 28;
+    public static int currentBuildNumber = 29;
     public static String localeLang;
     public static FileConfiguration lang;
 
@@ -29,23 +28,31 @@ public final class WebhookIntegrations extends JavaPlugin {
         if(!new File(getDataFolder(), "lang.yml").exists()) {
             this.saveResource("lang.yml",false);
         }
-        if(!new File(getDataFolder(), "advancements.yml").exists()) {
-            this.saveResource("advancements.yml", false);
-        }
 
+        getLogger().log(Level.INFO,"Initializing language...");
         File langFile = new File(this.getDataFolder(),"lang.yml");
         WebhookIntegrations.lang = YamlConfiguration.loadConfiguration(langFile);
-        getLogger().log(Level.INFO,"Initializing language...");
         saveDefaultConfig();
 
         Locale locale = Locale.getDefault();
         localeLang = locale.toString();
 
-        if(!lang.contains(localeLang)) {
-            localeLang = "en_US";
+        if(getConfig().get("language-override") instanceof String languageOverride) {
+            if(!lang.contains(localeLang)) {
+                getLogger().log(Level.INFO, "Language override is set to a language that doesn't exist. For all available languages see lang.yml.");
+                localeLang = "en_US";
+            } else {
+                getLogger().log(Level.INFO, "Language overriden to: " + languageOverride);
+                localeLang = languageOverride;
+            }
+        } else {
+            if(!lang.contains(localeLang)) {
+                localeLang = "en_US";
+            }
+            getLogger().log(Level.INFO,"Hooked to " + localeLang);
         }
 
-        getLogger().log(Level.INFO,"Hooked to " + localeLang);
+        getLogger().log(Level.SEVERE, getConfig().get("language-override").toString());
 
         if(getConfig().getBoolean("check-for-updates")) {
             getLogger().log(Level.INFO, lang.getString(localeLang + ".update.checking"));
@@ -54,7 +61,6 @@ public final class WebhookIntegrations extends JavaPlugin {
                 int receivedBuildNumber = new AutoUpdater(this).getLatestVersion();
                 if (currentBuildNumber < receivedBuildNumber && receivedBuildNumber != -1) {
                     isLatest = false;
-                    getLogger().log(Level.WARNING, "Current: " + currentBuildNumber + " | New: " + receivedBuildNumber);
                     getLogger().log(Level.WARNING, "------------------------- WI -------------------------");
                     getLogger().log(Level.INFO, lang.getString(localeLang + ".update.updateFound"));
                     getLogger().log(Level.WARNING, "------------------------------------------------------");
@@ -115,7 +121,7 @@ public final class WebhookIntegrations extends JavaPlugin {
 
             String serverIp = getServer().getIp();
             int slots = getServer().getMaxPlayers();
-            String serverMotd = getServer().getMotd();
+            String serverMotd = PlainTextComponentSerializer.plainText().serialize(getServer().motd());
             String serverName = getServer().getName();
             String serverVersion = getServer().getVersion();
             Boolean isOnlineMode = getServer().getOnlineMode();
