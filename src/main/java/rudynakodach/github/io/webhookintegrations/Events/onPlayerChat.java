@@ -44,13 +44,13 @@ public class onPlayerChat implements Listener {
             return;
         }
 
-        json = json.replace("%playersOnline%",String.valueOf(plugin.getServer().getOnlinePlayers().size()));
-        json = json.replace("%maxPlayers%",String.valueOf(plugin.getServer().getMaxPlayers()));
-        json = json.replace("%uuid%", event.getPlayer().getUniqueId().toString());
-        json = json.replace("%player%", playerName);
-        json = json.replace("%time%", time);
-        json = json.replace("%message%", message);
-        json = json.replace("%world%", playerWorldName);
+        json = json.replace("%playersOnline%",String.valueOf(plugin.getServer().getOnlinePlayers().size()))
+            .replace("%maxPlayers%",String.valueOf(plugin.getServer().getMaxPlayers()))
+            .replace("%uuid%", event.getPlayer().getUniqueId().toString())
+            .replace("%player%", playerName)
+            .replace("%time%", time)
+            .replace("%message%", message)
+            .replace("%world%", playerWorldName);
 
         new WebhookActions(plugin).SendAsync(json);
     }

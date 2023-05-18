@@ -16,7 +16,7 @@ import java.util.logging.Level;
 
 public final class WebhookIntegrations extends JavaPlugin {
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 29;
+    public static int currentBuildNumber = 30;
     public static String localeLang;
     public static FileConfiguration lang;
 
@@ -39,10 +39,10 @@ public final class WebhookIntegrations extends JavaPlugin {
 
         if(getConfig().get("language-override") instanceof String languageOverride) {
             if(!lang.contains(localeLang)) {
-                getLogger().log(Level.INFO, "Language override is set to a language that doesn't exist. For all available languages see lang.yml.");
+                getLogger().log(Level.INFO, "LanguageConfiguration override is set to a language that doesn't exist. For all available languages see lang.yml.");
                 localeLang = "en_US";
             } else {
-                getLogger().log(Level.INFO, "Language overriden to: " + languageOverride);
+                getLogger().log(Level.INFO, "LanguageConfiguration overriden to: " + languageOverride);
                 localeLang = languageOverride;
             }
         } else {
@@ -117,26 +117,7 @@ public final class WebhookIntegrations extends JavaPlugin {
         getLogger().log(Level.INFO, lang.getString(localeLang + ".onStart.commandRegisterFinish"));
 
         if(getConfig().getBoolean("onServerStart.announce")) {
-            String json = getConfig().getString("onServerStart.messageJson");
-
-            String serverIp = getServer().getIp();
-            int slots = getServer().getMaxPlayers();
-            String serverMotd = PlainTextComponentSerializer.plainText().serialize(getServer().motd());
-            String serverName = getServer().getName();
-            String serverVersion = getServer().getVersion();
-            Boolean isOnlineMode = getServer().getOnlineMode();
-            int playersOnline = getServer().getOnlinePlayers().size();
-
-            json = json.replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()));
-            json = json.replace("%serverIp%", serverIp);
-            json = json.replace("%maxPlayers%", String.valueOf(slots));
-            json = json.replace("%serverMotd%", serverMotd);
-            json = json.replace("%serverName%", serverName);
-            json = json.replace("%serverVersion%", serverVersion);
-            json = json.replace("%isOnlineMode%", String.valueOf(isOnlineMode));
-            json = json.replace("%playersOnline%", String.valueOf(playersOnline));
-
-            new WebhookActions(this).SendSync(json);
+            sendStartMessage();
         }
     }
 
@@ -145,30 +126,57 @@ public final class WebhookIntegrations extends JavaPlugin {
     public void onDisable() {
         if (getConfig().getBoolean("onServerStop.announce")) {
             if (!getConfig().getString("webhookUrl").trim().equals("")) {
-                String serverIp = getServer().getIp();
-                int slots = getServer().getMaxPlayers();
-                String serverMotd = getServer().getMotd();
-                String serverName = getServer().getName();
-                String serverVersion = getServer().getVersion();
-                Boolean isOnlineMode = getServer().getOnlineMode();
-                int playersOnline = getServer().getOnlinePlayers().size();
-
-                String json = getConfig().getString("onServerStop.messageJson");
-
-                json = json.replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()));
-                json = json.replace("%serverIp%", serverIp);
-                json = json.replace("%maxPlayers%", String.valueOf(slots));
-                json = json.replace("%serverMotd%", serverMotd);
-                json = json.replace("%serverName%", serverName);
-                json = json.replace("%serverVersion%", serverVersion);
-                json = json.replace("%isOnlineMode%", String.valueOf(isOnlineMode));
-                json = json.replace("%playersOnline%", String.valueOf(playersOnline));
-
-                new WebhookActions(this).SendSync(json);
+                sendStopMessage();
             }
         }
 
         getLogger().log(Level.INFO, "this is my final message");
         getLogger().log(Level.INFO, "goodb ye");
+    }
+
+    private void sendStartMessage() {
+        String json = getConfig().getString("onServerStart.messageJson");
+
+        String serverIp = getServer().getIp();
+        int slots = getServer().getMaxPlayers();
+        String serverMotd = PlainTextComponentSerializer.plainText().serialize(getServer().motd());
+        String serverName = getServer().getName();
+        String serverVersion = getServer().getVersion();
+        Boolean isOnlineMode = getServer().getOnlineMode();
+        int playersOnline = getServer().getOnlinePlayers().size();
+
+        json = json.replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()))
+            .replace("%serverIp%", serverIp)
+            .replace("%maxPlayers%", String.valueOf(slots))
+            .replace("%serverMotd%", serverMotd)
+            .replace("%serverName%", serverName)
+            .replace("%serverVersion%", serverVersion)
+            .replace("%isOnlineMode%", String.valueOf(isOnlineMode))
+            .replace("%playersOnline%", String.valueOf(playersOnline));
+
+        new WebhookActions(this).SendSync(json);
+    }
+
+    private void sendStopMessage() {
+        String serverIp = getServer().getIp();
+        int slots = getServer().getMaxPlayers();
+        String serverMotd = getServer().getMotd();
+        String serverName = getServer().getName();
+        String serverVersion = getServer().getVersion();
+        Boolean isOnlineMode = getServer().getOnlineMode();
+        int playersOnline = getServer().getOnlinePlayers().size();
+
+        String json = getConfig().getString("onServerStop.messageJson");
+
+        json = json.replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()))
+            .replace("%serverIp%", serverIp)
+            .replace("%maxPlayers%", String.valueOf(slots))
+            .replace("%serverMotd%", serverMotd)
+            .replace("%serverName%", serverName)
+            .replace("%serverVersion%", serverVersion)
+            .replace("%isOnlineMode%", String.valueOf(isOnlineMode))
+            .replace("%playersOnline%", String.valueOf(playersOnline));
+
+        new WebhookActions(this).SendSync(json);
     }
 }

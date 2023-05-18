@@ -37,16 +37,13 @@ public class onPlayerAdvancementCompleted implements Listener {
 
         String json = plugin.getConfig().getString("onPlayerAdvancementComplete.messageJson");
 
-        if (json != null) {
-
-            json = json.replace("%desc%", advancementDescription);
-            json = json.replace("%playersOnline%", String.valueOf(plugin.getServer().getOnlinePlayers().size()));
-            json = json.replace("%advancement%", advancement);
-            json = json.replace("%player%", event.getPlayer().getName());
-            json = json.replace("%uuid%", event.getPlayer().getUniqueId().toString());
-            json = json.replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()));
+            json = json.replace("%desc%", advancementDescription)
+                .replace("%playersOnline%", String.valueOf(plugin.getServer().getOnlinePlayers().size()))
+                .replace("%advancement%", advancement)
+                .replace("%player%", event.getPlayer().getName())
+                .replace("%uuid%", event.getPlayer().getUniqueId().toString())
+                .replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()));
 
             new WebhookActions(plugin).SendAsync(json);
-        }
     }
 }
