@@ -138,29 +138,26 @@ public class WIActions implements CommandExecutor, TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         List<String> suggestions = new ArrayList<>();
-        if(command.getName().equalsIgnoreCase("wi")) {
-            if (args.length <= 1) {
+        if (command.getName().equalsIgnoreCase("wi")) {
+            if (args.length == 1) {
                 suggestions.add("reset");
                 suggestions.add("reload");
                 suggestions.add("analyze");
-                return suggestions;
-            } else if(args.length <= 2) {
-                if (args[0].equalsIgnoreCase("reset")) {
-                    suggestions.add("confirm");
-                    return suggestions;
-                }
+            } else if (args.length == 2 && args[0].equalsIgnoreCase("reset")) {
+                suggestions.add("confirm");
             }
         }
-        return null;
+        return suggestions;
     }
+
 
     @Contract(pure = true)
     private @NotNull String colorBoolean(Boolean b) {
         if(!b) {
-            return ChatColor.RED + "" + ChatColor.BOLD + b + ChatColor.RESET;
+            return ChatColor.RED + "" + ChatColor.BOLD + false + ChatColor.RESET;
         }
         else {
-            return ChatColor.GREEN + "" + ChatColor.BOLD +  b + ChatColor.RESET;
+            return ChatColor.GREEN + "" + ChatColor.BOLD + true + ChatColor.RESET;
         }
     }
 }

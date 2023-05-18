@@ -34,11 +34,11 @@ public class onPlayerJoin implements Listener {
         if (plugin.getConfig().getBoolean("onPlayerJoin.announce")) {
             String json = plugin.getConfig().getString("onPlayerJoin.messageJson");
 
-            json = json.replace("%playersOnline%", String.valueOf(plugin.getServer().getOnlinePlayers().size()));
-            json = json.replace("%maxPlayers%", String.valueOf(plugin.getServer().getMaxPlayers()));
-            json = json.replace("%uuid%", event.getPlayer().getUniqueId().toString());
-            json = json.replace("%player%", event.getPlayer().getName());
-            json = json.replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()));
+            json = json.replace("%playersOnline%", String.valueOf(plugin.getServer().getOnlinePlayers().size()))
+                .replace("%maxPlayers%", String.valueOf(plugin.getServer().getMaxPlayers()))
+                .replace("%uuid%", event.getPlayer().getUniqueId().toString())
+                .replace("%player%", event.getPlayer().getName())
+                .replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()));
 
             new WebhookActions(plugin).SendAsync(json);
         }

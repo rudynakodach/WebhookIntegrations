@@ -23,12 +23,11 @@ public class onPlayerQuit implements Listener {
 
         String json = plugin.getConfig().getString("onPlayerQuit.messageJson");
 
-        json = json.replace("%playersOnline%",String.valueOf(plugin.getServer().getOnlinePlayers().size()));
-        json = json.replace("%maxPlayers%",String.valueOf(plugin.getServer().getMaxPlayers()));
-        json = json.replace("%player%", event.getPlayer().getName());
-        json = json.replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()));
+        json = json.replace("%playersOnline%",String.valueOf(plugin.getServer().getOnlinePlayers().size()))
+            .replace("%maxPlayers%",String.valueOf(plugin.getServer().getMaxPlayers()))
+            .replace("%player%", event.getPlayer().getName())
+            .replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()));
 
         new WebhookActions(plugin).SendAsync(json);
-
     }
 }

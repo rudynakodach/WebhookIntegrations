@@ -1,5 +1,6 @@
 package rudynakodach.github.io.webhookintegrations.Events;
 
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
@@ -22,7 +23,7 @@ public class onPlayerKick implements Listener {
             return;
         }
         String playerName = event.getPlayer().getName();
-        String reason = event.getReason();
+        String reason = PlainTextComponentSerializer.plainText().serialize(event.reason());
         String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
 
         if (reason.equals("")) {
@@ -31,12 +32,12 @@ public class onPlayerKick implements Listener {
 
         String json = plugin.getConfig().getString("onPlayerKicked.messageJson");
 
-        json = json.replace("%playersOnline%",String.valueOf(plugin.getServer().getOnlinePlayers().size()));
-        json = json.replace("%maxPlayers%",String.valueOf(plugin.getServer().getMaxPlayers()));
-        json = json.replace("%uuid%", event.getPlayer().getUniqueId().toString());
-        json = json.replace("%player%", playerName);
-        json = json.replace("%reason%", reason);
-        json = json.replace("%time%", time);
+        json = json.replace("%playersOnline%",String.valueOf(plugin.getServer().getOnlinePlayers().size()))
+            .replace("%maxPlayers%",String.valueOf(plugin.getServer().getMaxPlayers()))
+            .replace("%uuid%", event.getPlayer().getUniqueId().toString())
+            .replace("%player%", playerName)
+            .replace("%reason%", reason)
+            .replace("%time%", time);
 
         new WebhookActions(plugin).SendAsync(json);
     }
