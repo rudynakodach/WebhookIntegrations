@@ -6,6 +6,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import rudynakodach.github.io.webhookintegrations.Commands.*;
 import rudynakodach.github.io.webhookintegrations.Events.*;
+import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -16,53 +17,54 @@ import java.util.logging.Level;
 
 public final class WebhookIntegrations extends JavaPlugin {
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 30;
-    public static String localeLang;
-    public static FileConfiguration lang;
+    public static int currentBuildNumber = 31;
 
     //on startup
     @Override
     public void onEnable() {
+        saveDefaultConfig();
         getLogger().log(Level.INFO, "Hello, World!");
 
         if(!new File(getDataFolder(), "lang.yml").exists()) {
             this.saveResource("lang.yml",false);
         }
-
         getLogger().log(Level.INFO,"Initializing language...");
         File langFile = new File(this.getDataFolder(),"lang.yml");
-        WebhookIntegrations.lang = YamlConfiguration.loadConfiguration(langFile);
-        saveDefaultConfig();
 
         Locale locale = Locale.getDefault();
-        localeLang = locale.toString();
+        String selectedLanguage = locale.toString();
+
+
+        YamlConfiguration languageConfig = YamlConfiguration.loadConfiguration(langFile);
 
         if(getConfig().get("language-override") instanceof String languageOverride) {
-            if(!lang.contains(localeLang)) {
-                getLogger().log(Level.INFO, "LanguageConfiguration override is set to a language that doesn't exist. For all available languages see lang.yml.");
-                localeLang = "en_US";
+            if(!languageConfig.contains(selectedLanguage)) {
+                getLogger().log(Level.INFO, "Language override is set to a language that doesn't exist. Falling back to en_US. For all available languages see lang.yml.");
+                selectedLanguage = "en_US";
             } else {
-                getLogger().log(Level.INFO, "LanguageConfiguration overriden to: " + languageOverride);
-                localeLang = languageOverride;
+                getLogger().log(Level.INFO, "Language override set to: " + languageOverride);
+                selectedLanguage = languageOverride;
             }
         } else {
-            if(!lang.contains(localeLang)) {
-                localeLang = "en_US";
+            if(!languageConfig.contains(selectedLanguage)) {
+                selectedLanguage = "en_US";
             }
-            getLogger().log(Level.INFO,"Hooked to " + localeLang);
+            getLogger().log(Level.INFO,"Hooked to " + selectedLanguage);
         }
 
-        getLogger().log(Level.SEVERE, getConfig().get("language-override").toString());
+        LanguageConfiguration language = new LanguageConfiguration(selectedLanguage, languageConfig);
+
+        getLogger().log(Level.FINEST, language.getString("onStart.message"));
 
         if(getConfig().getBoolean("check-for-updates")) {
-            getLogger().log(Level.INFO, lang.getString(localeLang + ".update.checking"));
+            getLogger().log(Level.INFO, language.getString("update.checking"));
 
             try {
                 int receivedBuildNumber = new AutoUpdater(this).getLatestVersion();
                 if (currentBuildNumber < receivedBuildNumber && receivedBuildNumber != -1) {
                     isLatest = false;
                     getLogger().log(Level.WARNING, "------------------------- WI -------------------------");
-                    getLogger().log(Level.INFO, lang.getString(localeLang + ".update.updateFound"));
+                    getLogger().log(Level.INFO, language.getString("update.updateFound"));
                     getLogger().log(Level.WARNING, "------------------------------------------------------");
 
                     if (getConfig().getBoolean("auto-update")) {
@@ -70,20 +72,20 @@ public final class WebhookIntegrations extends JavaPlugin {
                     }
 
                 } else {
-                    getLogger().log(Level.INFO, lang.getString(localeLang + ".update.latest"));
+                    getLogger().log(Level.INFO, language.getString("update.latest"));
                 }
             } catch (IOException e) {
-                getLogger().log(Level.WARNING, lang.getString(localeLang + ".update.checkFailed") + e.getMessage());
+                getLogger().log(Level.WARNING, language.getString("update.checkFailed") + e.getMessage());
             }
         }
 
         this.saveDefaultConfig();
 
         if (Objects.equals(Objects.requireNonNull(getConfig().getString("webhookUrl")).trim(), "")) {
-            getLogger().log(Level.WARNING, lang.getString(localeLang + ".onStart.webhookEmpty"));
+            getLogger().log(Level.WARNING, language.getString("onStart.webhookEmpty"));
         }
 
-        getLogger().log(Level.INFO, lang.getString(localeLang + ".onStart.registeringEvents"));
+        getLogger().log(Level.INFO, language.getString("onStart.registeringEvents"));
 
         onPlayerChat chatEvent = new onPlayerChat(this);
         getServer().getPluginManager().registerEvents(chatEvent, this);
@@ -103,18 +105,18 @@ public final class WebhookIntegrations extends JavaPlugin {
         onPlayerDeath playerDeath = new onPlayerDeath(this);
         getServer().getPluginManager().registerEvents(playerDeath,this);
 
-        getLogger().log(Level.INFO, lang.getString(localeLang + ".onStart.eventRegisterFinish"));
+        getLogger().log(Level.INFO, language.getString("onStart.eventRegisterFinish"));
 
         SetWebhookURL setWebhookUrlCommand = new SetWebhookURL(getConfig(), this);
         Objects.requireNonNull(getCommand("setUrl")).setExecutor(setWebhookUrlCommand);
 
-        SendToWebhook sendToWebhookCommand = new SendToWebhook(getConfig(), this, getLogger());
+        SendToWebhook sendToWebhookCommand = new SendToWebhook(getConfig(), this);
         Objects.requireNonNull(getCommand("send")).setExecutor(sendToWebhookCommand);
 
         WIActions resetConfig = new WIActions(this);
         Objects.requireNonNull(getCommand("wi")).setExecutor(resetConfig);
 
-        getLogger().log(Level.INFO, lang.getString(localeLang + ".onStart.commandRegisterFinish"));
+        getLogger().log(Level.INFO, language.getString("onStart.commandRegisterFinish"));
 
         if(getConfig().getBoolean("onServerStart.announce")) {
             sendStartMessage();

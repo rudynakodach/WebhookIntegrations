@@ -38,3 +38,7 @@ commands:
   enable:
     usage: /wi enable
     permission: webhookintegrations.enable
+
+  setLang:
+    usage: /wi setlanguage
+    permission: webhookintegrations.setlanguage

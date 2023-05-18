@@ -36,7 +36,9 @@ public class AutoUpdater {
             File updateFolder = new File(destination);
             if(!updateFolder.exists())
             {
-                updateFolder.mkdir();
+                if(!updateFolder.mkdir()) {
+                    return false;
+                }
             }
 
             String newFilename = getLatestFilename();
@@ -68,7 +70,7 @@ public class AutoUpdater {
                 if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_NO_CONTENT) {
                     BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                     String inputLine;
-                    StringBuffer resp = new StringBuffer();
+                    StringBuilder resp = new StringBuilder();
                     while ((inputLine = in.readLine()) != null) {
                         resp.append(inputLine);
                     }
@@ -95,7 +97,7 @@ public class AutoUpdater {
                 if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_NO_CONTENT) {
                     BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                     String inputLine;
-                    StringBuffer resp = new StringBuffer();
+                    StringBuilder resp = new StringBuilder();
                     while ((inputLine = in.readLine()) != null) {
                         resp.append(inputLine);
                     }
@@ -144,7 +146,7 @@ public class AutoUpdater {
         if(responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_NO_CONTENT) {
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String inputLine;
-            StringBuffer resp = new StringBuffer();
+            StringBuilder resp = new StringBuilder();
             while((inputLine = in.readLine()) != null) {
                 resp.append(inputLine);
             }

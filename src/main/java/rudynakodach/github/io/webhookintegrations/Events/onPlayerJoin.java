@@ -23,24 +23,25 @@ public class onPlayerJoin implements Listener {
 
     @EventHandler
     public void onPlayerJoinEvent(PlayerJoinEvent event) {
-        if(!opsJoined.contains(event.getPlayer().getName())) {
+        if (!opsJoined.contains(event.getPlayer().getName())) {
             if (plugin.getServer().getOperators().contains(event.getPlayer())) {
-                if(!WebhookIntegrations.isLatest) {
+                if (!WebhookIntegrations.isLatest) {
                     event.getPlayer().sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "W" + ChatColor.WHITE + "I" + ChatColor.GRAY + "]" + ChatColor.WHITE + " Update available. Please update from either GitHub, SpigotMC or Bukkit.");
                     opsJoined.add(event.getPlayer().getName());
                 }
             }
         }
-        if (plugin.getConfig().getBoolean("onPlayerJoin.announce")) {
-            String json = plugin.getConfig().getString("onPlayerJoin.messageJson");
+        if (!plugin.getConfig().getBoolean("onPlayerJoin.announce")) {
+            return;
+        }
+        String json = plugin.getConfig().getString("onPlayerJoin.messageJson");
 
-            json = json.replace("%playersOnline%", String.valueOf(plugin.getServer().getOnlinePlayers().size()))
+        json = json.replace("%playersOnline%", String.valueOf(plugin.getServer().getOnlinePlayers().size()))
                 .replace("%maxPlayers%", String.valueOf(plugin.getServer().getMaxPlayers()))
                 .replace("%uuid%", event.getPlayer().getUniqueId().toString())
                 .replace("%player%", event.getPlayer().getName())
                 .replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()));
 
-            new WebhookActions(plugin).SendAsync(json);
-        }
+        new WebhookActions(plugin).SendAsync(json);
     }
 }

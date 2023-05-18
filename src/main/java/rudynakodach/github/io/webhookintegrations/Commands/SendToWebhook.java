@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
 import rudynakodach.github.io.webhookintegrations.WebhookIntegrations;
 
@@ -21,14 +22,11 @@ public class SendToWebhook implements CommandExecutor {
 
     final FileConfiguration config;
     final JavaPlugin javaPlugin;
-    final String localeName = WebhookIntegrations.localeLang;
-    final FileConfiguration lang = WebhookIntegrations.lang;
-    final Logger logger;
-
-    public SendToWebhook(FileConfiguration _cfg, JavaPlugin _javaPlugin, Logger _logger) {
-        config = _cfg;
-        javaPlugin = _javaPlugin;
-        logger = _logger;
+    final LanguageConfiguration language;
+    public SendToWebhook(FileConfiguration cfg, JavaPlugin javaPlugin) {
+        config = cfg;
+        this.javaPlugin = javaPlugin;
+        this.language = LanguageConfiguration.get();
     }
 
     @Override
@@ -38,37 +36,26 @@ public class SendToWebhook implements CommandExecutor {
                 String webhookUrl = Objects.requireNonNull(config.getString("webhookUrl"));
 
                 if (webhookUrl.equals("")) {
-
-                    String response = ChatColor.translateAlternateColorCodes('&', lang.getString(localeName + ".command.send.onEmptyUrl"));
+                    String response = ChatColor.translateAlternateColorCodes('&',
+                            language.getString("commands.send.onEmptyUrl"));
                     sender.sendMessage(response);
-
                     return true;
                 }
 
                 boolean isEmbed = Boolean.parseBoolean(args[0]);
                 String message = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
-
                 Player player = (Player) sender;
                 String username = player.getName();
 
-                logger.log(Level.INFO, username + " used /send with the following message: " + message);
+                javaPlugin.getLogger().log(Level.INFO, username + " used /send with the following message: " + message);
 
                 if (isEmbed) {
-
-                    String json = "{" +
-                            "\"embeds\": [" +
-                            "{" +
-                            "\"title\": \"" + username + "\"," +
-                            "\"description\": \"" + message + "\"" +
-                            "}" +
-                            "]" +
-                            "}";
+                    String json = "{\"embeds\": [ {\"title\": \"" + username + "\",\"description\": \"" + message + "\"}]}";
 
                     new WebhookActions(javaPlugin).SendAsync(json);
 
                 } else {
                     message = username + ": " + message;
-
                     String json = "{ \"content\": \"" + message + "\" }";
 
                     new WebhookActions(javaPlugin).SendAsync(json);
@@ -76,7 +63,8 @@ public class SendToWebhook implements CommandExecutor {
                 return true;
 
             } else {
-                String response = ChatColor.translateAlternateColorCodes('&', lang.getString(localeName + ".commands.send.commandIncorrectUsage") + "\n" +
+                String response = ChatColor.translateAlternateColorCodes('&',
+                        language.getString("commands.send.commandIncorrectUsage") + "\n" +
                         "&r&f/send &aisEmbed&7(true/false)&r&a message");
                 sender.sendMessage(response);
 

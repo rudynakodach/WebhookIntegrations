@@ -35,8 +35,14 @@ en_US:
       reloadFinish: "&aReloaded!"
 
     update:
-      success: "Later version downloaded!"
+      success: "Latest version downloaded!"
       failed: "Download failed!"
+      versionCheckFailed: "Version check failed!"
+      latest: "Already running the latest version!"
+
+    setLang:
+      changed: "Launguage changed."
+      notExists: "&cLanguage provided doesn't exist."
 
 pl_PL:
   no-permission: "&cNie masz uprawnień."
@@ -76,5 +82,11 @@ pl_PL:
     update:
       success: "Pobrano najnowszą wersje!"
       failed: "Nie udało się pobrać najnowszej wersji!"
+      versionCheckFailed: "Sprawdzanie najnowszej wersji nie powiodło się!"
+      latest: "Najnowsza wersja już zainstalowana!"
+
+    setLang:
+      changed: "Zmieniono język."
+      notExists: "&cPodany język nie istnieje."
 
 # END OF FILE

@@ -15,11 +15,8 @@ import java.util.Objects;
 
 public class onPlayerAdvancementCompleted implements Listener {
     JavaPlugin plugin;
-    YamlConfiguration advancementConfig;
     public onPlayerAdvancementCompleted(JavaPlugin plugin) {
         this.plugin = plugin;
-        File langFile = new File(plugin.getDataFolder(),"advancements.yml");
-        this.advancementConfig = YamlConfiguration.loadConfiguration(langFile);
     }
     @EventHandler
     public void onAdvancementMade(PlayerAdvancementDoneEvent event) {

@@ -37,7 +37,7 @@ public class onPlayerDeath implements Listener {
             json = json.replace("%playersOnline%",String.valueOf(plugin.getServer().getOnlinePlayers().size()))
                 .replace("%maxPlayers%",String.valueOf(plugin.getServer().getMaxPlayers()))
                 .replace("%time%",time)
-                .replace("%player%",playerName)
+                .replace("%victim%",playerName)
                 .replace("%killer%",killerName)
                 .replace("%deathMessage%",deathMessage)
                 .replace("%newLevel%",newLevel)
