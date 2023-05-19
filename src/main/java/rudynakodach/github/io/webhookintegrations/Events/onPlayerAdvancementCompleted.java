@@ -1,5 +1,6 @@
 package rudynakodach.github.io.webhookintegrations.Events;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
@@ -34,12 +35,16 @@ public class onPlayerAdvancementCompleted implements Listener {
 
         String json = plugin.getConfig().getString("onPlayerAdvancementComplete.messageJson");
 
-            json = json.replace("%desc%", advancementDescription)
-                .replace("%playersOnline%", String.valueOf(plugin.getServer().getOnlinePlayers().size()))
-                .replace("%advancement%", advancement)
-                .replace("%player%", event.getPlayer().getName())
-                .replace("%uuid%", event.getPlayer().getUniqueId().toString())
-                .replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()));
+            json = json.replace("$desc$", advancementDescription)
+                .replace("$playersOnline$", String.valueOf(plugin.getServer().getOnlinePlayers().size()))
+                .replace("$advancement$", advancement)
+                .replace("$player$", event.getPlayer().getName())
+                .replace("$uuid$", event.getPlayer().getUniqueId().toString())
+                .replace("$time$", new SimpleDateFormat("HH:mm:ss").format(new Date()));
+
+            if(plugin.getServer().getPluginManager().getPermission("PlaceholderAPI") != null) {
+                json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
+            }
 
             new WebhookActions(plugin).SendAsync(json);
     }

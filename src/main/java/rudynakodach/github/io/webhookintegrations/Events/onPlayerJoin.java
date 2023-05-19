@@ -1,5 +1,6 @@
 package rudynakodach.github.io.webhookintegrations.Events;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -36,11 +37,15 @@ public class onPlayerJoin implements Listener {
         }
         String json = plugin.getConfig().getString("onPlayerJoin.messageJson");
 
-        json = json.replace("%playersOnline%", String.valueOf(plugin.getServer().getOnlinePlayers().size()))
-                .replace("%maxPlayers%", String.valueOf(plugin.getServer().getMaxPlayers()))
-                .replace("%uuid%", event.getPlayer().getUniqueId().toString())
-                .replace("%player%", event.getPlayer().getName())
-                .replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()));
+        json = json.replace("$playersOnline$", String.valueOf(plugin.getServer().getOnlinePlayers().size()))
+                .replace("$maxPlayers$", String.valueOf(plugin.getServer().getMaxPlayers()))
+                .replace("$uuid$", event.getPlayer().getUniqueId().toString())
+                .replace("$player$", event.getPlayer().getName())
+                .replace("$time$", new SimpleDateFormat("HH:mm:ss").format(new Date()));
+
+        if(plugin.getServer().getPluginManager().getPermission("PlaceholderAPI") != null) {
+            json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
+        }
 
         new WebhookActions(plugin).SendAsync(json);
     }

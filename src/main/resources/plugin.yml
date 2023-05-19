@@ -1,5 +1,6 @@
 name: WebhookIntegrations
 version: '${project.version}'
+softdepend: [PlaceholderAPI]
 main: rudynakodach.github.io.webhookintegrations.WebhookIntegrations
 api-version: 1.17
 commands:
@@ -7,6 +8,7 @@ commands:
   seturl:
     usage: /setUrl <url>
     permission: webhookintegrations.setwebhookurl
+
   send:
     usage: /send <isEmbed> <message>
     permission: webhookintegrations.send
@@ -22,6 +24,8 @@ commands:
   wi:
     usage: /wi
     permission: webhookintegrations.wi
+    aliases:
+      - "webhookintegrations"
 
   update:
     usage: /wi update

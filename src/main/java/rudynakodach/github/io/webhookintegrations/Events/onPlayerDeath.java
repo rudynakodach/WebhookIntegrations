@@ -1,5 +1,6 @@
 package rudynakodach.github.io.webhookintegrations.Events;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.event.EventHandler;
@@ -34,16 +35,20 @@ public class onPlayerDeath implements Listener {
             String killerName = event.getEntity().getKiller().getName();
             String json = plugin.getConfig().getString("onPlayerDeath.playerKilledByPlayer.messageJson");
 
-            json = json.replace("%playersOnline%",String.valueOf(plugin.getServer().getOnlinePlayers().size()))
-                .replace("%maxPlayers%",String.valueOf(plugin.getServer().getMaxPlayers()))
-                .replace("%time%",time)
-                .replace("%victim%",playerName)
-                .replace("%killer%",killerName)
-                .replace("%deathMessage%",deathMessage)
-                .replace("%newLevel%",newLevel)
-                .replace("%newExp%",newExp)
-                .replace("%oldLevel%",oldLevel)
-                .replace("%oldExp%",oldExp);
+            json = json.replace("$playersOnline$",String.valueOf(plugin.getServer().getOnlinePlayers().size()))
+                .replace("$maxPlayers$",String.valueOf(plugin.getServer().getMaxPlayers()))
+                .replace("$time$",time)
+                .replace("$victim$",playerName)
+                .replace("$killer$",killerName)
+                .replace("$deathMessage$",deathMessage)
+                .replace("$newLevel$",newLevel)
+                .replace("$newExp$",newExp)
+                .replace("$oldLevel$",oldLevel)
+                .replace("$oldExp$",oldExp);
+
+            if(plugin.getServer().getPluginManager().getPermission("PlaceholderAPI") != null) {
+                json = PlaceholderAPI.setRelationalPlaceholders(event.getPlayer(), event.getEntity().getKiller(), json);
+            }
 
             new WebhookActions(plugin).SendAsync(json);
         }
@@ -51,13 +56,17 @@ public class onPlayerDeath implements Listener {
             if(!plugin.getConfig().getBoolean("onPlayerDeath.playerKilledByNPC.announce")) {return;}
             String json = plugin.getConfig().getString("onPlayerDeath.playerKilledByNPC.messageJson");
 
-            json = json.replace("%time%",time)
-                .replace("%player%",playerName)
-                .replace("%deathMessage%",deathMessage)
-                .replace("%newLevel%",newLevel)
-                .replace("%newExp%",newExp)
-                .replace("%oldLevel%",oldLevel)
-                .replace("%oldExp%",oldExp);
+            json = json.replace("$time$",time)
+                .replace("$player$",playerName)
+                .replace("$deathMessage$",deathMessage)
+                .replace("$newLevel$",newLevel)
+                .replace("$newExp$",newExp)
+                .replace("$oldLevel$",oldLevel)
+                .replace("$oldExp$",oldExp);
+
+            if(plugin.getServer().getPluginManager().getPermission("PlaceholderAPI") != null) {
+                json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
+            }
 
             new WebhookActions(plugin).SendAsync(json);
         }

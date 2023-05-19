@@ -1,6 +1,7 @@
 package rudynakodach.github.io.webhookintegrations.Events;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -38,7 +39,7 @@ public class onPlayerChat implements Listener {
         if(plugin.getConfig().getBoolean("remove-force-pings")) {
             message = message.replaceAll("<@[0-9]+>", "");
         }
-        if(plugin.getConfig().getBoolean("remove-force-channel-references")) {
+        if(plugin.getConfig().getBoolean("remove-force-channel-pings")) {
             message = message.replaceAll("<#[0-9]+>", "");
         }
 
@@ -46,13 +47,17 @@ public class onPlayerChat implements Listener {
             return;
         }
 
-        json = json.replace("%playersOnline%",String.valueOf(plugin.getServer().getOnlinePlayers().size()))
-            .replace("%maxPlayers%",String.valueOf(plugin.getServer().getMaxPlayers()))
-            .replace("%uuid%", event.getPlayer().getUniqueId().toString())
-            .replace("%player%", playerName)
-            .replace("%time%", time)
-            .replace("%message%", message)
-            .replace("%world%", playerWorldName);
+        json = json.replace("$playersOnline$",String.valueOf(plugin.getServer().getOnlinePlayers().size()))
+            .replace("$maxPlayers$",String.valueOf(plugin.getServer().getMaxPlayers()))
+            .replace("$uuid$", event.getPlayer().getUniqueId().toString())
+            .replace("$player$", playerName)
+            .replace("$time$", time)
+            .replace("$message$", message)
+            .replace("$world$", playerWorldName);
+
+        if(plugin.getServer().getPluginManager().getPermission("PlaceholderAPI") != null) {
+            json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
+        }
 
         new WebhookActions(plugin).SendAsync(json);
     }

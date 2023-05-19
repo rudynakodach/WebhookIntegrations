@@ -1,5 +1,6 @@
 package rudynakodach.github.io.webhookintegrations.Events;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -23,10 +24,14 @@ public class onPlayerQuit implements Listener {
 
         String json = plugin.getConfig().getString("onPlayerQuit.messageJson");
 
-        json = json.replace("%playersOnline%",String.valueOf(plugin.getServer().getOnlinePlayers().size()))
-            .replace("%maxPlayers%",String.valueOf(plugin.getServer().getMaxPlayers()))
-            .replace("%player%", event.getPlayer().getName())
-            .replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()));
+        json = json.replace("$playersOnline$",String.valueOf(plugin.getServer().getOnlinePlayers().size()))
+            .replace("$maxPlayers$",String.valueOf(plugin.getServer().getMaxPlayers()))
+            .replace("$player$", event.getPlayer().getName())
+            .replace("$time$", new SimpleDateFormat("HH:mm:ss").format(new Date()));
+
+        if(plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
+        }
 
         new WebhookActions(plugin).SendAsync(json);
     }

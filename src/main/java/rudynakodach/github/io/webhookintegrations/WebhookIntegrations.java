@@ -17,7 +17,7 @@ import java.util.logging.Level;
 public final class WebhookIntegrations extends JavaPlugin {
     // Welcome, fellow source code reader!
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 32;
+    public static int currentBuildNumber = 33;
 
     //on startup
     @Override
@@ -33,7 +33,6 @@ public final class WebhookIntegrations extends JavaPlugin {
 
         Locale locale = Locale.getDefault();
         String selectedLanguage = locale.toString();
-
 
         YamlConfiguration languageConfig = YamlConfiguration.loadConfiguration(langFile);
 
@@ -54,7 +53,7 @@ public final class WebhookIntegrations extends JavaPlugin {
 
         LanguageConfiguration language = new LanguageConfiguration(selectedLanguage, languageConfig);
 
-        getLogger().log(Level.FINEST, language.getString("onStart.message"));
+        getLogger().log(Level.INFO, language.getString("onStart.message"));
 
         if(getConfig().getBoolean("check-for-updates")) {
             getLogger().log(Level.INFO, language.getString("update.checking"));
