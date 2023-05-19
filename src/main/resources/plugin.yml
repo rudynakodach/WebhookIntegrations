@@ -1,7 +1,7 @@
 name: WebhookIntegrations
 version: '${project.version}'
 main: rudynakodach.github.io.webhookintegrations.WebhookIntegrations
-api-version: 1.19
+api-version: 1.17
 commands:
 
   seturl:

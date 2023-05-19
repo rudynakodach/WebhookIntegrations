@@ -1,5 +1,7 @@
 package rudynakodach.github.io.webhookintegrations.Events;
 
+import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -18,11 +20,11 @@ public class onPlayerChat implements Listener {
     }
 
     @EventHandler
-    public void onPlayerChatEvent(AsyncPlayerChatEvent event) {
+    public void onPlayerChatEvent(AsyncChatEvent event) {
         if (!plugin.getConfig().getBoolean("onPlayerChat.announce")) {
             return;
         }
-        String message = event.getMessage();
+        String message = PlainTextComponentSerializer.plainText().serialize(event.message());
         String playerName = event.getPlayer().getName();
         String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
         String playerWorldName = event.getPlayer().getWorld().getName();

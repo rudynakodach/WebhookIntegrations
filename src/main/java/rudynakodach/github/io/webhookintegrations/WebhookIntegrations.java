@@ -1,7 +1,6 @@
 package rudynakodach.github.io.webhookintegrations;
 
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import rudynakodach.github.io.webhookintegrations.Commands.*;
@@ -16,8 +15,9 @@ import java.util.Objects;
 import java.util.logging.Level;
 
 public final class WebhookIntegrations extends JavaPlugin {
+    // Welcome, fellow source code reader!
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 31;
+    public static int currentBuildNumber = 32;
 
     //on startup
     @Override
