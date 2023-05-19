@@ -53,7 +53,6 @@ public class SendToWebhook implements CommandExecutor {
                     String json = "{\"embeds\": [ {\"title\": \"" + username + "\",\"description\": \"" + message + "\"}]}";
 
                     new WebhookActions(javaPlugin).SendAsync(json);
-
                 } else {
                     message = username + ": " + message;
                     String json = "{ \"content\": \"" + message + "\" }";

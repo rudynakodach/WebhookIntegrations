@@ -5,6 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -18,6 +19,7 @@ import rudynakodach.github.io.webhookintegrations.WebhookIntegrations;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -64,6 +66,8 @@ public class WIActions implements CommandExecutor, TabCompleter {
                     return disable(commandSender);
                 } else if(args[0].equalsIgnoreCase("setlanguage")) {
                     return setLanguage(commandSender, args);
+                } else if(args[0].equalsIgnoreCase("config") && args.length >= 3) {
+                    return setConfig(commandSender, args);
                 }
             }
         }
@@ -82,17 +86,34 @@ public class WIActions implements CommandExecutor, TabCompleter {
                 suggestions.add("reload");
                 suggestions.add("analyze");
                 suggestions.add("update");
+                suggestions.add("config");
             } else if (args.length == 2) {
                 if(args[0].equalsIgnoreCase("reset")) {
                     suggestions.add("confirm");
                 } else if(args[0].equalsIgnoreCase("setlanguage")) {
                     return language.getYamlConfig().getKeys(false).stream().toList();
+                } else if(args[0].equalsIgnoreCase("config")) {
+                    suggestions.add("setvalue");
+                    return suggestions;
+                }
+            } else if(args.length == 3) {
+                if(args[0].equalsIgnoreCase("config") && args[1].equalsIgnoreCase("setvalue")) {
+                    return plugin.getConfig().getKeys(true).stream().toList();
+                }
+            } else if(args.length == 4) {
+                if(args[0].equalsIgnoreCase("config") && args[1].equalsIgnoreCase("setvalue")) {
+                    if(!plugin.getConfig().contains(args[3])) {return null;}
+                    Object value = plugin.getConfig().get(args[3]);
+                    if(value instanceof Boolean) {
+                        suggestions.add("true");
+                        suggestions.add("false");
+                        return suggestions;
+                    }
                 }
             }
         }
         return suggestions;
     }
-
 
     @Contract(pure = true)
     private @NotNull String colorBoolean(Boolean b) {
@@ -236,6 +257,60 @@ public class WIActions implements CommandExecutor, TabCompleter {
         } else {
             commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', language.getString("commands.setLang.notExists")));
         }
+        return true;
+    }
+
+    private boolean setConfig(CommandSender commandSender, String[] args) {
+        Player player = (Player) commandSender;
+        if(!player.hasPermission("webhookintegrations.config.setvalue")) {
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                    language.getString("commands.no-permission")));
+            return true;
+        }
+        String path = args[2];
+        Object value = args.length >= 4 ? String.join(" ", Arrays.copyOfRange(args, 3, args.length)) : null;
+        String message;
+        Object oldValue = null;
+
+        if(plugin.getConfig().contains(path)) {
+            oldValue = plugin.getConfig().get(path);
+            message = LanguageConfiguration.get().getString("commands.config.keyEdited");
+        } else {
+            message = LanguageConfiguration.get().getString("commands.config.keyCreated");
+        }
+
+        if(value == null) {
+            message = LanguageConfiguration.get().getString("commands.config.keyRemoved");
+        } else {
+            if (value.toString().equalsIgnoreCase("true")) {
+                value = true;
+            } else if (value.toString().equalsIgnoreCase("false")) {
+                value = false;
+            } else {
+                try {
+                    value = Integer.parseInt(value.toString());
+                } catch (NumberFormatException ignored) {}
+            }
+        }
+
+        plugin.getConfig().set(path, value);
+        try {
+            plugin.getConfig().save(new File(plugin.getDataFolder(), "config.yml"));
+        } catch (Exception e) {
+            commandSender.sendMessage(LanguageConfiguration.get().getString("commands.config.saveFailed").replace("%04", e.getMessage()));
+            return true;
+        }
+
+        message = message.replace("%01", path)
+                .replace("%02", value instanceof String ?
+                        String.format("\"%s\"", value) :
+                        String.valueOf(value));
+
+        if(oldValue != null) {
+            message = message.replace("%03", oldValue.toString());
+        }
+
+        commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
         return true;
     }
 

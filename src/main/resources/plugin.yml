@@ -46,3 +46,7 @@ commands:
   setLang:
     usage: /wi setlanguage
     permission: webhookintegrations.setlanguage
+
+  setConfigValue:
+    usage: /wi config setvalue <key> <value>
+    permission: webhookintegrations.config.setvalue

@@ -54,7 +54,6 @@ public class AutoUpdater {
             return true;
         } catch (ExecutionException | InterruptedException | IOException e) {
             plugin.getLogger().log(Level.SEVERE,"Update failed: " + e.getMessage());
-            WebhookIntegrations.isLatest = false;
             return false;
         }
     }
@@ -86,7 +85,7 @@ public class AutoUpdater {
         return future.get();
     }
 
-    public String getLatestFilename() throws ExecutionException, InterruptedException {
+    private String getLatestFilename() throws ExecutionException, InterruptedException {
         CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
             try {
                 URL target = new URL(filenameUrl);
@@ -114,7 +113,7 @@ public class AutoUpdater {
         return future.get();
     }
 
-    public byte[] getLatestFile(String url) throws ExecutionException, InterruptedException {
+    private byte[] getLatestFile(String url) throws ExecutionException, InterruptedException {
         CompletableFuture<byte[]> future = CompletableFuture.supplyAsync(() -> {
             try {
                 URL fileUrl = new URL(url);

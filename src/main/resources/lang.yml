@@ -34,6 +34,15 @@ en_US:
       resetFinish: "&aConfig reset successful!"
       reloadFinish: "&aReloaded!"
 
+      # %01 - key
+      # %02 - new value
+      # %03 - old value
+      # %04 - error
+      keyEdited: "&aSet value of %01 to from %03 to %02."
+      keyCreated: "&aCreated key %01 with a value of %02."
+      keyRemoved: "&aRemoved key %01."
+      saveFailed: "&cAn error occurred while saving the file: %04."
+
     update:
       success: "Latest version downloaded!"
       failed: "Download failed!"
@@ -78,6 +87,15 @@ pl_PL:
       noConfirm: "&cUżyj &7/config reset confirm &caby zresetować config."
       resetFinish: "&aResetowanie configa zakończone."
       reloadFinish: "&aOperacja zakończona sukcesem."
+
+      # %01 - key
+      # %02 - new value
+      # %03 - old value
+      # %04 - error
+      keyEdited: "&aUstawiono wartość &l%01&r&a z &l%03&r&a na &l%02&r&a."
+      keyCreated: "&aUtworzono klucz &l%01&r&a z wartością &l%02&r&a."
+      keyRemoved: "&aUsunięto klucz &l%01&r&a."
+      saveFailed: "&cWystąpił błąd podczas zapisywania pliku: &l%04&r&a."
 
     update:
       success: "Pobrano najnowszą wersje!"

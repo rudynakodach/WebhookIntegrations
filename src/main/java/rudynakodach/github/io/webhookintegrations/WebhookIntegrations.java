@@ -18,7 +18,7 @@ import java.util.logging.Level;
 public final class WebhookIntegrations extends JavaPlugin {
     // Welcome, fellow source code reader!
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 35;
+    public static int currentBuildNumber = 36;
 
     //on startup
     @Override
@@ -81,8 +81,6 @@ public final class WebhookIntegrations extends JavaPlugin {
                 getLogger().log(Level.WARNING, language.getString("update.checkFailed") + e.getMessage());
             }
         }
-
-        this.saveDefaultConfig();
 
         if (Objects.equals(Objects.requireNonNull(getConfig().getString("webhookUrl")).trim(), "")) {
             getLogger().log(Level.WARNING, language.getString("onStart.webhookEmpty"));
