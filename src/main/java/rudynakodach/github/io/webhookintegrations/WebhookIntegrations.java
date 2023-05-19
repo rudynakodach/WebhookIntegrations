@@ -1,6 +1,7 @@
 package rudynakodach.github.io.webhookintegrations;
 
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import rudynakodach.github.io.webhookintegrations.Commands.*;
@@ -17,11 +18,14 @@ import java.util.logging.Level;
 public final class WebhookIntegrations extends JavaPlugin {
     // Welcome, fellow source code reader!
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 33;
+    public static int currentBuildNumber = 35;
 
     //on startup
     @Override
     public void onEnable() {
+        // bStats integration
+        Metrics metrics = new Metrics(this, 18509);
+
         saveDefaultConfig();
         getLogger().log(Level.INFO, "Hello, World!");
 

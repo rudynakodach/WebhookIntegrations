@@ -150,6 +150,11 @@ onPlayerDeath:
       "fields": [ { "name":"Time", "value":"$time$", "inline":false } ] } ] } }'
 
 onPlayerChat:
+
+  # Do we allow the user to have placeholders in their chat message?
+  # Setting this to true will allow the player to format their messages using PAPI (%%) and built-in ($$) placeholders.
+  allow-placeholders-in-message: false
+
   # Available variables:
   # - $player$ - player who left
   # - $uuid$ - player's uuid who died

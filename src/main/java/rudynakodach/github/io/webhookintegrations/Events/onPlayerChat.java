@@ -5,7 +5,6 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
 
@@ -25,6 +24,8 @@ public class onPlayerChat implements Listener {
         if (!plugin.getConfig().getBoolean("onPlayerChat.announce")) {
             return;
         }
+        boolean allowPlaceholdersInMessage = plugin.getConfig().getBoolean("onPlayerChat.allow-placeholders-in-message");
+
         String message = PlainTextComponentSerializer.plainText().serialize(event.message());
         String playerName = event.getPlayer().getName();
         String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
@@ -47,17 +48,25 @@ public class onPlayerChat implements Listener {
             return;
         }
 
+        if(allowPlaceholdersInMessage) {
+            json = json.replace("$message$", message);
+        }
+
         json = json.replace("$playersOnline$",String.valueOf(plugin.getServer().getOnlinePlayers().size()))
             .replace("$maxPlayers$",String.valueOf(plugin.getServer().getMaxPlayers()))
             .replace("$uuid$", event.getPlayer().getUniqueId().toString())
             .replace("$player$", playerName)
             .replace("$time$", time)
-            .replace("$message$", message)
             .replace("$world$", playerWorldName);
 
         if(plugin.getServer().getPluginManager().getPermission("PlaceholderAPI") != null) {
             json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
         }
+
+        if(!allowPlaceholdersInMessage) {
+            json = json.replace("$message$", message);
+        }
+
 
         new WebhookActions(plugin).SendAsync(json);
     }
