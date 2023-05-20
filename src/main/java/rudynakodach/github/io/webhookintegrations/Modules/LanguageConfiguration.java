@@ -1,26 +1,31 @@
 package rudynakodach.github.io.webhookintegrations.Modules;
 
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
 
 public class LanguageConfiguration {
 
     private static LanguageConfiguration instance;
     private String locale;
     private YamlConfiguration languageFile;
-
+    private final JavaPlugin plugin;
     public static LanguageConfiguration get() {
         return instance;
     }
 
-    public LanguageConfiguration(String locale, YamlConfiguration languageFile) {
+    public LanguageConfiguration(JavaPlugin plugin, String locale, YamlConfiguration languageFile) {
+        this.plugin = plugin;
+
         this.locale = locale;
         this.languageFile = languageFile;
 
         instance = this;
     }
 
-    public void reload(YamlConfiguration languageFile) {
-        this.languageFile = languageFile;
+    public void reload() {
+        this.languageFile = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "lang.yml"));
     }
 
     public YamlConfiguration getYamlConfig() {

@@ -6,7 +6,6 @@ import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -43,7 +42,7 @@ public class WebhookActions {
                     connection.setDoOutput(true);
 
                     OutputStream outputStream = connection.getOutputStream();
-                    outputStream.write(encodedJson.getBytes(StandardCharsets.UTF_8));
+                    outputStream.write(encodedJson.getBytes());
                     outputStream.flush();
                     outputStream.close();
 
@@ -83,7 +82,7 @@ public class WebhookActions {
             connection.setDoOutput(true);
 
             OutputStream outputStream = connection.getOutputStream();
-            outputStream.write(encodedJson.getBytes(StandardCharsets.UTF_8));
+            outputStream.write(encodedJson.getBytes());
             outputStream.flush();
             outputStream.close();
 

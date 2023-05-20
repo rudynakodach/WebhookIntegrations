@@ -18,11 +18,13 @@ import rudynakodach.github.io.webhookintegrations.WebhookIntegrations;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class WIActions implements CommandExecutor, TabCompleter {
     JavaPlugin plugin;
@@ -67,8 +69,14 @@ public class WIActions implements CommandExecutor, TabCompleter {
                     return disable(commandSender);
                 } else if(args[0].equalsIgnoreCase("setlanguage")) {
                     return setLanguage(commandSender, args);
-                } else if(args[0].equalsIgnoreCase("config") && args.length >= 3) {
-                    return setConfig(commandSender, args);
+                } else if(args[0].equalsIgnoreCase("config")) {
+                    if(args[1].equalsIgnoreCase("setvalue") && args.length >= 3) {
+                        return setConfig(commandSender, args);
+                    } else if(args[1].equalsIgnoreCase("savebackup")) {
+                        return saveBackup(commandSender, args);
+                    } else if(args[1].equalsIgnoreCase("loadbackup") && args.length >= 3) {
+                        return loadBackup(commandSender, args);
+                    }
                 }
             }
         }
@@ -95,11 +103,25 @@ public class WIActions implements CommandExecutor, TabCompleter {
                     return language.getYamlConfig().getKeys(false).stream().toList();
                 } else if(args[0].equalsIgnoreCase("config")) {
                     suggestions.add("setvalue");
+                    suggestions.add("savebackup");
+                    suggestions.add("loadbackup");
                     return suggestions;
                 }
             } else if(args.length == 3) {
-                if(args[0].equalsIgnoreCase("config") && args[1].equalsIgnoreCase("setvalue")) {
-                    return plugin.getConfig().getKeys(true).stream().toList();
+                if(args[0].equalsIgnoreCase("config")) {
+                    if(args[1].equalsIgnoreCase("setvalue")) {
+                        return plugin.getConfig().getKeys(true).stream().toList();
+                    } else if(args[1].equalsIgnoreCase("loadbackup")) {
+                        File configBackupsDirectory = new File(plugin.getDataFolder(), "config-backups");
+                        File[] backups = configBackupsDirectory.listFiles();
+                        if(backups == null) {
+                            return suggestions;
+                        }
+                        // Returns a list of all filenames present in the config-backups directory.
+                        return Arrays.stream(backups)
+                                .map(File::getName)
+                                .collect(Collectors.toList());
+                    }
                 }
             } else if(args.length == 4) {
                 if(args[0].equalsIgnoreCase("config") && args[1].equalsIgnoreCase("setvalue")) {
@@ -180,8 +202,7 @@ public class WIActions implements CommandExecutor, TabCompleter {
             return true;
         }
         plugin.reloadConfig();
-        YamlConfiguration languageFile = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "lang.yml"));
-        language.reload(languageFile);
+        language.reload();
         MessageConfiguration.get().reload();
         commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', language.getString("commands.config.reloadFinish")));
         return true;
@@ -326,4 +347,89 @@ public class WIActions implements CommandExecutor, TabCompleter {
         return true;
     }
 
+    private boolean saveBackup(CommandSender commandSender, String[] args) {
+        Player player = (Player) commandSender;
+        if(!player.hasPermission("webhookintegrations.config.savebackup")) {
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                    language.getString("commands.no-permission")));
+            return true;
+        }
+        // Saves the backup as the provided name if possible, current time otherwise.
+        String backupName = args.length >= 3 ? String.join("_", Arrays.copyOfRange(args, 3, args.length)) :
+                new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss.SSS").format(new Date());
+
+        Path originalConfig = Path.of(plugin.getDataFolder().getAbsolutePath(), "config.yml");
+        Path originalLanguage = Path.of(plugin.getDataFolder().getAbsolutePath(), "lang.yml");
+        Path originalMessages = Path.of(plugin.getDataFolder().getAbsolutePath(), "messages.yml");
+
+        Path backupConfig = Path.of(plugin.getDataFolder().getAbsolutePath(), "config-backups", backupName, "config.yml");
+        Path backupLanguage = Path.of(plugin.getDataFolder().getAbsolutePath(), "config-backups", backupName, "lang.yml");
+        Path backupMessages = Path.of(plugin.getDataFolder().getAbsolutePath(), "config-backups", backupName, "messages.yml");
+
+        try {
+            Files.copy(originalConfig, backupConfig, StandardCopyOption.COPY_ATTRIBUTES);
+        } catch (IOException e) {
+            plugin.getLogger().log(Level.SEVERE, "Failed to make a copy of the config file: " + e.getMessage());
+        }
+        try {
+            Files.copy(originalLanguage, backupLanguage, StandardCopyOption.COPY_ATTRIBUTES);
+        } catch (IOException e) {
+            plugin.getLogger().log(Level.SEVERE, "Failed to make a copy of the language configuration file: " + e.getMessage());
+        }
+        try {
+            Files.copy(originalMessages, backupMessages, StandardCopyOption.COPY_ATTRIBUTES);
+        } catch (IOException e) {
+            plugin.getLogger().log(Level.SEVERE, "Failed to make a copy of JSON payloads file: " + e.getMessage());
+        }
+
+        return true;
+    }
+
+    private boolean loadBackup(CommandSender commandSender, String[] args) {
+        Player player = (Player) commandSender;
+        if(!player.hasPermission("webhookintegrations.config.loadbackup")) {
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                    language.getString("commands.no-permission")));
+            return true;
+        }
+
+        String backupName = args[2];
+        Path backups = Path.of(plugin.getDataFolder().getAbsolutePath(), "config-backups");
+
+        if(!Files.exists(Path.of(backups.toAbsolutePath().toString(), backupName))) {
+            player.sendMessage("Folder doesn't exist.");
+            return true;
+        }
+
+        Path originalConfig = Path.of(plugin.getDataFolder().getAbsolutePath(), "config.yml");
+        Path originalLanguage = Path.of(plugin.getDataFolder().getAbsolutePath(), "lang.yml");
+        Path originalMessages = Path.of(plugin.getDataFolder().getAbsolutePath(), "messages.yml");
+
+        Path backupConfig = Path.of(plugin.getDataFolder().getAbsolutePath(), "config-backups", backupName, "config.yml");
+        Path backupLanguage = Path.of(plugin.getDataFolder().getAbsolutePath(), "config-backups", backupName, "lang.yml");
+        Path backupMessages = Path.of(plugin.getDataFolder().getAbsolutePath(), "config-backups", backupName, "messages.yml");
+
+        try {
+            Files.copy(backupConfig, originalConfig, StandardCopyOption.COPY_ATTRIBUTES);
+            plugin.reloadConfig();
+        } catch (IOException e) {
+            plugin.getLogger().log(Level.SEVERE, "Failed to copy the config file: " + e.getMessage());
+        }
+
+        try {
+            Files.copy(backupLanguage, originalLanguage, StandardCopyOption.COPY_ATTRIBUTES);
+            LanguageConfiguration.get().reload();
+        } catch (IOException e) {
+            plugin.getLogger().log(Level.SEVERE, "Failed to copy the language configuration file: " + e.getMessage());
+        }
+
+        try {
+            Files.copy(backupMessages, originalMessages, StandardCopyOption.COPY_ATTRIBUTES);
+            MessageConfiguration.get().reload();
+        } catch (IOException e) {
+            plugin.getLogger().log(Level.SEVERE, "Failed to copy the JSON payloads file: " + e.getMessage());
+        }
+
+        return true;
+    }
 }

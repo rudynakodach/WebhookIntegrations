@@ -1,6 +1,5 @@
 package rudynakodach.github.io.webhookintegrations.Modules;
 
-
 public enum MessageType {
     SERVER_START("onServerStart"),
     SERVER_STOP("onServerStop"),

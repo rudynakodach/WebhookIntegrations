@@ -20,7 +20,7 @@ import java.util.logging.Level;
 public final class WebhookIntegrations extends JavaPlugin {
     // Welcome, fellow source code reader!
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 38;
+    public static int currentBuildNumber = 39;
 
     //on startup
     @Override
@@ -37,6 +37,13 @@ public final class WebhookIntegrations extends JavaPlugin {
 
         if(!new File(getDataFolder(), "lang.yml").exists()) {
             this.saveResource("lang.yml",false);
+        }
+
+        if(!new File(getDataFolder(), "config-backups").exists()) {
+            boolean result = new File(getDataFolder(), "config-backups").mkdir();
+            if(!result) {
+                getLogger().log(Level.SEVERE, "Failed to create the config-backups directory.");
+            }
         }
 
         getLogger().log(Level.INFO,"Initializing language...");
@@ -62,7 +69,7 @@ public final class WebhookIntegrations extends JavaPlugin {
             getLogger().log(Level.INFO,"Hooked to " + selectedLanguage);
         }
 
-        LanguageConfiguration language = new LanguageConfiguration(selectedLanguage, languageConfig);
+        LanguageConfiguration language = new LanguageConfiguration(this, selectedLanguage, languageConfig);
 
         getLogger().log(Level.INFO, language.getString("onStart.message"));
 
@@ -125,7 +132,6 @@ public final class WebhookIntegrations extends JavaPlugin {
         Objects.requireNonNull(getCommand("wi")).setExecutor(resetConfig);
 
         getLogger().log(Level.INFO, language.getString("onStart.commandRegisterFinish"));
-
 
         new MessageConfiguration(this);
 

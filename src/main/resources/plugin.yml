@@ -50,3 +50,11 @@ commands:
   setconfigvalue:
     usage: /wi config setvalue <key> <value>
     permission: webhookintegrations.config.setvalue
+
+  loadbackup:
+    usage: /wi config loadbackup <name>
+    permission: webhookintegrations.config.loadbackup
+
+  savebackup:
+    usage: /wi config savebackup <?name>
+    permission: webhookintegrations.config.savebackup
