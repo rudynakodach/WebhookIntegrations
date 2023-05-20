@@ -2,10 +2,12 @@ package rudynakodach.github.io.webhookintegrations;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.*;
+import java.util.Objects;
 import java.util.logging.Level;
 
 public class WebhookActions {
@@ -16,7 +18,12 @@ public class WebhookActions {
 
     public void SendAsync(String json) {
         if(!plugin.getConfig().getBoolean("isEnabled")) {return;}
-        String webhookUrl = plugin.getConfig().getString("webhookUrl").trim();
+        if(!plugin.getConfig().contains("webhookUrl")) {
+            plugin.getLogger().log(Level.SEVERE, LanguageConfiguration.get().getString("config.noWebhookUrl"));
+            return;
+        }
+
+        String webhookUrl = Objects.requireNonNull(plugin.getConfig().getString("webhookUrl")).trim();
 
         if (webhookUrl.equals("")) {
             plugin.getLogger().log(Level.WARNING, "Attempted to send a message to an empty webhook URL! Use /setUrl or disable the event in the config!");
@@ -50,7 +57,12 @@ public class WebhookActions {
 
     public void SendSync(String json) {
         if(!plugin.getConfig().getBoolean("isEnabled")) {return;}
-        String webhookUrl = plugin.getConfig().getString("webhookUrl").trim();
+        if(!plugin.getConfig().contains("webhookUrl")) {
+            plugin.getLogger().log(Level.SEVERE, LanguageConfiguration.get().getString("config.noWebhookUrl"));
+            return;
+        }
+
+        String webhookUrl = Objects.requireNonNull(plugin.getConfig().getString("webhookUrl")).trim();
 
         if (webhookUrl.equals("")) {
             plugin.getLogger().log(Level.WARNING, "Attempted to send a message to an empty webhook URL! Use /setUrl or disable the event in the config!");

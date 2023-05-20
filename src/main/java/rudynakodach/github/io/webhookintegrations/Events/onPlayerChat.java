@@ -33,8 +33,12 @@ public class onPlayerChat implements Listener {
 
         String json = plugin.getConfig().getString("onPlayerChat.messageJson");
 
+        if(json == null) {
+            return;
+        }
+
         for(String key : plugin.getConfig().getConfigurationSection("censoring").getKeys(false)) {
-            message = message.replace(key, plugin.getConfig().getString("censoring." + key + ".to"));
+            message = message.replace(key, String.valueOf(plugin.getConfig().get("censoring." + key)));
         }
 
         if(plugin.getConfig().getBoolean("remove-force-pings")) {
@@ -66,7 +70,6 @@ public class onPlayerChat implements Listener {
         if(!allowPlaceholdersInMessage) {
             json = json.replace("$message$", message);
         }
-
 
         new WebhookActions(plugin).SendAsync(json);
     }

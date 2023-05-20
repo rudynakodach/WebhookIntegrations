@@ -24,6 +24,10 @@ public class onPlayerQuit implements Listener {
 
         String json = plugin.getConfig().getString("onPlayerQuit.messageJson");
 
+        if(json == null) {
+            return;
+        }
+
         json = json.replace("$playersOnline$",String.valueOf(plugin.getServer().getOnlinePlayers().size()))
             .replace("$maxPlayers$",String.valueOf(plugin.getServer().getMaxPlayers()))
             .replace("$player$", event.getPlayer().getName())

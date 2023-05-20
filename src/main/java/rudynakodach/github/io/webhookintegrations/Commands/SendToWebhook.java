@@ -10,12 +10,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
-import rudynakodach.github.io.webhookintegrations.WebhookIntegrations;
 
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 public class SendToWebhook implements CommandExecutor {

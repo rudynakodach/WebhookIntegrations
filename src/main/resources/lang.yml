@@ -2,6 +2,9 @@
 en_US:
   no-permission: "&cYou don't have permission to do that."
 
+  config:
+    noWebhookUrl: "Config doesn't contain a webhookUrl key! Creating a backup of the config file and using /wi config reset is reccomended."
+
   update:
     checking: "Checking for updates..."
     checkFailed: "Failed to get build number: "
@@ -56,6 +59,9 @@ en_US:
 pl_PL:
   no-permission: "&cNie masz uprawnień."
 
+  cofig:
+    noWebhookUrl: "Config nie zawiera klucza webhookUrl! Zalecane jest stworzenie kopii zapasowej pliku konfiguracyjnego i użycie /wi config reset confirm"
+
   update:
     checking: "Sprawdzanie aktualizacji..."
     checkFailed: "Wystąpił błąd podczas sprawdzania aktualizacji: "
@@ -80,7 +86,7 @@ pl_PL:
       noHttps: "URL powinno zawierać \"https://\"!"
 
     send:
-      onEmptyUrl: "Adres URL jest &lPUSTY! Najpierw użyj &e/setUrl&r!"
+      onEmptyUrl: "&lNie podano aresu webhooka! Najpierw użyj &e/seturl&r!"
       commandIncorrectUsage: "Niepoprawne użycie."
 
     config:

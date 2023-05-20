@@ -18,10 +18,8 @@ isEnabled: true
 
 # You should wrap censored phrases in "quotes".
 censoring:
-  "@everyone":
-    to: "everyone"
-  "@here":
-    to: "here"
+  "@everyone": "everyone"
+  "@here": "here"
 
 # You can ping someone using their id like this: <@id> (for instance <@795204175314272>)
 # Setting this to true removes this ability by removing the force-ping from the message completely.

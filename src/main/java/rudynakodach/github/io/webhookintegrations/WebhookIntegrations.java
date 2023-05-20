@@ -18,13 +18,13 @@ import java.util.logging.Level;
 public final class WebhookIntegrations extends JavaPlugin {
     // Welcome, fellow source code reader!
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 36;
+    public static int currentBuildNumber = 37;
 
     //on startup
     @Override
     public void onEnable() {
         // bStats integration
-        Metrics metrics = new Metrics(this, 18509);
+        new Metrics(this, 18509);
 
         saveDefaultConfig();
         getLogger().log(Level.INFO, "Hello, World!");
@@ -128,7 +128,7 @@ public final class WebhookIntegrations extends JavaPlugin {
     @Override
     public void onDisable() {
         if (getConfig().getBoolean("onServerStop.announce")) {
-            if (!getConfig().getString("webhookUrl").trim().equals("")) {
+            if (!Objects.requireNonNull(getConfig().getString("webhookUrl")).trim().equals("")) {
                 sendStopMessage();
             }
         }
@@ -148,6 +148,10 @@ public final class WebhookIntegrations extends JavaPlugin {
         Boolean isOnlineMode = getServer().getOnlineMode();
         int playersOnline = getServer().getOnlinePlayers().size();
 
+        if(json == null) {
+            return;
+        }
+
         json = json.replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()))
             .replace("%serverIp%", serverIp)
             .replace("%maxPlayers%", String.valueOf(slots))
@@ -163,13 +167,17 @@ public final class WebhookIntegrations extends JavaPlugin {
     private void sendStopMessage() {
         String serverIp = getServer().getIp();
         int slots = getServer().getMaxPlayers();
-        String serverMotd = getServer().getMotd();
+        String serverMotd = PlainTextComponentSerializer.plainText().serialize(getServer().motd());
         String serverName = getServer().getName();
         String serverVersion = getServer().getVersion();
         Boolean isOnlineMode = getServer().getOnlineMode();
         int playersOnline = getServer().getOnlinePlayers().size();
 
         String json = getConfig().getString("onServerStop.messageJson");
+
+        if(json == null) {
+            return;
+        }
 
         json = json.replace("%time%", new SimpleDateFormat("HH:mm:ss").format(new Date()))
             .replace("%serverIp%", serverIp)

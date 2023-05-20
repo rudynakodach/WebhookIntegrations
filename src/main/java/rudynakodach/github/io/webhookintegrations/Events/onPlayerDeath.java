@@ -11,6 +11,7 @@ import rudynakodach.github.io.webhookintegrations.WebhookActions;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 public class onPlayerDeath implements Listener {
 
@@ -23,7 +24,7 @@ public class onPlayerDeath implements Listener {
     public void onPlayerDeathEvent(PlayerDeathEvent event) {
         String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
         String playerName = event.getEntity().getName();
-        String deathMessage = PlainTextComponentSerializer.plainText().serialize(event.deathMessage() == null ? Component.empty() : event.deathMessage());
+        String deathMessage = PlainTextComponentSerializer.plainText().serialize(event.deathMessage() == null ? Component.empty() : Objects.requireNonNull(event.deathMessage()));
 
         String newLevel = String.valueOf(event.getNewLevel());
         String newExp = String.valueOf(event.getNewExp());
@@ -34,6 +35,10 @@ public class onPlayerDeath implements Listener {
             if(!plugin.getConfig().getBoolean("onPlayerDeath.playerKilledByPlayer.announce")) {return;}
             String killerName = event.getEntity().getKiller().getName();
             String json = plugin.getConfig().getString("onPlayerDeath.playerKilledByPlayer.messageJson");
+
+            if(json == null) {
+                return;
+            }
 
             json = json.replace("$playersOnline$",String.valueOf(plugin.getServer().getOnlinePlayers().size()))
                 .replace("$maxPlayers$",String.valueOf(plugin.getServer().getMaxPlayers()))
@@ -55,6 +60,10 @@ public class onPlayerDeath implements Listener {
         else {
             if(!plugin.getConfig().getBoolean("onPlayerDeath.playerKilledByNPC.announce")) {return;}
             String json = plugin.getConfig().getString("onPlayerDeath.playerKilledByNPC.messageJson");
+
+            if(json == null) {
+                return;
+            }
 
             json = json.replace("$time$",time)
                 .replace("$player$",playerName)

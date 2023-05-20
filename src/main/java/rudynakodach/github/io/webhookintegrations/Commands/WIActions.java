@@ -5,7 +5,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 
 public class WIActions implements CommandExecutor, TabCompleter {
@@ -135,23 +135,23 @@ public class WIActions implements CommandExecutor, TabCompleter {
             return true;
         }
         commandSender.sendMessage(ChatColor.AQUA + "Analyzing config... To reload the config use /wi reload");
-        StringBuilder message = new StringBuilder("auto-update: " + colorBoolean(plugin.getConfig().getBoolean("auto-update")));
-        if (plugin.getConfig().getString("webhookUrl").trim().equalsIgnoreCase("")) {
-            message.append("\nwebhookUrl: " + ChatColor.RED + "unset\n");
+        String message = "auto-update: " + colorBoolean(plugin.getConfig().getBoolean("auto-update"));
+        if (Objects.requireNonNull(plugin.getConfig().getString("webhookUrl")).trim().equalsIgnoreCase("")) {
+            message += "\nwebhookUrl: " + ChatColor.RED + "unset\n";
         } else {
-            message.append("\nwebhookUrl: " + ChatColor.GREEN + "set\n");
+            message += "\nwebhookUrl: " + ChatColor.GREEN + "set\n";
         }
-        message.append(ChatColor.YELLOW + "EVENTS" + ChatColor.WHITE)
-                .append("\nonStart: " + colorBoolean(plugin.getConfig().getBoolean("onServerStart.announce")))
-                .append("\nonStop: " + colorBoolean(plugin.getConfig().getBoolean("onServerStop.announce")))
-                .append("\nplayerJoin: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerJoin.announce")))
-                .append("\nplayerQuit: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerQuit.announce")))
-                .append("\nplayerKicked: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerKicked.announce")))
-                .append("\nonAdvancementMade: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerAdvancementComplete.announce")))
-                .append("\nplayerDeathPve: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerDeath.playerKilledByNPC.announce")))
-                .append("\nPlayerDeathPvp: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerDeath.playerKilledByPlayer.announce")));
+        message += ChatColor.YELLOW + "EVENTS" + ChatColor.WHITE;
+        message += "\nonStart: " + colorBoolean(plugin.getConfig().getBoolean("onServerStart.announce"));
+        message += "\nonStop: " + colorBoolean(plugin.getConfig().getBoolean("onServerStop.announce"));
+        message += "\nplayerJoin: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerJoin.announce"));
+        message += "\nplayerQuit: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerQuit.announce"));
+        message += "\nplayerKicked: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerKicked.announce"));
+        message += "\nonAdvancementMade: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerAdvancementComplete.announce"));
+        message += "\nplayerDeathPve: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerDeath.playerKilledByNPC.announce"));
+        message += "\nPlayerDeathPvp: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerDeath.playerKilledByPlayer.announce"));
 
-        commandSender.sendMessage(String.valueOf(message));
+        commandSender.sendMessage(message);
         return true;
     }
 
