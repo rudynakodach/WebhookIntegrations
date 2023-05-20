@@ -6,6 +6,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
+import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
 
 import java.text.SimpleDateFormat;
@@ -20,7 +22,7 @@ public class onPlayerKick implements Listener {
 
     @EventHandler
     public void onPlayerKickedEvent(PlayerKickEvent event) {
-        if (!plugin.getConfig().getBoolean("onPlayerKicked.announce")) {
+        if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_KICK.getValue())) {
             return;
         }
         String playerName = event.getPlayer().getName();
@@ -31,7 +33,7 @@ public class onPlayerKick implements Listener {
             reason = "Unspecified reason.";
         }
 
-        String json = plugin.getConfig().getString("onPlayerKicked.messageJson");
+        String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_KICK.getValue());
 
         if(json == null) {
             return;
@@ -44,7 +46,7 @@ public class onPlayerKick implements Listener {
             .replace("$reason$", reason)
             .replace("$time$", time);
 
-        if(plugin.getServer().getPluginManager().getPermission("PlaceholderAPI") != null) {
+        if(plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
         }
 

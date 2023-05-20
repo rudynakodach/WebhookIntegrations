@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import rudynakodach.github.io.webhookintegrations.AutoUpdater;
 import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
+import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
 import rudynakodach.github.io.webhookintegrations.WebhookIntegrations;
 
 import java.io.File;
@@ -181,6 +182,7 @@ public class WIActions implements CommandExecutor, TabCompleter {
         plugin.reloadConfig();
         YamlConfiguration languageFile = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "lang.yml"));
         language.reload(languageFile);
+        MessageConfiguration.get().reload();
         commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', language.getString("commands.config.reloadFinish")));
         return true;
     }
@@ -225,6 +227,11 @@ public class WIActions implements CommandExecutor, TabCompleter {
             return true;
         }
         plugin.getConfig().set("isEnabled", true);
+        try {
+            plugin.getConfig().save(new File(plugin.getDataFolder(), "config.yml"));
+        } catch (IOException e) {
+            plugin.getLogger().log(Level.SEVERE, "Couldn't enable webhook due to an exception: " + e.getMessage());
+        }
         plugin.reloadConfig();
         return true;
     }
@@ -239,6 +246,11 @@ public class WIActions implements CommandExecutor, TabCompleter {
             return true;
         }
         plugin.getConfig().set("isEnabled", false);
+        try {
+            plugin.getConfig().save(new File(plugin.getDataFolder(), "config.yml"));
+        } catch (IOException e) {
+            plugin.getLogger().log(Level.SEVERE, "Couldn't disable webhook due to an exception: " + e.getMessage());
+        }
         plugin.reloadConfig();
         return true;
     }

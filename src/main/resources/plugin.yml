@@ -13,7 +13,7 @@ commands:
     usage: /send <isEmbed> <message>
     permission: webhookintegrations.send
 
-  cfgreload:
+  configreset:
     usage: /wi config reset <confirm>
     permission: webhookintegrations.config.reset
 
@@ -43,10 +43,10 @@ commands:
     usage: /wi enable
     permission: webhookintegrations.enable
 
-  setLang:
+  setlang:
     usage: /wi setlanguage
     permission: webhookintegrations.setlanguage
 
-  setConfigValue:
+  setconfigvalue:
     usage: /wi config setvalue <key> <value>
     permission: webhookintegrations.config.setvalue

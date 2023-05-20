@@ -5,6 +5,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
+import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
 
 import java.text.SimpleDateFormat;
@@ -20,9 +22,9 @@ public class onPlayerQuit implements Listener {
 
     @EventHandler
     public void onPlayerQuitEvent(PlayerQuitEvent event) {
-        if (!plugin.getConfig().getBoolean("onPlayerQuit.announce")) {return;}
+        if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_QUIT.getValue())) {return;}
 
-        String json = plugin.getConfig().getString("onPlayerQuit.messageJson");
+        String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_QUIT.getValue());
 
         if(json == null) {
             return;
