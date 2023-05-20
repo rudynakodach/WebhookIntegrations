@@ -6,7 +6,7 @@
 
     <groupId>rudynakodach.github.io</groupId>
     <artifactId>WebhookIntegrations</artifactId>
-    <version>3.6.1</version>
+    <version>3.7</version>
     <packaging>jar</packaging>
 
     <name>WebhookIntegrations</name>
@@ -43,7 +43,6 @@
                             <relocations>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
-                                    <!-- Replace this with your package! -->
                                     <shadedPattern>rudynakodach.github.io.webhookintegrations</shadedPattern>
                                 </relocation>
                             </relocations>

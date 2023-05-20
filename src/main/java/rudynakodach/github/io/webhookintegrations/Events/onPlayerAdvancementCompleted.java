@@ -6,6 +6,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
+import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
 
 import java.text.SimpleDateFormat;
@@ -18,31 +20,31 @@ public class onPlayerAdvancementCompleted implements Listener {
     }
     @EventHandler
     public void onAdvancementMade(PlayerAdvancementDoneEvent event) {
-        if (!plugin.getConfig().getBoolean("onPlayerAdvancementComplete.announce")) {
+        if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_ADVANCEMENT.getValue())) {
             return;
         }
 
         // if the advancement is hidden
-        if(event.getAdvancement().getDisplay() == null) {
+        if (event.getAdvancement().getDisplay() == null) {
             return;
         }
 
         String advancement = PlainTextComponentSerializer.plainText().serialize(event.getAdvancement().getDisplay().title());
         String advancementDescription = PlainTextComponentSerializer.plainText().serialize(event.getAdvancement().getDisplay().description());
 
-        String json = plugin.getConfig().getString("onPlayerAdvancementComplete.messageJson");
+        String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_ADVANCEMENT.getValue());
 
-            json = json.replace("$desc$", advancementDescription)
+        json = json.replace("$desc$", advancementDescription)
                 .replace("$playersOnline$", String.valueOf(plugin.getServer().getOnlinePlayers().size()))
                 .replace("$advancement$", advancement)
                 .replace("$player$", event.getPlayer().getName())
                 .replace("$uuid$", event.getPlayer().getUniqueId().toString())
                 .replace("$time$", new SimpleDateFormat("HH:mm:ss").format(new Date()));
 
-            if(plugin.getServer().getPluginManager().getPermission("PlaceholderAPI") != null) {
-                json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
-            }
+        if (plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
+        }
 
-            new WebhookActions(plugin).SendAsync(json);
+        new WebhookActions(plugin).SendAsync(json);
     }
 }

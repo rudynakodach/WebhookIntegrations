@@ -6,8 +6,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
-import rudynakodach.github.io.webhookintegrations.WebhookIntegrations;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -18,20 +18,20 @@ import java.util.logging.Logger;
 public class SetWebhookURL implements CommandExecutor {
 
     final FileConfiguration config;
-    final JavaPlugin javaPlugin;
+    final JavaPlugin plugin;
     final Logger logger;
     final LanguageConfiguration language;
 
-    public SetWebhookURL(FileConfiguration _cfg, JavaPlugin _javaPlugin) {
-        config = _cfg;
-        javaPlugin = _javaPlugin;
-        logger = javaPlugin.getLogger();
+    public SetWebhookURL(JavaPlugin plugin) {
+        config = plugin.getConfig();
+        this.plugin = plugin;
+        logger = this.plugin.getLogger();
 
         this.language = LanguageConfiguration.get();
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String label, String[] args) {
         if (command.getName().equalsIgnoreCase("seturl")) {
             if (args.length == 1) {
                 String newUrl = args[0].trim();
@@ -62,7 +62,7 @@ public class SetWebhookURL implements CommandExecutor {
                 }
 
                 config.set("webhookUrl", newUrl);
-                javaPlugin.saveConfig();
+                plugin.saveConfig();
                 sender.sendMessage(ChatColor.GREEN + language.getString("commands.seturl.newUrlSet"));
                 return true;
             } else {

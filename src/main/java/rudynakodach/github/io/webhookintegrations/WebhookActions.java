@@ -6,7 +6,9 @@ import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.logging.Level;
 
@@ -32,6 +34,8 @@ public class WebhookActions {
         new BukkitRunnable() {
             public void run() {
                 try {
+                    String encodedJson = URLEncoder.encode(json, StandardCharsets.UTF_8);
+
                     URL url = new URL(webhookUrl);
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("POST");
@@ -39,7 +43,7 @@ public class WebhookActions {
                     connection.setDoOutput(true);
 
                     OutputStream outputStream = connection.getOutputStream();
-                    outputStream.write(json.getBytes());
+                    outputStream.write(encodedJson.getBytes(StandardCharsets.UTF_8));
                     outputStream.flush();
                     outputStream.close();
 
@@ -70,6 +74,8 @@ public class WebhookActions {
         }
 
         try {
+            String encodedJson = URLEncoder.encode(json, StandardCharsets.UTF_8);
+
             URL url = new URL(webhookUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
@@ -77,7 +83,7 @@ public class WebhookActions {
             connection.setDoOutput(true);
 
             OutputStream outputStream = connection.getOutputStream();
-            outputStream.write(json.getBytes());
+            outputStream.write(encodedJson.getBytes(StandardCharsets.UTF_8));
             outputStream.flush();
             outputStream.close();
 

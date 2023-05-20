@@ -6,6 +6,8 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
+import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
 
 import java.text.SimpleDateFormat;
@@ -21,17 +23,17 @@ public class onPlayerChat implements Listener {
 
     @EventHandler
     public void onPlayerChatEvent(AsyncChatEvent event) {
-        if (!plugin.getConfig().getBoolean("onPlayerChat.announce")) {
+        if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_CHAT.getValue())) {
             return;
         }
-        boolean allowPlaceholdersInMessage = plugin.getConfig().getBoolean("onPlayerChat.allow-placeholders-in-message");
+        boolean allowPlaceholdersInMessage = MessageConfiguration.get().getConfig().getBoolean("onPlayerChat.allow-placeholders-in-message");
 
         String message = PlainTextComponentSerializer.plainText().serialize(event.message());
         String playerName = event.getPlayer().getName();
         String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
         String playerWorldName = event.getPlayer().getWorld().getName();
 
-        String json = plugin.getConfig().getString("onPlayerChat.messageJson");
+        String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_CHAT.getValue());
 
         if(json == null) {
             return;
@@ -63,7 +65,7 @@ public class onPlayerChat implements Listener {
             .replace("$time$", time)
             .replace("$world$", playerWorldName);
 
-        if(plugin.getServer().getPluginManager().getPermission("PlaceholderAPI") != null) {
+        if(plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
         }
 

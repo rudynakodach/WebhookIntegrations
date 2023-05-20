@@ -6,6 +6,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
+import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
 import rudynakodach.github.io.webhookintegrations.WebhookIntegrations;
 
@@ -24,18 +26,13 @@ public class onPlayerJoin implements Listener {
 
     @EventHandler
     public void onPlayerJoinEvent(PlayerJoinEvent event) {
-        if (!opsJoined.contains(event.getPlayer().getName())) {
-            if (plugin.getServer().getOperators().contains(event.getPlayer())) {
-                if (!WebhookIntegrations.isLatest) {
-                    event.getPlayer().sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "W" + ChatColor.WHITE + "I" + ChatColor.GRAY + "]" + ChatColor.WHITE + " Update available. Please update from either GitHub, SpigotMC or Bukkit.");
-                    opsJoined.add(event.getPlayer().getName());
-                }
-            }
-        }
-        if (!plugin.getConfig().getBoolean("onPlayerJoin.announce")) {
+        sendOpMessage(event);
+
+        if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_JOIN.getValue())) {
             return;
         }
-        String json = plugin.getConfig().getString("onPlayerJoin.messageJson");
+
+        String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_JOIN.getValue());
 
         if(json == null) {
             return;
@@ -47,10 +44,21 @@ public class onPlayerJoin implements Listener {
                 .replace("$player$", event.getPlayer().getName())
                 .replace("$time$", new SimpleDateFormat("HH:mm:ss").format(new Date()));
 
-        if(plugin.getServer().getPluginManager().getPermission("PlaceholderAPI") != null) {
+        if(plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
         }
 
         new WebhookActions(plugin).SendAsync(json);
+    }
+
+    private void sendOpMessage(PlayerJoinEvent event) {
+        if (!opsJoined.contains(event.getPlayer().getName())) {
+            if (plugin.getServer().getOperators().contains(event.getPlayer())) {
+                if (!WebhookIntegrations.isLatest) {
+                    event.getPlayer().sendMessage(ChatColor.GRAY + "[" + ChatColor.BLUE + "W" + ChatColor.WHITE + "I" + ChatColor.GRAY + "]" + ChatColor.WHITE + " Update available. Please update from either GitHub, SpigotMC or Bukkit.");
+                    opsJoined.add(event.getPlayer().getName());
+                }
+            }
+        }
     }
 }

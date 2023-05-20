@@ -7,6 +7,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
+import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
 
 import java.text.SimpleDateFormat;
@@ -32,9 +34,9 @@ public class onPlayerDeath implements Listener {
         String oldExp = String.valueOf(event.getEntity().getTotalExperience());
 
         if(event.getEntity().getKiller() != null) {
-            if(!plugin.getConfig().getBoolean("onPlayerDeath.playerKilledByPlayer.announce")) {return;}
+            if(!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_DEATH_KILLED.getValue())) {return;}
             String killerName = event.getEntity().getKiller().getName();
-            String json = plugin.getConfig().getString("onPlayerDeath.playerKilledByPlayer.messageJson");
+            String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_DEATH_KILLED.getValue());
 
             if(json == null) {
                 return;
@@ -58,8 +60,8 @@ public class onPlayerDeath implements Listener {
             new WebhookActions(plugin).SendAsync(json);
         }
         else {
-            if(!plugin.getConfig().getBoolean("onPlayerDeath.playerKilledByNPC.announce")) {return;}
-            String json = plugin.getConfig().getString("onPlayerDeath.playerKilledByNPC.messageJson");
+            if(!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_DEATH_NPC.getValue())) {return;}
+            String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_DEATH_NPC.getValue());
 
             if(json == null) {
                 return;
@@ -73,7 +75,7 @@ public class onPlayerDeath implements Listener {
                 .replace("$oldLevel$",oldLevel)
                 .replace("$oldExp$",oldExp);
 
-            if(plugin.getServer().getPluginManager().getPermission("PlaceholderAPI") != null) {
+            if(plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
                 json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
             }
 
