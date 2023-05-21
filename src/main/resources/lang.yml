@@ -1,9 +1,10 @@
-#file: noinspection SpellCheckingInspection
+# If you want to contribute and add your own translations, create a fork and make a pull request on the GitHub repository here: https://github.com/rudynakodach/WebhookIntegrations/pulls
+
 en_US:
   no-permission: "&cYou don't have permission to do that."
 
   config:
-    noWebhookUrl: "Config doesn't contain a webhookUrl key! Creating a backup of the config file and using /wi config reset is reccomended."
+    noWebhookUrl: "Config doesn't contain a webhookUrl key! Creating a backup of the config file and using /wi config reset is recommended."
 
   update:
     checking: "Checking for updates..."
@@ -53,13 +54,13 @@ en_US:
       latest: "Already running the latest version!"
 
     setLang:
-      changed: "Launguage changed."
+      changed: "Language changed."
       notExists: "&cLanguage provided doesn't exist."
 
 pl_PL:
   no-permission: "&cNie masz uprawnień."
 
-  cofig:
+  config:
     noWebhookUrl: "Config nie zawiera klucza webhookUrl! Zalecane jest stworzenie kopii zapasowej pliku konfiguracyjnego i użycie /wi config reset confirm"
 
   update:
@@ -69,7 +70,7 @@ pl_PL:
     updateFound: "Nowa wersja dostępna! Zainstaluj nową wersje z:\nGitHuba: https://github.com/rudynakodach/WebhookIntegrations/releases/latest \nSpigotMC: https://www.spigotmc.org/resources/webhookintegrations-1-16-1-19-3.107688/\nBukkit: https://dev.bukkit.org/projects/webhookintegrations"
 
   onStart:
-    message: "Dziękuje za korzystanie z WebhookIntegrations <3"
+    message: "Dziękuję za korzystanie z WebhookIntegrations <3"
     webhookEmpty: "Adres Webhooka jest pusty i nie może zostać użyty! Ustaw wartość 'webhookUrl' w configu albo użyj \"/seturl <url>\"!"
     registeringEvents: "Rejestrowanie wydarzeń..."
     eventRegisterFinish: "Wydarzenia zarejestrowane."
