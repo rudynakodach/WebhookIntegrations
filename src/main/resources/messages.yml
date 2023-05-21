@@ -1,9 +1,10 @@
-# IF YOU DON'T KNOW ANYTHING ABOUT WEBHOOK STRUCTURE, PLEASE GO HERE: https://gist.github.com/Birdie0/78ee79402a4301b1faf412ab5f1cdcf9#structure-of-webhooks
+# IF YOU DON'T KNOW ANYTHING ABOUT WEBHOOK STRUCTURE, PLEASE GO HERE: https://birdie0.github.io/discord-webhooks-guide/index.html
 # minotar API for player head icons: https://minotar.net/
 
 onServerStart:
   # Available variables:
   # - $time$ - server's local time
+  # - $timestamp$ - the current timestamp
   # - $serverIp$ - IP address of your server.
   # - $maxPlayers$ - slot count
   # - $playersOnline$ - the amount of players online
@@ -14,27 +15,22 @@ onServerStart:
   announce: true
   # I won't make this message for you.
   messageJson: '{
- "embeds": [ 
-  { 
-   "author": { 
-    "name": "Server" 
-   }, 
-   "description": "Server Started.", 
-   "color": 65280, 
-   "fields": [ 
-    { 
-     "name": "Time", 
-     "value": "$time$", 
-     "inline": false 
-    } 
-   ] 
-  } 
- ] 
+  "embeds": [
+    {
+      "author": {
+        "name": "Server"
+      },
+      "description": "Server Started.",
+      "color": 65280,
+      "timestamp": "$timestamp$"
+    }
+  ]
 }'
 
 onServerStop:
   # Available variables:
   # - $time$ - server's local time
+  # - $timestamp$ - the current timestamp
   # - $serverIp$ - IP address of your server.
   # - $maxPlayers$ - slot count
   # - $playersOnline$ - the amount of players online
@@ -44,46 +40,88 @@ onServerStop:
   # - $isOnlineMode$ - true if online-mode is enabled, false otherwise
   announce: true
   # I won't make this message for you.
-  messageJson: '{ "embeds": [ { "author": { "name": "Server" }, "description": "Server
-    Stopped.", "color": 16711680, "fields": [ { "name":"Time", "value":"$time$", "inline":false
-    } ] } ] }'
+  messageJson: '{
+  "embeds": [
+    {
+      "author": {
+        "name": "Server"
+      },
+      "description": "Server Stopped.",
+      "color": 16711680,
+      "timestamp": "$timestamp$"
+    }
+  ]
+}'
 
 onPlayerJoin:
   # Available variables:
   # - $player$ - player who joined
   # - $uuid$ - player's uuid who triggered the event
   # - $time$ - server"s local time
+  # - $timestamp$ - the current timestamp
   # - $maxPlayers$ - slot count
   # - $playersOnline$ - the amount of players online
   announce: true
-  messageJson: '{ "embeds": [ { "author": { "name": "$player$", "icon_url": "https://minotar.net/helm/$player$/512.png"
-    }, "description": "**$player$** joined the game.", "color": 65280, "fields":
-    [ { "name":"Time", "value":"$time$", "inline":false } ] } ] }'
+  messageJson: '{
+  "embeds": [
+    {
+      "author": {
+        "name": "$player$",
+        "icon_url": "https://minotar.net/helm/$player$/512.png"
+      },
+      "description": "**$player$** joined the game.",
+      "color": 65280,
+      "timestamp": "$timestamp$"
+    }
+  ]
+}'
 
 onPlayerQuit:
   # Available variables:
   # - $player$ - player who left
   # - $uuid$ - player's uuid who triggered the event
   # - $time$ - server's local time
+  # - $timestamp$ - the current timestamp
   # - $maxPlayers$ - slot count
   # - $playersOnline$ - the amount of players online
   announce: true
-  messageJson: '{ "embeds": [ { "author": { "name": "$player$", "icon_url": "https://minotar.net/helm/$player$/512.png"
-    }, "description": "**$player$** left the game.", "color": 16711680, "fields":
-    [ { "name":"Time", "value":"$time$", "inline":false } ] } ] } '
+  messageJson: '{
+  "embeds": [
+    {
+      "author": {
+        "name": "$player$",
+        "icon_url": "https://minotar.net/helm/$player$/512.png"
+      },
+      "description": "**$player$** left the game.",
+      "color": 16711680,
+      "timestamp": "$timestamp$"
+    }
+  ]
+}'
 
 onPlayerKicked:
   # Available variables:
   # - $player$ - player who left
   # - $uuid$ - player's uuid who triggered the event
   # - $time$ - server's local time
+  # - $timestamp$ - the current timestamp
   # - $reason$ - reason provided
   # - $maxPlayers$ - slot count
   # - $playersOnline$ - the amount of players online
 
   announce: true
-  messageJson: '{ "embeds": [ { "author": {"name": "$player$", "icon_url": "https://minotar.net/helm/$player$/512.png" }, "description": "**$player$** was kicked:
-    *$reason$*", "color": 16753920, "fields": [ { "name": "Time", "value": "$time$", "inline": false } ] } ] }'
+  messageJson: '{
+  "embeds": [
+    {
+      "author": {
+        "name": "$player$",
+        "icon_url": "https://minotar.net/helm/$player$/512.png"
+      },
+      "description": "**$player$** was kicked: *$reason$*",
+      "color": 16753920
+    }
+  ]
+}'
 
 onPlayerDeath:
   # This event is different.
@@ -94,6 +132,7 @@ onPlayerDeath:
   # - $uuid$ - player's uuid who died
 
   # - $time$ - server's local time
+  # - $timestamp$ - the current timestamp
   # - $deathMessage$ - death message visible in chat
   # - $newLevel$ - player's level after death
   # - $newExp$ - player's experience after death
@@ -103,9 +142,19 @@ onPlayerDeath:
   # - $playersOnline$ - the amount of players online
   playerKilledByNPC:
     announce: true
-    messageJson: '{ "embeds": [ { "author": { "name": "$player$", "icon_url": "https://minotar.net/helm/$player$/512.png"
-      }, "description": "**$player$** died.", "color": 15631086, "fields": [ { "name":"Time",
-      "value":"$time$", "inline":false } ] } ] }'
+    messageJson: '{
+  "embeds": [
+    {
+      "author": {
+        "name": "$player$",
+        "icon_url": "https://minotar.net/helm/$player$/512.png"
+      },
+      "description": "**$player$** died.",
+      "color": 15631086,
+      "timestamp": "$timestamp$"
+    }
+  ]
+}'
   playerKilledByPlayer:
     # Additional variables:
     # - $killer$ - killer's player name
@@ -113,9 +162,19 @@ onPlayerDeath:
     # This uses relational placeholders from PlaceholderAPI. Its usage is as follows: %<rel_(identifier)_(params)>%
     # The first identifier is the victim, where the second is the killer.
     announce: true
-    messageJson: '{ "embeds": [ { "author": { "name": "$player$", "icon_url": "https://minotar.net/helm/$player$/512.png"
-      }, "description": "**$player$** was killed by **$killer$**.", "color": 16711680,
-      "fields": [ { "name":"Time", "value":"$time$", "inline":false } ] } ] } }'
+    messageJson: '{
+  "embeds": [
+    {
+      "author": {
+        "name": "$player$",
+        "icon_url": "https://minotar.net/helm/$player$/512.png"
+      },
+      "description": "**$player$** was killed by **$killer$**.",
+      "color": 16711680,
+      "timestamp": "$timestamp$"
+    }
+  ]
+}'
 
 onPlayerChat:
 
@@ -127,27 +186,48 @@ onPlayerChat:
   # - $player$ - player who left
   # - $uuid$ - player's uuid who died
   # - $time$ - server's local time
+  # - $timestamp$ - the current timestamp
   # - $message$ - message sent by player
   # - $worldName$ - name of the world the player currently is
   # - $maxPlayers$ - slot count
   # - $playersOnline$ - the amount of players online
   announce: true
-  messageJson: '{ "embeds":[ { "author":{ "name": "$player$", "icon_url":"https://minotar.net/helm/$player$/512.png"
-    }, "description":"*$message$*", "color":3447003, "fields": [ { "name":"Time",
-    "value":"$time$", "inline":false } ] } ] }'
+  messageJson: '{
+  "embeds": [
+    {
+      "author": {
+        "name": "$player$",
+        "icon_url": "https://minotar.net/helm/$player$/512.png"
+      },
+      "description": "$message$",
+      "color": 3447003,
+      "timestamp": "$timestamp$"
+    }
+  ]
+}'
 
 onPlayerAdvancementComplete:
   # Available variables:
   # - $player$ - player name
   # - $uuid$ - player's uuid who died
   # - $time$ - server's local time
-  # - $advancement$ - full advancement message visible in chat
+  # - $timestamp$ - the current timestamp
+  # - $advancement$ - the name of the advancement
   # - $maxPlayers$ - slot count
   # - $playersOnline$ - the amount of players online
   announce: true
-  messageJson: '{ "embeds": [ { "author":{ "name": "$player$", "icon_url":"https://minotar.net/helm/$player$/512.png"
-    }, "description": "**$player$** has made the advancement `[$advancement$]`", "color":
-    16766720, "fields": [ { "name":"Time", "value":"$time$", "inline":false } ] }
-    ] }'
+  messageJson: '{
+  "embeds": [
+    {
+      "author": {
+        "name": "$player$",
+        "icon_url": "https://minotar.net/helm/$player$/512.png"
+      },
+      "description": "**$player$** has made the advancement `[$advancement$]`",
+      "color": 16766720,
+      "timestamp": "$timestamp$"
+    }
+  ]
+}'
 
 #END OF FILE
