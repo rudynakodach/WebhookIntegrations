@@ -1,11 +1,12 @@
 package rudynakodach.github.io.webhookintegrations.Commands;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
@@ -355,8 +356,8 @@ public class WIActions implements CommandExecutor, TabCompleter {
             return true;
         }
         // Saves the backup as the provided name if possible, current time otherwise.
-        String backupName = args.length >= 3 ? String.join("_", Arrays.copyOfRange(args, 3, args.length)) :
-                new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss.SSS").format(new Date());
+        String backupName = args.length >= 3 ? String.join("_", Arrays.copyOfRange(args, 2, args.length)) :
+                new SimpleDateFormat("yyyy-MM-dd_hh-mm-ss-SSS").format(new Date());
 
         Path originalConfig = Path.of(plugin.getDataFolder().getAbsolutePath(), "config.yml");
         Path originalLanguage = Path.of(plugin.getDataFolder().getAbsolutePath(), "lang.yml");
@@ -365,6 +366,13 @@ public class WIActions implements CommandExecutor, TabCompleter {
         Path backupConfig = Path.of(plugin.getDataFolder().getAbsolutePath(), "config-backups", backupName, "config.yml");
         Path backupLanguage = Path.of(plugin.getDataFolder().getAbsolutePath(), "config-backups", backupName, "lang.yml");
         Path backupMessages = Path.of(plugin.getDataFolder().getAbsolutePath(), "config-backups", backupName, "messages.yml");
+
+        try {
+            Files.createDirectory(Path.of(plugin.getDataFolder().getAbsolutePath(), "config-backups", backupName));
+        } catch (IOException e) {
+            plugin.getLogger().log(Level.SEVERE, "Failed to make a backup folder: " + e.getMessage());
+            return true;
+        }
 
         try {
             Files.copy(originalConfig, backupConfig, StandardCopyOption.COPY_ATTRIBUTES);
@@ -397,7 +405,7 @@ public class WIActions implements CommandExecutor, TabCompleter {
         Path backups = Path.of(plugin.getDataFolder().getAbsolutePath(), "config-backups");
 
         if(!Files.exists(Path.of(backups.toAbsolutePath().toString(), backupName))) {
-            player.sendMessage("Folder doesn't exist.");
+            commandSender.sendMessage(Component.text("Folder doesn't exist.").color(NamedTextColor.RED));
             return true;
         }
 
@@ -410,24 +418,36 @@ public class WIActions implements CommandExecutor, TabCompleter {
         Path backupMessages = Path.of(plugin.getDataFolder().getAbsolutePath(), "config-backups", backupName, "messages.yml");
 
         try {
-            Files.copy(backupConfig, originalConfig, StandardCopyOption.COPY_ATTRIBUTES);
+            if(Files.exists(Path.of(plugin.getDataFolder().getAbsolutePath(), "config.yml"))) {
+                Files.copy(backupConfig, originalConfig, StandardCopyOption.REPLACE_EXISTING);
+            } else {
+                Files.copy(backupConfig, originalConfig, StandardCopyOption.COPY_ATTRIBUTES);
+            }
             plugin.reloadConfig();
         } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to copy the config file: " + e.getMessage());
+            plugin.getLogger().log(Level.SEVERE, "Failed to replace the config file: " + e.getMessage());
         }
 
         try {
-            Files.copy(backupLanguage, originalLanguage, StandardCopyOption.COPY_ATTRIBUTES);
+            if(Files.exists(Path.of(plugin.getDataFolder().getAbsolutePath(), "lang.yml"))) {
+                Files.copy(backupLanguage, originalLanguage, StandardCopyOption.REPLACE_EXISTING);
+            } else {
+                Files.copy(backupLanguage, originalLanguage, StandardCopyOption.COPY_ATTRIBUTES);
+            }
             LanguageConfiguration.get().reload();
         } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to copy the language configuration file: " + e.getMessage());
+            plugin.getLogger().log(Level.SEVERE, "Failed to replace the language configuration file: " + e.getMessage());
         }
 
         try {
-            Files.copy(backupMessages, originalMessages, StandardCopyOption.COPY_ATTRIBUTES);
+            if(Files.exists(Path.of(plugin.getDataFolder().getAbsolutePath(), "messages.yml"))) {
+                Files.copy(backupMessages, originalMessages, StandardCopyOption.REPLACE_EXISTING);
+            } else {
+                Files.copy(backupMessages, originalMessages, StandardCopyOption.COPY_ATTRIBUTES);
+            }
             MessageConfiguration.get().reload();
         } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to copy the JSON payloads file: " + e.getMessage());
+            plugin.getLogger().log(Level.SEVERE, "Failed to replace the JSON payloads file: " + e.getMessage());
         }
 
         return true;
