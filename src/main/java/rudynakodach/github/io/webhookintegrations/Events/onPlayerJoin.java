@@ -12,6 +12,8 @@ import rudynakodach.github.io.webhookintegrations.WebhookActions;
 import rudynakodach.github.io.webhookintegrations.WebhookIntegrations;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -39,6 +41,7 @@ public class onPlayerJoin implements Listener {
         }
 
         json = json.replace("$playersOnline$", String.valueOf(plugin.getServer().getOnlinePlayers().size()))
+                .replace("$timestamp$", DateTimeFormatter.ISO_INSTANT.format(Instant.now()))
                 .replace("$maxPlayers$", String.valueOf(plugin.getServer().getMaxPlayers()))
                 .replace("$uuid$", event.getPlayer().getUniqueId().toString())
                 .replace("$player$", event.getPlayer().getName())

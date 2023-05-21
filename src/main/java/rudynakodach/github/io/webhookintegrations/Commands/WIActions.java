@@ -286,6 +286,8 @@ public class WIActions implements CommandExecutor, TabCompleter {
         }
         String newLang = args[1];
         if(language.getYamlConfig().contains(newLang)) {
+            plugin.getConfig().set("language-override", newLang);
+            plugin.reloadConfig();
             language.setLanguage(newLang);
             commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', language.getString("commands.setLang.changed")));
         } else {

@@ -11,6 +11,8 @@ import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class onPlayerAdvancementCompleted implements Listener {
@@ -35,6 +37,7 @@ public class onPlayerAdvancementCompleted implements Listener {
         String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_ADVANCEMENT.getValue());
 
         json = json.replace("$desc$", advancementDescription)
+                .replace("$timestamp$", DateTimeFormatter.ISO_INSTANT.format(Instant.now()))
                 .replace("$playersOnline$", String.valueOf(plugin.getServer().getOnlinePlayers().size()))
                 .replace("$advancement$", advancement)
                 .replace("$player$", event.getPlayer().getName())

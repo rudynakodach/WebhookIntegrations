@@ -11,6 +11,8 @@ import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class onPlayerChat implements Listener {
@@ -59,6 +61,7 @@ public class onPlayerChat implements Listener {
         }
 
         json = json.replace("$playersOnline$",String.valueOf(plugin.getServer().getOnlinePlayers().size()))
+            .replace("$timestamp$", DateTimeFormatter.ISO_INSTANT.format(Instant.now()))
             .replace("$maxPlayers$",String.valueOf(plugin.getServer().getMaxPlayers()))
             .replace("$uuid$", event.getPlayer().getUniqueId().toString())
             .replace("$player$", playerName)
