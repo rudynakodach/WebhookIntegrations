@@ -2,7 +2,7 @@
 name: Support
 about: "Support ticket"
 title: WI help needed
-labels: help-wanted
+labels: help-needed
 assignees: rudynakodach
 ---
 
