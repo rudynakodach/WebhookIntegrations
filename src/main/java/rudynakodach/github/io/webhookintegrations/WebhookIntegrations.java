@@ -2,6 +2,7 @@ package rudynakodach.github.io.webhookintegrations;
 
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import rudynakodach.github.io.webhookintegrations.Commands.*;
@@ -21,14 +22,13 @@ import java.util.logging.Level;
 public final class WebhookIntegrations extends JavaPlugin {
     // Welcome, fellow source code reader!
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 42;
+    public static int currentBuildNumber = 43;
 
     //on startup
     @Override
     public void onEnable() {
         // bStats integration
-        new Metrics(this, 18509);
-
+        Metrics metrics = new Metrics(this, 18509);
         saveDefaultConfig();
         getLogger().log(Level.INFO, "Hello, World!");
 
@@ -135,6 +135,8 @@ public final class WebhookIntegrations extends JavaPlugin {
         getLogger().log(Level.INFO, language.getString("onStart.commandRegisterFinish"));
 
         new MessageConfiguration(this);
+        metrics.addCustomChart(new SimplePie("url_state", () ->
+                String.valueOf(!Objects.requireNonNullElse(getConfig().getString("webhookUrl"), "").equalsIgnoreCase(""))));
 
         sendStartMessage();
     }
