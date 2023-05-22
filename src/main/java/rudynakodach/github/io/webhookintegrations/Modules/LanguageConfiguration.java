@@ -28,6 +28,10 @@ public class LanguageConfiguration {
         this.languageFile = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "lang.yml"));
     }
 
+    public String getLocale() {
+        return locale;
+    }
+
     public YamlConfiguration getYamlConfig() {
         return languageFile;
     }

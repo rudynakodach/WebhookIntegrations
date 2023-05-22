@@ -22,7 +22,7 @@ import java.util.logging.Level;
 public final class WebhookIntegrations extends JavaPlugin {
     // Welcome, fellow source code reader!
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 43;
+    public static int currentBuildNumber = 44;
 
     //on startup
     @Override
@@ -137,6 +137,8 @@ public final class WebhookIntegrations extends JavaPlugin {
         new MessageConfiguration(this);
         metrics.addCustomChart(new SimplePie("url_state", () ->
                 String.valueOf(!Objects.requireNonNullElse(getConfig().getString("webhookUrl"), "").equalsIgnoreCase(""))));
+
+        metrics.addCustomChart(new SimplePie("lang_used", () -> LanguageConfiguration.get().getLocale()));
 
         sendStartMessage();
     }
