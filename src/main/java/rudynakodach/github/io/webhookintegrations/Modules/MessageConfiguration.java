@@ -21,7 +21,6 @@ public class MessageConfiguration {
         instance = this;
     }
 
-
     public boolean canAnnounce(String message) {
         return config.getBoolean(message + ".announce");
     }

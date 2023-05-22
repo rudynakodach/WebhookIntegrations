@@ -11,9 +11,9 @@ import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
 
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Objects;
+import java.util.TimeZone;
 
 public class onPlayerAdvancementCompleted implements Listener {
     JavaPlugin plugin;
@@ -36,13 +36,20 @@ public class onPlayerAdvancementCompleted implements Listener {
 
         String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_ADVANCEMENT.getValue());
 
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        sdf.setTimeZone(TimeZone.getTimeZone(plugin.getConfig().getString("timezone")));
+
         json = json.replace("$desc$", advancementDescription)
-                .replace("$timestamp$", DateTimeFormatter.ISO_INSTANT.format(Instant.now()))
+                .replace("$timestamp$", sdf.format(new Date()))
                 .replace("$playersOnline$", String.valueOf(plugin.getServer().getOnlinePlayers().size()))
                 .replace("$advancement$", advancement)
                 .replace("$player$", event.getPlayer().getName())
                 .replace("$uuid$", event.getPlayer().getUniqueId().toString())
-                .replace("$time$", new SimpleDateFormat("HH:mm:ss").format(new Date()));
+                .replace("$time$", new SimpleDateFormat(
+                        Objects.requireNonNullElse(
+                                plugin.getConfig().getString("date-format"),
+                                "HH:mm:ss")).format(new Date())
+                );
 
         if (plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);

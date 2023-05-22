@@ -15,12 +15,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.TimeZone;
 import java.util.logging.Level;
 
 public final class WebhookIntegrations extends JavaPlugin {
     // Welcome, fellow source code reader!
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 41;
+    public static int currentBuildNumber = 42;
 
     //on startup
     @Override
@@ -165,8 +166,15 @@ public final class WebhookIntegrations extends JavaPlugin {
             return;
         }
 
-        json = json.replace("$time$", new SimpleDateFormat("HH:mm:ss").format(new Date()))
-            .replace("$serverIp$", serverIp)
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        sdf.setTimeZone(TimeZone.getTimeZone(getConfig().getString("timezone")));
+
+        json = json.replace("$serverIp$", serverIp)
+            .replace("$timestamp$", sdf.format(new Date()))
+            .replace("$time$", new SimpleDateFormat(
+                    Objects.requireNonNullElse(
+                            getConfig().getString("date-format"),
+                            "")).format(new Date()))
             .replace("$maxPlayers$", String.valueOf(slots))
             .replace("$serverMotd$", serverMotd)
             .replace("$serverName$", serverName)
@@ -196,7 +204,14 @@ public final class WebhookIntegrations extends JavaPlugin {
             return;
         }
 
-        json = json.replace("$time$", new SimpleDateFormat("HH:mm:ss").format(new Date()))
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        sdf.setTimeZone(TimeZone.getTimeZone(getConfig().getString("timezone")));
+
+        json = json.replace("$time$", new SimpleDateFormat(
+                        Objects.requireNonNullElse(
+                                getConfig().getString("date-format"),
+                                "")).format(new Date()))
+            .replace("$timestamp$", sdf.format(new Date()))
             .replace("$serverIp$", serverIp)
             .replace("$maxPlayers$", String.valueOf(slots))
             .replace("$serverMotd$", serverMotd)

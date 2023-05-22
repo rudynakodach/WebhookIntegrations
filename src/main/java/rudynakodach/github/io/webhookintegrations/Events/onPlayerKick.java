@@ -11,9 +11,9 @@ import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
 
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Objects;
+import java.util.TimeZone;
 
 public class onPlayerKick implements Listener {
     JavaPlugin plugin;
@@ -29,7 +29,6 @@ public class onPlayerKick implements Listener {
         }
         String playerName = event.getPlayer().getName();
         String reason = PlainTextComponentSerializer.plainText().serialize(event.reason());
-        String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
 
         if (reason.equals("")) {
             reason = "Unspecified reason.";
@@ -41,13 +40,20 @@ public class onPlayerKick implements Listener {
             return;
         }
 
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        sdf.setTimeZone(TimeZone.getTimeZone(plugin.getConfig().getString("timezone")));
+
         json = json.replace("$playersOnline$",String.valueOf(plugin.getServer().getOnlinePlayers().size()))
-            .replace("$timestamp$", DateTimeFormatter.ISO_INSTANT.format(Instant.now()))
+            .replace("$timestamp$", sdf.format(new Date()))
             .replace("$maxPlayers$",String.valueOf(plugin.getServer().getMaxPlayers()))
             .replace("$uuid$", event.getPlayer().getUniqueId().toString())
             .replace("$player$", playerName)
             .replace("$reason$", reason)
-            .replace("$time$", time);
+                .replace("$time$", new SimpleDateFormat(
+                        Objects.requireNonNullElse(
+                                plugin.getConfig().getString("date-format"),
+                                "")).format(new Date())
+                );
 
         if(plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);

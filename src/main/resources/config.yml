@@ -28,4 +28,10 @@ remove-force-pings: true
 # Setting this to true removes this ability by removing the force-channel-ping from the message completely.
 remove-force-channel-pings: true
 
+# Date format used for the $time$ placeholder.
+date-format: "HH:mm:ss"
+
+# The timezone used for timestamps in the $timestamp$ placeholder.
+timezone: "UTC"
+
 #END OF FILE

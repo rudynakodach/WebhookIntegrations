@@ -12,10 +12,9 @@ import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
 
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Objects;
+import java.util.TimeZone;
 
 public class onPlayerDeath implements Listener {
 
@@ -26,7 +25,6 @@ public class onPlayerDeath implements Listener {
 
     @EventHandler
     public void onPlayerDeathEvent(PlayerDeathEvent event) {
-        String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
         String playerName = event.getEntity().getName();
         String deathMessage = PlainTextComponentSerializer.plainText().serialize(event.deathMessage() == null ? Component.empty() : Objects.requireNonNull(event.deathMessage()));
 
@@ -34,6 +32,9 @@ public class onPlayerDeath implements Listener {
         String newExp = String.valueOf(event.getNewExp());
         String oldLevel = String.valueOf(event.getEntity().getLevel());
         String oldExp = String.valueOf(event.getEntity().getTotalExperience());
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        sdf.setTimeZone(TimeZone.getTimeZone(plugin.getConfig().getString("timezone")));
 
         if(event.getEntity().getKiller() != null) {
             if(!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_DEATH_KILLED.getValue())) {return;}
@@ -45,9 +46,13 @@ public class onPlayerDeath implements Listener {
             }
 
             json = json.replace("$playersOnline$",String.valueOf(plugin.getServer().getOnlinePlayers().size()))
-                .replace("$timestamp$", DateTimeFormatter.ISO_INSTANT.format(Instant.now()))
+                .replace("$timestamp$", sdf.format(new Date()))
                 .replace("$maxPlayers$",String.valueOf(plugin.getServer().getMaxPlayers()))
-                .replace("$time$",time)
+                    .replace("$time$", new SimpleDateFormat(
+                            Objects.requireNonNullElse(
+                                    plugin.getConfig().getString("date-format"),
+                                    "HH:mm:ss")).format(new Date())
+                    )
                 .replace("$victim$",playerName)
                 .replace("$killer$",killerName)
                 .replace("$deathMessage$",deathMessage)
@@ -70,8 +75,12 @@ public class onPlayerDeath implements Listener {
                 return;
             }
 
-            json = json.replace("$time$",time)
-                .replace("$timestamp$", DateTimeFormatter.ISO_INSTANT.format(Instant.now()))
+            json = json.replace("$time$", new SimpleDateFormat(
+                            Objects.requireNonNullElse(
+                                    plugin.getConfig().getString("date-format"),
+                                    "HH:mm:ss")).format(new Date())
+                    )
+                .replace("$timestamp$", sdf.format(new Date()))
                 .replace("$player$",playerName)
                 .replace("$deathMessage$",deathMessage)
                 .replace("$newLevel$",newLevel)

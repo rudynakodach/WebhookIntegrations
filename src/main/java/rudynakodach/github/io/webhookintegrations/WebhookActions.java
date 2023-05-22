@@ -7,7 +7,6 @@ import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.*;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.logging.Level;
 
@@ -30,11 +29,10 @@ public class WebhookActions {
             plugin.getLogger().log(Level.WARNING, "Attempted to send a message to an empty webhook URL! Use /setUrl or disable the event in the config!");
             return;
         }
+
         new BukkitRunnable() {
             public void run() {
                 try {
-                    String encodedJson = URLEncoder.encode(json, StandardCharsets.UTF_8);
-
                     URL url = new URL(webhookUrl);
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("POST");
@@ -42,7 +40,7 @@ public class WebhookActions {
                     connection.setDoOutput(true);
 
                     OutputStream outputStream = connection.getOutputStream();
-                    outputStream.write(encodedJson.getBytes());
+                    outputStream.write(json.getBytes());
                     outputStream.flush();
                     outputStream.close();
 
@@ -73,8 +71,6 @@ public class WebhookActions {
         }
 
         try {
-            String encodedJson = URLEncoder.encode(json, StandardCharsets.UTF_8);
-
             URL url = new URL(webhookUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
@@ -82,7 +78,7 @@ public class WebhookActions {
             connection.setDoOutput(true);
 
             OutputStream outputStream = connection.getOutputStream();
-            outputStream.write(encodedJson.getBytes());
+            outputStream.write(json.getBytes());
             outputStream.flush();
             outputStream.close();
 
