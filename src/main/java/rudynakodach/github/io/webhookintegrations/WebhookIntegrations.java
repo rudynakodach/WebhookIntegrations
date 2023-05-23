@@ -23,7 +23,7 @@ public final class WebhookIntegrations extends JavaPlugin {
     // Welcome, fellow source code reader!
 
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 45;
+    public static int currentBuildNumber = 46;
 
     //on startup
     @Override
@@ -142,6 +142,10 @@ public final class WebhookIntegrations extends JavaPlugin {
         metrics.addCustomChart(new SimplePie("lang_used", () -> LanguageConfiguration.get().getLocale()));
 
         metrics.addCustomChart(new SimplePie("timezone", () -> getConfig().getString("timezone")));
+
+        metrics.addCustomChart(new SimplePie("remove-force-role-pings", () -> String.valueOf(getConfig().getBoolean("remove-force-role-pings"))));
+        metrics.addCustomChart(new SimplePie("remove-force-pings", () -> String.valueOf(getConfig().getBoolean("remove-force-pings"))));
+        metrics.addCustomChart(new SimplePie("remove-force-channel-pings", () -> String.valueOf(getConfig().getBoolean("remove-force-channel-pings"))));
 
         sendStartMessage();
     }

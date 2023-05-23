@@ -28,6 +28,9 @@ remove-force-pings: true
 # Setting this to true removes this ability by removing the force-channel-ping from the message completely.
 remove-force-channel-pings: true
 
+# The same thing here. Removes the ability to use the <@&id> syntax to ping roles.
+remove-force-role-pings: true
+
 # Date format used for the $time$ placeholder.
 date-format: "HH:mm:ss"
 
