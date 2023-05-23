@@ -6,7 +6,8 @@ import org.bstats.charts.SimplePie;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import rudynakodach.github.io.webhookintegrations.Commands.*;
-import rudynakodach.github.io.webhookintegrations.Events.*;
+import rudynakodach.github.io.webhookintegrations.Events.Actions.OpJoinEvent;
+import rudynakodach.github.io.webhookintegrations.Events.Webhook.*;
 import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
@@ -23,7 +24,7 @@ public final class WebhookIntegrations extends JavaPlugin {
     // Welcome, fellow source code reader!
 
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 46;
+    public static int currentBuildNumber = 47;
 
     //on startup
     @Override
@@ -109,6 +110,9 @@ public final class WebhookIntegrations extends JavaPlugin {
 
         onPlayerJoin onPlayerJoinEvent = new onPlayerJoin(this);
         getServer().getPluginManager().registerEvents(onPlayerJoinEvent, this);
+
+        OpJoinEvent opJoinEvent = new OpJoinEvent(this);
+        getServer().getPluginManager().registerEvents(opJoinEvent, this);
 
         onPlayerQuit playerQuitEvent = new onPlayerQuit(this);
         getServer().getPluginManager().registerEvents(playerQuitEvent, this);

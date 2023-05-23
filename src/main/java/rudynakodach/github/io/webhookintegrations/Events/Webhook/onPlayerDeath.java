@@ -1,4 +1,4 @@
-package rudynakodach.github.io.webhookintegrations.Events;
+package rudynakodach.github.io.webhookintegrations.Events.Webhook;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;

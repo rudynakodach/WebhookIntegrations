@@ -1,4 +1,4 @@
-package rudynakodach.github.io.webhookintegrations.Events;
+package rudynakodach.github.io.webhookintegrations.Events.Webhook;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
 import me.clip.placeholderapi.PlaceholderAPI;
