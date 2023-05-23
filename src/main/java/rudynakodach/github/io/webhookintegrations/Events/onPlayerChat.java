@@ -58,6 +58,9 @@ public class onPlayerChat implements Listener {
         if(plugin.getConfig().getBoolean("remove-force-channel-pings")) {
             message = message.replaceAll("<#[0-9]+>", "");
         }
+        if(plugin.getConfig().getBoolean("remove-force-role-pings")) {
+            message = message.replaceAll("<@&[0-9]+>", "");
+        }
 
         if(message.trim().equalsIgnoreCase("")) {
             return;
@@ -65,6 +68,9 @@ public class onPlayerChat implements Listener {
 
         if(allowPlaceholdersInMessage) {
             json = json.replace("$message$", message);
+            if(plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+                json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
+            }
         }
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
@@ -82,11 +88,10 @@ public class onPlayerChat implements Listener {
                 )
             .replace("$world$", playerWorldName);
 
-        if(plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
-        }
-
         if(!allowPlaceholdersInMessage) {
+            if(plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+                json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
+            }
             json = json.replace("$message$", message);
         }
 
