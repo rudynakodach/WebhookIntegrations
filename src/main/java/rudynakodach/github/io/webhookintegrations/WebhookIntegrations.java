@@ -21,8 +21,9 @@ import java.util.logging.Level;
 
 public final class WebhookIntegrations extends JavaPlugin {
     // Welcome, fellow source code reader!
+
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 44;
+    public static int currentBuildNumber = 45;
 
     //on startup
     @Override
@@ -139,6 +140,8 @@ public final class WebhookIntegrations extends JavaPlugin {
                 String.valueOf(!Objects.requireNonNullElse(getConfig().getString("webhookUrl"), "").equalsIgnoreCase(""))));
 
         metrics.addCustomChart(new SimplePie("lang_used", () -> LanguageConfiguration.get().getLocale()));
+
+        metrics.addCustomChart(new SimplePie("timezone", () -> getConfig().getString("timezone")));
 
         sendStartMessage();
     }
