@@ -18,7 +18,6 @@ disableForVanishedPlayers: true
 
 # Replaces every occurrence of each word to their corresponding values
 # e.g. "@everyone" to "everyone"
-
 # You should wrap censored phrases in "quotes".
 censoring:
   "@everyone": "everyone"
@@ -34,7 +33,7 @@ remove-force-channel-pings: true
 # The same thing here. Removes the ability to use the <@&id> syntax to ping roles.
 remove-force-role-pings: true
 
-# Date format used for the $time$ placeholder.
+# Date format used for the $time$ placeholder. All formats: https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html
 date-format: "HH:mm:ss"
 
 # The timezone used for timestamps in the $timestamp$ placeholder.

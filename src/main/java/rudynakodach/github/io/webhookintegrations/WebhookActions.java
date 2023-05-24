@@ -1,14 +1,35 @@
+/*
+ * WebhookIntegrations
+ * Copyright (C) 2023 rudynakodach
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package rudynakodach.github.io.webhookintegrations;
 
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -39,25 +60,24 @@ public class WebhookActions {
 
         new BukkitRunnable() {
             public void run() {
-                try {
-                    URL url = new URL(webhookUrl);
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.setRequestMethod("POST");
-                    connection.setRequestProperty("Content-Type", "application/json");
-                    connection.setDoOutput(true);
+                CloseableHttpClient httpClient = HttpClients.createDefault();
+                HttpPost httpPost = new HttpPost(webhookUrl);
 
-                    OutputStream outputStream = connection.getOutputStream();
-                    outputStream.write(json.getBytes());
-                    outputStream.flush();
-                    outputStream.close();
+                StringEntity requestEntity = new StringEntity(
+                        json,
+                        ContentType.APPLICATION_JSON
+                );
+                httpPost.setEntity(requestEntity);
 
-                    int responseCode = connection.getResponseCode();
-                    if (responseCode >= 400) {
-                        plugin.getLogger().log(Level.WARNING, "Failed to send eventMessage to Discord webhook: " + connection.getResponseMessage());
-                        plugin.getLogger().log(Level.INFO, json);
+                try (CloseableHttpResponse ignored = httpClient.execute(httpPost)) {}
+                catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        httpClient.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (IOException e) {
-                    plugin.getLogger().warning("Failed to POST json to URL: " + e.getMessage());
                 }
             }
         }.runTaskAsynchronously(plugin);
@@ -81,25 +101,24 @@ public class WebhookActions {
             return;
         }
 
-        try {
-            URL url = new URL(webhookUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setDoOutput(true);
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost(webhookUrl);
 
-            OutputStream outputStream = connection.getOutputStream();
-            outputStream.write(json.getBytes());
-            outputStream.flush();
-            outputStream.close();
+        StringEntity requestEntity = new StringEntity(
+                json,
+                ContentType.APPLICATION_JSON
+        );
+        httpPost.setEntity(requestEntity);
 
-            int responseCode = connection.getResponseCode();
-            if (responseCode >= 400) {
-                plugin.getLogger().log(Level.WARNING, "Failed to send eventMessage to Discord webhook: " + connection.getResponseMessage());
-                plugin.getLogger().log(Level.INFO, json);
+        try (CloseableHttpResponse ignored = httpClient.execute(httpPost)) {}
+        catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                httpClient.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            plugin.getLogger().warning("Failed to POST json to URL: " + e.getMessage());
         }
     }
 
