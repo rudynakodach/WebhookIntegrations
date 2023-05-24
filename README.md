@@ -3,8 +3,9 @@ The simpliest solution for Discord Webhook integration with your Minecraft serve
 
 [![License](https://img.shields.io/github/license/rudynakodach/WebhookIntegrations?style=plastic)](https://img.shields.io/github/license/rudynakodach/WebhookIntegrations)
 
-[![Servers](https://img.shields.io/bstats/servers/18509)](https://bstats.org/plugin/bukkit/WebhookIntegrations/18509)
-[![Players](https://img.shields.io/bstats/players/18509)](https://bstats.org/plugin/bukkit/WebhookIntegrations/18509)
+[![Servers](https://img.shields.io/bstats/servers/18509?style=for-the-badge)](https://bstats.org/plugin/bukkit/WebhookIntegrations/18509) 
+[![Players](https://img.shields.io/bstats/players/18509?style=for-the-badge)](https://bstats.org/plugin/bukkit/WebhookIntegrations/18509)
+![Downloads](https://img.shields.io/github/downloads/rudynakodach/WebhookIntegrations/total?style=for-the-badge)
 
 # Download
 Get the plugin from [SpigotMC](https://www.spigotmc.org/resources/webhookintegrations-1-17-1-19-pl-en.107688/) or [CurseForge](https://legacy.curseforge.com/minecraft/bukkit-plugins/webhookintegrations)
