@@ -26,6 +26,10 @@ public class onPlayerQuit implements Listener {
     public void onPlayerQuitEvent(PlayerQuitEvent event) {
         if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_QUIT.getValue())) {return;}
 
+        if(new WebhookActions(plugin).isPlayerVanished(event.getPlayer())) {
+            return;
+        }
+
         String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_QUIT.getValue());
 
         if(json == null) {

@@ -27,6 +27,11 @@ public class onPlayerKick implements Listener {
         if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_KICK.getValue())) {
             return;
         }
+
+        if(new WebhookActions(plugin).isPlayerVanished(event.getPlayer())) {
+            return;
+        }
+
         String playerName = event.getPlayer().getName();
         String reason = PlainTextComponentSerializer.plainText().serialize(event.reason());
 

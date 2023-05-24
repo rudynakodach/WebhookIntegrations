@@ -10,11 +10,11 @@ import rudynakodach.github.io.webhookintegrations.WebhookIntegrations;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class OpJoinEvent implements Listener {
+public class opJoinEvent implements Listener {
     Collection<String> opsJoined = new ArrayList<>();
     private final JavaPlugin plugin;
 
-    public OpJoinEvent(JavaPlugin plugin) {
+    public opJoinEvent(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 

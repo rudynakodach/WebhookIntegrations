@@ -31,6 +31,10 @@ public class onPlayerAdvancementCompleted implements Listener {
             return;
         }
 
+        if(new WebhookActions(plugin).isPlayerVanished(event.getPlayer())) {
+            return;
+        }
+
         String advancement = PlainTextComponentSerializer.plainText().serialize(event.getAdvancement().getDisplay().title());
         String advancementDescription = PlainTextComponentSerializer.plainText().serialize(event.getAdvancement().getDisplay().description());
 

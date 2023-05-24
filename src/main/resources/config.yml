@@ -13,6 +13,9 @@ language-override: false
 # set this to false if you don't want to send messages to the webhook
 isEnabled: true
 
+# Events will be ignored for vanished players and no message will be sent to the webhook.
+disableForVanishedPlayers: true
+
 # Replaces every occurrence of each word to their corresponding values
 # e.g. "@everyone" to "everyone"
 

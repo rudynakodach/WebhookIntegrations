@@ -25,6 +25,11 @@ public class onPlayerDeath implements Listener {
 
     @EventHandler
     public void onPlayerDeathEvent(PlayerDeathEvent event) {
+
+        if(new WebhookActions(plugin).isPlayerVanished(event.getPlayer()) || new WebhookActions(plugin).isPlayerVanished(event.getEntity().getKiller())) {
+            return;
+        }
+
         String playerName = event.getEntity().getName();
         String deathMessage = PlainTextComponentSerializer.plainText().serialize(event.deathMessage() == null ? Component.empty() : Objects.requireNonNull(event.deathMessage()));
 

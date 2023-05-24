@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.logging.Level;
 
 public class onPlayerChat implements Listener {
 
@@ -30,6 +31,13 @@ public class onPlayerChat implements Listener {
         if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_CHAT.getValue())) {
             return;
         }
+
+        if(new WebhookActions(plugin).isPlayerVanished(event.getPlayer())) {
+            plugin.getLogger().log(Level.INFO, "prevented");
+            return;
+        }
+        plugin.getLogger().log(Level.INFO, "let");
+
         boolean allowPlaceholdersInMessage = MessageConfiguration.get().getConfig().getBoolean("onPlayerChat.allow-placeholders-in-message");
 
         String message = PlainTextComponentSerializer.plainText().serialize(event.message());
@@ -49,8 +57,6 @@ public class onPlayerChat implements Listener {
                 message = message.replace(key, String.valueOf(plugin.getConfig().get("censoring." + key)));
             }
         }
-
-
 
         if(plugin.getConfig().getBoolean("remove-force-pings")) {
             message = message.replaceAll("<@[0-9]+>", "");

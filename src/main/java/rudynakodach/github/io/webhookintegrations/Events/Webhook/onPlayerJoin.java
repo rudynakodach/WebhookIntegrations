@@ -25,6 +25,10 @@ public class onPlayerJoin implements Listener {
             return;
         }
 
+        if(new WebhookActions(plugin).isPlayerVanished(event.getPlayer())) {
+            return;
+        }
+
         String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_JOIN.getValue());
 
         if(json == null) {
