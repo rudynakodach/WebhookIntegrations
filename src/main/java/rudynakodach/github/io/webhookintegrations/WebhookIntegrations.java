@@ -21,10 +21,11 @@ package rudynakodach.github.io.webhookintegrations;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import rudynakodach.github.io.webhookintegrations.Commands.*;
-import rudynakodach.github.io.webhookintegrations.Events.Actions.opJoinEvent;
+import rudynakodach.github.io.webhookintegrations.Events.Actions.OpJoinEvent;
 import rudynakodach.github.io.webhookintegrations.Events.Webhook.*;
 import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
@@ -42,13 +43,13 @@ public final class WebhookIntegrations extends JavaPlugin {
     // Welcome, fellow source code reader!
 
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 49;
+    public static int currentBuildNumber = 50;
 
-    //on startup
     @Override
     public void onEnable() {
         // bStats integration
         Metrics metrics = new Metrics(this, 18509);
+
         saveDefaultConfig();
         getLogger().log(Level.INFO, "Hello, World!");
 
@@ -123,30 +124,31 @@ public final class WebhookIntegrations extends JavaPlugin {
 
         getLogger().log(Level.INFO, language.getString("onStart.registeringEvents"));
 
-        onPlayerChat chatEvent = new onPlayerChat(this);
+        // Events
+        OnPlayerChat chatEvent = new OnPlayerChat(this);
         getServer().getPluginManager().registerEvents(chatEvent,  this);
 
-
-        onPlayerJoin onPlayerJoinEvent = new onPlayerJoin(this);
+        OnPlayerJoin onPlayerJoinEvent = new OnPlayerJoin(this);
         getServer().getPluginManager().registerEvents(onPlayerJoinEvent, this);
 
-        opJoinEvent opJoinEvent = new opJoinEvent(this);
+        OpJoinEvent opJoinEvent = new OpJoinEvent(this);
         getServer().getPluginManager().registerEvents(opJoinEvent, this);
 
-        onPlayerQuit playerQuitEvent = new onPlayerQuit(this);
+        OnPlayerQuit playerQuitEvent = new OnPlayerQuit(this);
         getServer().getPluginManager().registerEvents(playerQuitEvent, this);
 
-        onPlayerKick playerKick = new onPlayerKick(this);
+        OnPlayerKick playerKick = new OnPlayerKick(this);
         getServer().getPluginManager().registerEvents(playerKick, this);
 
-        onPlayerAdvancementCompleted onPlayerAdvancement = new onPlayerAdvancementCompleted(this);
+        OnPlayerAdvancementCompleted onPlayerAdvancement = new OnPlayerAdvancementCompleted(this);
         getServer().getPluginManager().registerEvents(onPlayerAdvancement, this);
 
-        onPlayerDeath playerDeath = new onPlayerDeath(this);
+        OnPlayerDeath playerDeath = new OnPlayerDeath(this);
         getServer().getPluginManager().registerEvents(playerDeath,this);
 
         getLogger().log(Level.INFO, language.getString("onStart.eventRegisterFinish"));
 
+        // Commands
         SetWebhookURL setWebhookUrlCommand = new SetWebhookURL(this);
         Objects.requireNonNull(getCommand("seturl")).setExecutor(setWebhookUrlCommand);
 
@@ -159,6 +161,8 @@ public final class WebhookIntegrations extends JavaPlugin {
         getLogger().log(Level.INFO, language.getString("onStart.commandRegisterFinish"));
 
         new MessageConfiguration(this);
+
+        // Metrics
         metrics.addCustomChart(new SimplePie("url_state", () ->
                 String.valueOf(!Objects.requireNonNullElse(getConfig().getString("webhookUrl"), "").equalsIgnoreCase(""))));
 
@@ -169,58 +173,20 @@ public final class WebhookIntegrations extends JavaPlugin {
         metrics.addCustomChart(new SimplePie("remove-force-role-pings", () -> String.valueOf(getConfig().getBoolean("remove-force-role-pings"))));
         metrics.addCustomChart(new SimplePie("remove-force-pings", () -> String.valueOf(getConfig().getBoolean("remove-force-pings"))));
         metrics.addCustomChart(new SimplePie("remove-force-channel-pings", () -> String.valueOf(getConfig().getBoolean("remove-force-channel-pings"))));
-
-        sendStartMessage();
     }
 
-    //on shutdown
     @Override
     public void onDisable() {
-        sendStopMessage();
+        if(Bukkit.isStopping()) {
+            sendStopMessage();
+        }
 
         getLogger().log(Level.INFO, "this is my final message");
         getLogger().log(Level.INFO, "goodb ye");
     }
 
-    private void sendStartMessage() {
-        if(!MessageConfiguration.get().canAnnounce(MessageType.SERVER_START.getValue())) {
-            return;
-        }
-        String json = MessageConfiguration.get().getMessage(MessageType.SERVER_START.getValue());
-
-        String serverIp = getServer().getIp();
-        int slots = getServer().getMaxPlayers();
-        String serverMotd = PlainTextComponentSerializer.plainText().serialize(getServer().motd());
-        String serverName = getServer().getName();
-        String serverVersion = getServer().getVersion();
-        Boolean isOnlineMode = getServer().getOnlineMode();
-        int playersOnline = getServer().getOnlinePlayers().size();
-
-        if(json == null) {
-            return;
-        }
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-        sdf.setTimeZone(TimeZone.getTimeZone(getConfig().getString("timezone")));
-
-        json = json.replace("$serverIp$", serverIp)
-            .replace("$timestamp$", sdf.format(new Date()))
-            .replace("$time$", new SimpleDateFormat(
-                    Objects.requireNonNullElse(
-                            getConfig().getString("date-format"),
-                            "")).format(new Date()))
-            .replace("$maxPlayers$", String.valueOf(slots))
-            .replace("$serverMotd$", serverMotd)
-            .replace("$serverName$", serverName)
-            .replace("$serverVersion$", serverVersion)
-            .replace("$isOnlineMode$", String.valueOf(isOnlineMode))
-            .replace("$playersOnline$", String.valueOf(playersOnline));
-
-        new WebhookActions(this).SendSync(json);
-    }
-
     private void sendStopMessage() {
-        if(!MessageConfiguration.get().canAnnounce(MessageType.SERVER_STOP.getValue())) {
+        if(!MessageConfiguration.get().canAnnounce(MessageType.SERVER_STOP)) {
             return;
         }
 
@@ -232,7 +198,7 @@ public final class WebhookIntegrations extends JavaPlugin {
         Boolean isOnlineMode = getServer().getOnlineMode();
         int playersOnline = getServer().getOnlinePlayers().size();
 
-        String json = MessageConfiguration.get().getMessage(MessageType.SERVER_STOP.getValue());
+        String json = MessageConfiguration.get().getMessage(MessageType.SERVER_STOP);
 
         if(json == null) {
             return;

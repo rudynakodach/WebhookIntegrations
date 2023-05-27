@@ -30,22 +30,19 @@ import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TimeZone;
+import java.util.*;
 
-public class onPlayerChat implements Listener {
+public class OnPlayerChat implements Listener {
 
     JavaPlugin plugin;
 
-    public onPlayerChat(JavaPlugin plugin) {
+    public OnPlayerChat(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 
     @EventHandler
     public void onPlayerChatEvent(AsyncChatEvent event) {
-        if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_CHAT.getValue())) {
+        if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_CHAT)) {
             return;
         }
 
@@ -59,7 +56,7 @@ public class onPlayerChat implements Listener {
         String playerName = event.getPlayer().getName();
         String playerWorldName = event.getPlayer().getWorld().getName();
 
-        String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_CHAT.getValue());
+        String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_CHAT);
 
         if(json == null) {
             return;
@@ -85,6 +82,13 @@ public class onPlayerChat implements Listener {
 
         if(message.trim().equalsIgnoreCase("")) {
             return;
+        }
+
+        if(plugin.getConfig().getBoolean("useRegexCensoring")) {
+            List<String> patterns = Objects.requireNonNull(plugin.getConfig().getConfigurationSection("regexCensoring")).getKeys(false).stream().toList();
+            for(String expr : patterns) {
+                message = message.replace(expr, Objects.requireNonNull(plugin.getConfig().getString("regexCensoring." + expr)));
+            }
         }
 
         if(allowPlaceholdersInMessage) {

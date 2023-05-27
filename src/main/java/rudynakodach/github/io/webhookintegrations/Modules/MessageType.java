@@ -18,24 +18,14 @@
 
 package rudynakodach.github.io.webhookintegrations.Modules;
 
-public enum MessageType {
-    SERVER_START("onServerStart"),
-    SERVER_STOP("onServerStop"),
-    PLAYER_JOIN("onPlayerJoin"),
-    PLAYER_QUIT("onPlayerQuit"),
-    PLAYER_KICK("onPlayerKicked"),
-    PLAYER_DEATH_NPC("onPlayerDeath.playerKilledByNPC"),
-    PLAYER_DEATH_KILLED("noPlayerDeath.playerKilledByPlayer"),
-    PLAYER_CHAT("onPlayerChat"),
-    PLAYER_ADVANCEMENT("onPlayerAdvancement");
-
-    private final String value;
-
-    MessageType(String value) {
-        this.value = value;
-    }
-
-    public String getValue() {
-        return value;
-    }
+public class MessageType {
+    public static String SERVER_START = "onServerStart";
+    public static String SERVER_STOP = "onServerStop";
+    public static String PLAYER_JOIN = "onPlayerJoin";
+    public static String PLAYER_QUIT = "onPlayerQuit";
+    public static String PLAYER_KICK = "onPlayerKicked";
+    public static String PLAYER_DEATH_NPC = "onPlayerDeath.playerKilledByNPC";
+    public static String PLAYER_DEATH_KILLED = "noPlayerDeath.playerKilledByPlayer";
+    public static String PLAYER_CHAT = "onPlayerChat";
+    public static String PLAYER_ADVANCEMENT = "onPlayerAdvancement";
 }

@@ -136,6 +136,7 @@ public class WIActions implements CommandExecutor, TabCompleter {
                         if(backups == null) {
                             return suggestions;
                         }
+
                         // Returns a list of all filenames present in the config-backups directory.
                         return Arrays.stream(backups)
                                 .map(File::getName)
@@ -183,15 +184,16 @@ public class WIActions implements CommandExecutor, TabCompleter {
         } else {
             message += "\nwebhookUrl: " + ChatColor.GREEN + "set\n";
         }
+
         message += ChatColor.YELLOW + "EVENTS" + ChatColor.WHITE;
-        message += "\nonStart: " + colorBoolean(plugin.getConfig().getBoolean("onServerStart.announce"));
-        message += "\nonStop: " + colorBoolean(plugin.getConfig().getBoolean("onServerStop.announce"));
-        message += "\nplayerJoin: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerJoin.announce"));
-        message += "\nplayerQuit: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerQuit.announce"));
-        message += "\nplayerKicked: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerKicked.announce"));
-        message += "\nonAdvancementMade: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerAdvancementComplete.announce"));
-        message += "\nplayerDeathPve: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerDeath.playerKilledByNPC.announce"));
-        message += "\nPlayerDeathPvp: " + colorBoolean(plugin.getConfig().getBoolean("onPlayerDeath.playerKilledByPlayer.announce"));
+        message += "\nServer Start: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean("onServerStart.announce"));
+        message += "\nServer Stop: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean("onServerStop.announce"));
+        message += "\nPlayer Join: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean("onPlayerJoin.announce"));
+        message += "\nPlayer Quit: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean("onPlayerQuit.announce"));
+        message += "\nPlayer Kick: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean("onPlayerKicked.announce"));
+        message += "\nAdvancement made: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean("onPlayerAdvancementComplete.announce"));
+        message += "\nPlayer Death PVE: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean("onPlayerDeath.playerKilledByNPC.announce"));
+        message += "\nPlayer Death PVP: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean("onPlayerDeath.playerKilledByPlayer.announce"));
 
         commandSender.sendMessage(message);
         return true;

@@ -19,27 +19,33 @@
 package rudynakodach.github.io.webhookintegrations.Events.Webhook;
 
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.Objects;
+import java.util.TimeZone;
 
-public class onPlayerJoin implements Listener {
-
+public class OnPlayerAdvancementCompleted implements Listener {
     JavaPlugin plugin;
-    public onPlayerJoin(JavaPlugin plugin) {
+    public OnPlayerAdvancementCompleted(JavaPlugin plugin) {
         this.plugin = plugin;
     }
-
     @EventHandler
-    public void onPlayerJoinEvent(PlayerJoinEvent event) {
-        if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_JOIN.getValue())) {
+    public void onAdvancementMade(PlayerAdvancementDoneEvent event) {
+        if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_ADVANCEMENT)) {
+            return;
+        }
+
+        // if the advancement is hidden
+        if (event.getAdvancement().getDisplay() == null) {
             return;
         }
 
@@ -47,27 +53,27 @@ public class onPlayerJoin implements Listener {
             return;
         }
 
-        String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_JOIN.getValue());
+        String advancement = PlainTextComponentSerializer.plainText().serialize(event.getAdvancement().getDisplay().title());
+        String advancementDescription = PlainTextComponentSerializer.plainText().serialize(event.getAdvancement().getDisplay().description());
 
-        if(json == null) {
-            return;
-        }
+        String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_ADVANCEMENT);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         sdf.setTimeZone(TimeZone.getTimeZone(plugin.getConfig().getString("timezone")));
 
-        json = json.replace("$playersOnline$", String.valueOf(plugin.getServer().getOnlinePlayers().size()))
+        json = json.replace("$desc$", advancementDescription)
                 .replace("$timestamp$", sdf.format(new Date()))
-                .replace("$maxPlayers$", String.valueOf(plugin.getServer().getMaxPlayers()))
-                .replace("$uuid$", event.getPlayer().getUniqueId().toString())
+                .replace("$playersOnline$", String.valueOf(plugin.getServer().getOnlinePlayers().size()))
+                .replace("$advancement$", advancement)
                 .replace("$player$", event.getPlayer().getName())
+                .replace("$uuid$", event.getPlayer().getUniqueId().toString())
                 .replace("$time$", new SimpleDateFormat(
                         Objects.requireNonNullElse(
                                 plugin.getConfig().getString("date-format"),
-                                "")).format(new Date())
+                                "HH:mm:ss")).format(new Date())
                 );
 
-        if(plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+        if (plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
         }
 

@@ -34,10 +34,10 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.TimeZone;
 
-public class onPlayerDeath implements Listener {
+public class OnPlayerDeath implements Listener {
 
     JavaPlugin plugin;
-    public onPlayerDeath(JavaPlugin plugin) {
+    public OnPlayerDeath(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -60,9 +60,9 @@ public class onPlayerDeath implements Listener {
         sdf.setTimeZone(TimeZone.getTimeZone(plugin.getConfig().getString("timezone")));
 
         if(event.getEntity().getKiller() != null) {
-            if(!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_DEATH_KILLED.getValue())) {return;}
+            if(!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_DEATH_KILLED)) {return;}
             String killerName = event.getEntity().getKiller().getName();
-            String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_DEATH_KILLED.getValue());
+            String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_DEATH_KILLED);
 
             if(json == null) {
                 return;
@@ -91,8 +91,8 @@ public class onPlayerDeath implements Listener {
             new WebhookActions(plugin).SendAsync(json);
         }
         else {
-            if(!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_DEATH_NPC.getValue())) {return;}
-            String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_DEATH_NPC.getValue());
+            if(!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_DEATH_NPC)) {return;}
+            String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_DEATH_NPC);
 
             if(json == null) {
                 return;

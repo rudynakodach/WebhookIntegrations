@@ -23,6 +23,11 @@ censoring:
   "@everyone": "everyone"
   "@here": "here"
 
+useRegexCensoring: false
+# Works like regular censoring but compares text to the provided regex (regular expression) patters. You really shouldn't use this unless you get to know regex.
+regexCensoring:
+  "\<\@[0-9]+\>": ""
+
 # You can ping someone using their id like this: <@id> (for instance <@795204175314272>)
 # Setting this to true removes this ability by removing the force-ping from the message completely.
 remove-force-pings: true
