@@ -10,12 +10,12 @@ assignees: rudynakodach
 # WI Bug Report Template
 Please answer all the questions below to give me clear understanding of what might not work as expected.
 
-## Describe the bug
+## Description
 What happened?
 Did you get any errors in the console (if yes, send **the entire stack**)?
 What version of the plugin are you using?
 
-## To Reproduce
+## Reproduction
 Steps to reproduce the behavior (example):
 1. Go to '...'
 2. Click on '....'
