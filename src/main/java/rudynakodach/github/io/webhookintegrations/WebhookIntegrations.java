@@ -43,7 +43,7 @@ public final class WebhookIntegrations extends JavaPlugin {
     // Welcome, fellow source code reader!
 
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 50;
+    public static int currentBuildNumber = 51;
 
     @Override
     public void onEnable() {
@@ -118,7 +118,7 @@ public final class WebhookIntegrations extends JavaPlugin {
             }
         }
 
-        if (Objects.equals(Objects.requireNonNull(getConfig().getString("webhookUrl")).trim(), "")) {
+        if (getConfig().getString("webhookUrl") == null || getConfig().getString("webhookUrl").equalsIgnoreCase("")) {
             getLogger().log(Level.WARNING, language.getString("onStart.webhookEmpty"));
         }
 
