@@ -44,7 +44,7 @@ public class OnPlayerDeath implements Listener {
     @EventHandler
     public void onPlayerDeathEvent(PlayerDeathEvent event) {
 
-        if(new WebhookActions(plugin).isPlayerVanished(event.getPlayer()) || new WebhookActions(plugin).isPlayerVanished(event.getEntity().getKiller())) {
+        if(new WebhookActions(plugin).isPlayerVanished(event.getPlayer())) {
             return;
         }
 
@@ -60,6 +60,10 @@ public class OnPlayerDeath implements Listener {
         sdf.setTimeZone(TimeZone.getTimeZone(plugin.getConfig().getString("timezone")));
 
         if(event.getEntity().getKiller() != null) {
+            if(new WebhookActions(plugin).isPlayerVanished(event.getEntity().getKiller())) {
+                return;
+            }
+
             if(!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_DEATH_KILLED)) {return;}
             String killerName = event.getEntity().getKiller().getName();
             String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_DEATH_KILLED);

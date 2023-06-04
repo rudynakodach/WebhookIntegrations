@@ -28,6 +28,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
 
 import java.util.List;
@@ -124,9 +125,9 @@ public class WebhookActions {
 
     /**
      * @param player Player to check
-     * @return Whether the player is vanished. {@code False} if {@code disableForVanishedPlayers} is set to {@code true} in the config
+     * @return whether the player is vanished. {@code False} if {@code disableForVanishedPlayers} is set to {@code true} in the config
      */
-    public boolean isPlayerVanished(Player player) {
+    public boolean isPlayerVanished(@NotNull Player player) {
         if(!plugin.getConfig().getBoolean("disableForVanishedPlayers")) {
             return false;
         }
@@ -138,7 +139,6 @@ public class WebhookActions {
                 return true;
             }
         }
-
         return false;
     }
 }
