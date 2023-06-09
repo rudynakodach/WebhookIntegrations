@@ -43,7 +43,7 @@ public final class WebhookIntegrations extends JavaPlugin {
     // Welcome, fellow source code reader!
 
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 52;
+    public static int currentBuildNumber = 53;
 
     @Override
     public void onEnable() {
@@ -125,6 +125,9 @@ public final class WebhookIntegrations extends JavaPlugin {
         getLogger().log(Level.INFO, language.getString("onStart.registeringEvents"));
 
         // Events
+        OnServerStart serverStart = new OnServerStart(this);
+        getServer().getPluginManager().registerEvents(serverStart, this);
+
         OnPlayerChat chatEvent = new OnPlayerChat(this);
         getServer().getPluginManager().registerEvents(chatEvent,  this);
 
