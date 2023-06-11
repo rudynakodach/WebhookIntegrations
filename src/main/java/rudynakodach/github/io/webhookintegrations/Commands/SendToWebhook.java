@@ -22,8 +22,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
@@ -60,8 +60,8 @@ public class SendToWebhook implements CommandExecutor {
 
                 boolean isEmbed = Boolean.parseBoolean(args[0]);
                 String message = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
-                Player player = (Player) sender;
-                String username = player.getName();
+
+                String username = sender instanceof ConsoleCommandSender ? "CONSOLE" : sender.getName();
 
                 javaPlugin.getLogger().log(Level.INFO, username + " used /send with the following message: " + message);
 

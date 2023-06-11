@@ -25,7 +25,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -56,18 +55,14 @@ public class WIActions implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-        if(!(commandSender instanceof Player player)) {
-            plugin.getLogger().log(Level.INFO, "This command is intended to be used in the game.");
-            return true;
-        }
         if(command.getName().equalsIgnoreCase("wi")) {
             if (args.length >= 1) {
                 if (args[0].equalsIgnoreCase("reset")) {
                     if (args[1].equalsIgnoreCase("confirm")) {
-                        return resetConfirm(commandSender);
+                        return resetConfig(commandSender);
                     } else {
-                        if(!player.hasPermission("webhookintegrations.config.reset")) {
-                            player.sendMessage(
+                        if(!commandSender.hasPermission("webhookintegrations.config.reset")) {
+                            commandSender.sendMessage(
                                     ChatColor.translateAlternateColorCodes('&',
                                             language.getString("commands.no-permission"))
                             );
@@ -169,9 +164,8 @@ public class WIActions implements CommandExecutor, TabCompleter {
     }
 
     private boolean analyze(CommandSender commandSender) {
-        Player player = (Player) commandSender;
-        if (!player.hasPermission("webhookintegrations.analyze")) {
-            player.sendMessage(
+        if (!commandSender.hasPermission("webhookintegrations.analyze")) {
+            commandSender.sendMessage(
                     ChatColor.translateAlternateColorCodes('&',
                             language.getString("commands.no-permission"))
             );
@@ -199,24 +193,25 @@ public class WIActions implements CommandExecutor, TabCompleter {
         return true;
     }
 
-    private boolean resetConfirm(CommandSender commandSender) {
-        Player player = (Player) commandSender;
-        if (!player.hasPermission("webhookintegrations.config.reset")) {
-            player.sendMessage(
+    private boolean resetConfig(CommandSender commandSender) {
+        if (!commandSender.hasPermission("webhookintegrations.config.reset")) {
+            commandSender.sendMessage(
                     ChatColor.translateAlternateColorCodes('&',
                             language.getString("commands.no-permission"))
             );
             return true;
         }
         plugin.saveResource("config.yml", true);
+        plugin.saveResource("lang.yml", true);
+        plugin.saveResource("messages.yml", true);
+
         plugin.reloadConfig();
         return true;
     }
 
     private boolean reload(CommandSender commandSender) {
-        Player player = (Player) commandSender;
-        if (!player.hasPermission("webhookintegrations.reload")) {
-            player.sendMessage(
+        if (!commandSender.hasPermission("webhookintegrations.reload")) {
+            commandSender.sendMessage(
                     ChatColor.translateAlternateColorCodes('&',
                             language.getString("commands.no-permission"))
             );
@@ -230,9 +225,8 @@ public class WIActions implements CommandExecutor, TabCompleter {
     }
 
     private boolean update(CommandSender commandSender) {
-        Player player = (Player) commandSender;
-        if(!player.hasPermission("webhookintegrations.update")) {
-            player.sendMessage(
+        if(!commandSender.hasPermission("webhookintegrations.update")) {
+            commandSender.sendMessage(
                     ChatColor.translateAlternateColorCodes('&',
                             language.getString("commands.no-permission"))
             );
@@ -260,47 +254,36 @@ public class WIActions implements CommandExecutor, TabCompleter {
     }
 
     private boolean enable(CommandSender commandSender) {
-        Player player = (Player) commandSender;
-        if(!player.hasPermission("webhookintegrations.enable")) {
-            player.sendMessage(
+        if(!commandSender.hasPermission("webhookintegrations.enable")) {
+            commandSender.sendMessage(
                     ChatColor.translateAlternateColorCodes('&',
                             language.getString("commands.no-permission"))
             );
             return true;
         }
         plugin.getConfig().set("isEnabled", true);
-        try {
-            plugin.getConfig().save(new File(plugin.getDataFolder(), "config.yml"));
-        } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "Couldn't enable webhook due to an exception: " + e.getMessage());
-        }
         plugin.reloadConfig();
+        plugin.saveConfig();
         return true;
     }
 
     private boolean disable(CommandSender commandSender) {
-        Player player = (Player) commandSender;
-        if(!player.hasPermission("webhookintegrations.disable")) {
-            player.sendMessage(
+        if(!commandSender.hasPermission("webhookintegrations.disable")) {
+            commandSender.sendMessage(
                     ChatColor.translateAlternateColorCodes('&',
                             language.getString("commands.no-permission"))
             );
             return true;
         }
         plugin.getConfig().set("isEnabled", false);
-        try {
-            plugin.getConfig().save(new File(plugin.getDataFolder(), "config.yml"));
-        } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "Couldn't disable webhook due to an exception: " + e.getMessage());
-        }
         plugin.reloadConfig();
+        plugin.saveConfig();
         return true;
     }
 
     private boolean setLanguage(CommandSender commandSender, String[] args) {
-        Player player = (Player) commandSender;
-        if(!player.hasPermission("webhookintegrations.setlanguage")) {
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+        if(!commandSender.hasPermission("webhookintegrations.setlanguage")) {
+            commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&',
                 language.getString("commands.no-permission")));
             return true;
         }
@@ -317,9 +300,8 @@ public class WIActions implements CommandExecutor, TabCompleter {
     }
 
     private boolean setConfig(CommandSender commandSender, String[] args) {
-        Player player = (Player) commandSender;
-        if(!player.hasPermission("webhookintegrations.config.setvalue")) {
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+        if(!commandSender.hasPermission("webhookintegrations.config.setvalue")) {
+            commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&',
                     language.getString("commands.no-permission")));
             return true;
         }
@@ -371,13 +353,12 @@ public class WIActions implements CommandExecutor, TabCompleter {
     }
 
     private boolean saveBackup(CommandSender commandSender, String[] args) {
-        Player player = (Player) commandSender;
-        if(!player.hasPermission("webhookintegrations.config.savebackup")) {
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+        if(!commandSender.hasPermission("webhookintegrations.config.savebackup")) {
+            commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&',
                     language.getString("commands.no-permission")));
             return true;
         }
-        // Saves the backup as the provided name if possible, current time otherwise.
+        // Saves the backup as the provided name if possible, current unix time otherwise.
         String backupName = args.length >= 3 ? String.join("_", Arrays.copyOfRange(args, 2, args.length)) :
                 new SimpleDateFormat("yyyy-MM-dd_hh-mm-ss-SSS").format(new Date());
 
@@ -416,9 +397,8 @@ public class WIActions implements CommandExecutor, TabCompleter {
     }
 
     private boolean loadBackup(CommandSender commandSender, String[] args) {
-        Player player = (Player) commandSender;
-        if(!player.hasPermission("webhookintegrations.config.loadbackup")) {
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+        if(!commandSender.hasPermission("webhookintegrations.config.loadbackup")) {
+            commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&',
                     language.getString("commands.no-permission")));
             return true;
         }

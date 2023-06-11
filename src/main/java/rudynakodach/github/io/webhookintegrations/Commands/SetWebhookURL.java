@@ -50,45 +50,45 @@ public class SetWebhookURL implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String label, String[] args) {
-        if (command.getName().equalsIgnoreCase("seturl")) {
-            if (args.length == 1) {
-                String newUrl = args[0].trim();
-
-                //checking URL validity
-                if(!newUrl.startsWith("https://")) {
-                    sender.sendMessage(ChatColor.RED + language.getString("commands.seturl.noHttps"));
-                    return true;
-                } else if(!newUrl.contains("discord")) {
-                    sender.sendMessage(ChatColor.RED + language.getString("commands.seturl.notDiscord"));
-                    return true;
-                }
-
-                sender.sendMessage(ChatColor.BLUE + language.getString("commands.seturl.verifyStart"));
-
-                try {
-                    int responseCode = getResponseCode(newUrl);
-
-                    if(responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_NO_CONTENT) {
-                        sender.sendMessage(ChatColor.GREEN + language.getString("commands.seturl.verifySuccess"));
-                    } else {
-                        sender.sendMessage(ChatColor.LIGHT_PURPLE + language.getString("commands.seturl.verifyFail"));
-                        return true;
-                    }
-                } catch (IOException e) {
-                    sender.sendMessage(ChatColor.RED + language.getString("commands.seturl.verifyFail"));
-                    return true;
-                }
-
-                config.set("webhookUrl", newUrl);
-                plugin.saveConfig();
-                sender.sendMessage(ChatColor.GREEN + language.getString("commands.seturl.newUrlSet"));
-                return true;
-            } else {
-                sender.sendMessage(ChatColor.LIGHT_PURPLE + language.getString("commands.seturl.commandIncorrectUsage"));
-                return false;
-            }
+        if (!command.getName().equalsIgnoreCase("seturl")) {
+            return true;
         }
-        return false;
+        if (args.length == 1) {
+            String newUrl = args[0].trim();
+
+            //checking URL validity
+            if (!newUrl.startsWith("https://")) {
+                sender.sendMessage(ChatColor.RED + language.getString("commands.seturl.noHttps"));
+                return true;
+            } else if (!newUrl.contains("discord")) {
+                sender.sendMessage(ChatColor.RED + language.getString("commands.seturl.notDiscord"));
+                return true;
+            }
+
+            sender.sendMessage(ChatColor.BLUE + language.getString("commands.seturl.verifyStart"));
+
+            try {
+                int responseCode = getResponseCode(newUrl);
+
+                if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_NO_CONTENT) {
+                    sender.sendMessage(ChatColor.GREEN + language.getString("commands.seturl.verifySuccess"));
+                } else {
+                    sender.sendMessage(ChatColor.LIGHT_PURPLE + language.getString("commands.seturl.verifyFail"));
+                    return true;
+                }
+            } catch (IOException e) {
+                sender.sendMessage(ChatColor.RED + language.getString("commands.seturl.verifyFail"));
+                return true;
+            }
+
+            config.set("webhookUrl", newUrl);
+            plugin.saveConfig();
+            sender.sendMessage(ChatColor.GREEN + language.getString("commands.seturl.newUrlSet"));
+            return true;
+        } else {
+            sender.sendMessage(ChatColor.LIGHT_PURPLE + language.getString("commands.seturl.commandIncorrectUsage"));
+            return false;
+        }
     }
 
     private int getResponseCode(String target) throws IOException {

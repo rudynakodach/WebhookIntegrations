@@ -43,7 +43,7 @@ public final class WebhookIntegrations extends JavaPlugin {
     // Welcome, fellow source code reader!
 
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 53;
+    public static int currentBuildNumber = 54;
 
     @Override
     public void onEnable() {
