@@ -26,7 +26,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import rudynakodach.github.io.webhookintegrations.Commands.*;
 import rudynakodach.github.io.webhookintegrations.Events.Actions.OpJoinEvent;
-import rudynakodach.github.io.webhookintegrations.Events.Webhook.*;
+import rudynakodach.github.io.webhookintegrations.Events.Game.*;
 import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
@@ -43,7 +43,7 @@ public final class WebhookIntegrations extends JavaPlugin {
     // Welcome, fellow source code reader!
 
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 54;
+    public static int currentBuildNumber = 55;
 
     @Override
     public void onEnable() {

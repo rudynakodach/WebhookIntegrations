@@ -16,33 +16,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package rudynakodach.github.io.webhookintegrations.Events.Webhook;
+package rudynakodach.github.io.webhookintegrations.Events.Game;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Objects;
-import java.util.TimeZone;
+import java.util.*;
 
-public class OnPlayerKick implements Listener {
+public class OnPlayerJoin implements Listener {
+
     JavaPlugin plugin;
-
-    public OnPlayerKick(JavaPlugin plugin) {
+    public OnPlayerJoin(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 
     @EventHandler
-    public void onPlayerKickedEvent(PlayerKickEvent event) {
-        if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_KICK)) {
+    public void onPlayerJoinEvent(PlayerJoinEvent event) {
+        if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_JOIN)) {
             return;
         }
 
@@ -50,14 +47,7 @@ public class OnPlayerKick implements Listener {
             return;
         }
 
-        String playerName = event.getPlayer().getName();
-        String reason = PlainTextComponentSerializer.plainText().serialize(event.reason());
-
-        if (reason.equals("")) {
-            reason = "Unspecified reason.";
-        }
-
-        String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_KICK);
+        String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_JOIN);
 
         if(json == null) {
             return;
@@ -66,12 +56,11 @@ public class OnPlayerKick implements Listener {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         sdf.setTimeZone(TimeZone.getTimeZone(plugin.getConfig().getString("timezone")));
 
-        json = json.replace("$playersOnline$",String.valueOf(plugin.getServer().getOnlinePlayers().size()))
-            .replace("$timestamp$", sdf.format(new Date()))
-            .replace("$maxPlayers$",String.valueOf(plugin.getServer().getMaxPlayers()))
-            .replace("$uuid$", event.getPlayer().getUniqueId().toString())
-            .replace("$player$", playerName)
-            .replace("$reason$", reason)
+        json = json.replace("$playersOnline$", String.valueOf(plugin.getServer().getOnlinePlayers().size()))
+                .replace("$timestamp$", sdf.format(new Date()))
+                .replace("$maxPlayers$", String.valueOf(plugin.getServer().getMaxPlayers()))
+                .replace("$uuid$", event.getPlayer().getUniqueId().toString())
+                .replace("$player$", event.getPlayer().getName())
                 .replace("$time$", new SimpleDateFormat(
                         Objects.requireNonNullElse(
                                 plugin.getConfig().getString("date-format"),

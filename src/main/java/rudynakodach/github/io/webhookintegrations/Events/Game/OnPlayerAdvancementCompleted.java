@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package rudynakodach.github.io.webhookintegrations.Events.Webhook;
+package rudynakodach.github.io.webhookintegrations.Events.Game;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;

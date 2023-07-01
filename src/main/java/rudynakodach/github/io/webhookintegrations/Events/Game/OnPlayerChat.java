@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package rudynakodach.github.io.webhookintegrations.Events.Webhook;
+package rudynakodach.github.io.webhookintegrations.Events.Game;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
 import me.clip.placeholderapi.PlaceholderAPI;

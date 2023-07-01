@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package rudynakodach.github.io.webhookintegrations.Events.Webhook;
+package rudynakodach.github.io.webhookintegrations.Events.Game;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
@@ -88,7 +88,7 @@ public class OnPlayerDeath implements Listener {
                 .replace("$oldLevel$",oldLevel)
                 .replace("$oldExp$",oldExp);
 
-            if(plugin.getServer().getPluginManager().getPermission("PlaceholderAPI") != null) {
+            if(plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
                 json = PlaceholderAPI.setRelationalPlaceholders(event.getPlayer(), event.getEntity().getKiller(), json);
             }
 

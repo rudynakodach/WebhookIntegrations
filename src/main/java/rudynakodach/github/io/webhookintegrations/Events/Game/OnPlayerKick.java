@@ -16,12 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package rudynakodach.github.io.webhookintegrations.Events.Webhook;
+package rudynakodach.github.io.webhookintegrations.Events.Game;
 
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
@@ -32,23 +33,31 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.TimeZone;
 
-public class OnPlayerQuit implements Listener {
-
+public class OnPlayerKick implements Listener {
     JavaPlugin plugin;
 
-    public OnPlayerQuit(JavaPlugin plugin) {
+    public OnPlayerKick(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 
     @EventHandler
-    public void onPlayerQuitEvent(PlayerQuitEvent event) {
-        if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_QUIT)) {return;}
+    public void onPlayerKickedEvent(PlayerKickEvent event) {
+        if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_KICK)) {
+            return;
+        }
 
         if(new WebhookActions(plugin).isPlayerVanished(event.getPlayer())) {
             return;
         }
 
-        String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_QUIT);
+        String playerName = event.getPlayer().getName();
+        String reason = PlainTextComponentSerializer.plainText().serialize(event.reason());
+
+        if (reason.equals("")) {
+            reason = "Unspecified reason.";
+        }
+
+        String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_KICK);
 
         if(json == null) {
             return;
@@ -60,12 +69,14 @@ public class OnPlayerQuit implements Listener {
         json = json.replace("$playersOnline$",String.valueOf(plugin.getServer().getOnlinePlayers().size()))
             .replace("$timestamp$", sdf.format(new Date()))
             .replace("$maxPlayers$",String.valueOf(plugin.getServer().getMaxPlayers()))
-            .replace("$player$", event.getPlayer().getName())
-            .replace("$time$", new SimpleDateFormat(
-                    Objects.requireNonNullElse(
-                            plugin.getConfig().getString("date-format"),
-                            "")).format(new Date())
-            );
+            .replace("$uuid$", event.getPlayer().getUniqueId().toString())
+            .replace("$player$", playerName)
+            .replace("$reason$", reason)
+                .replace("$time$", new SimpleDateFormat(
+                        Objects.requireNonNullElse(
+                                plugin.getConfig().getString("date-format"),
+                                "")).format(new Date())
+                );
 
         if(plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
