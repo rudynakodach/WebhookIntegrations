@@ -7,6 +7,6 @@ assignees: rudynakodach
 ---
 
 # Support
-Please tell me what you are struggling with.
+Please describe what you are struggling with.
 
 ...
