@@ -32,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import rudynakodach.github.io.webhookintegrations.AutoUpdater;
 import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
+import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.WebhookIntegrations;
 
 import java.io.File;
@@ -58,6 +59,11 @@ public class WIActions implements CommandExecutor, TabCompleter {
         if(command.getName().equalsIgnoreCase("wi")) {
             if (args.length >= 1) {
                 if (args[0].equalsIgnoreCase("reset")) {
+                    if(args.length < 2) {
+                        commandSender.sendMessage("/wi reset confirm");
+                        return true;
+                    }
+
                     if (args[1].equalsIgnoreCase("confirm")) {
                         return resetConfig(commandSender);
                     } else {
@@ -84,6 +90,10 @@ public class WIActions implements CommandExecutor, TabCompleter {
                 } else if(args[0].equalsIgnoreCase("setlanguage")) {
                     return setLanguage(commandSender, args);
                 } else if(args[0].equalsIgnoreCase("config")) {
+                    if(args.length < 2) {
+                        commandSender.sendMessage("/wi config setvalue|savebackup|loadbackup");
+                        return true;
+                    }
                     if(args[1].equalsIgnoreCase("setvalue") && args.length >= 3) {
                         return setConfig(commandSender, args);
                     } else if(args[1].equalsIgnoreCase("savebackup")) {
@@ -155,12 +165,7 @@ public class WIActions implements CommandExecutor, TabCompleter {
 
     @Contract(pure = true)
     private @NotNull String colorBoolean(Boolean b) {
-        if(!b) {
-            return ChatColor.RED + "" + ChatColor.BOLD + false + ChatColor.RESET;
-        }
-        else {
-            return ChatColor.GREEN + "" + ChatColor.BOLD + true + ChatColor.RESET;
-        }
+        return (b ? ChatColor.GREEN : ChatColor.RED) + String.valueOf(b) + ChatColor.RESET;
     }
 
     private boolean analyze(CommandSender commandSender) {
@@ -180,14 +185,14 @@ public class WIActions implements CommandExecutor, TabCompleter {
         }
 
         message += ChatColor.YELLOW + "EVENTS" + ChatColor.WHITE;
-        message += "\nServer Start: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean("onServerStart.announce"));
-        message += "\nServer Stop: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean("onServerStop.announce"));
-        message += "\nPlayer Join: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean("onPlayerJoin.announce"));
-        message += "\nPlayer Quit: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean("onPlayerQuit.announce"));
-        message += "\nPlayer Kick: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean("onPlayerKicked.announce"));
-        message += "\nAdvancement made: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean("onPlayerAdvancementComplete.announce"));
-        message += "\nPlayer Death PVE: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean("onPlayerDeath.playerKilledByNPC.announce"));
-        message += "\nPlayer Death PVP: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean("onPlayerDeath.playerKilledByPlayer.announce"));
+        message += "\nServer Start: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean(MessageType.SERVER_START));
+        message += "\nServer Stop: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean(MessageType.SERVER_STOP));
+        message += "\nPlayer Join: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean(MessageType.PLAYER_JOIN));
+        message += "\nPlayer Quit: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean(MessageType.PLAYER_QUIT));
+        message += "\nPlayer Kick: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean(MessageType.PLAYER_KICK));
+        message += "\nAdvancement made: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean(MessageType.PLAYER_ADVANCEMENT));
+        message += "\nPlayer Death PVE: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean(MessageType.PLAYER_DEATH_NPC));
+        message += "\nPlayer Death PVP: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean(MessageType.PLAYER_DEATH_KILLED));
 
         commandSender.sendMessage(message);
         return true;
@@ -201,6 +206,7 @@ public class WIActions implements CommandExecutor, TabCompleter {
             );
             return true;
         }
+
         plugin.saveResource("config.yml", true);
         plugin.saveResource("lang.yml", true);
         plugin.saveResource("messages.yml", true);
@@ -261,9 +267,13 @@ public class WIActions implements CommandExecutor, TabCompleter {
             );
             return true;
         }
+
         plugin.getConfig().set("isEnabled", true);
-        plugin.reloadConfig();
         plugin.saveConfig();
+        plugin.reloadConfig();
+
+        commandSender.sendMessage(LanguageConfiguration.get().getString("commands.enable"));
+
         return true;
     }
 
@@ -275,9 +285,13 @@ public class WIActions implements CommandExecutor, TabCompleter {
             );
             return true;
         }
+
         plugin.getConfig().set("isEnabled", false);
-        plugin.reloadConfig();
         plugin.saveConfig();
+        plugin.reloadConfig();
+
+        commandSender.sendMessage(LanguageConfiguration.get().getString("commands.disable"));
+
         return true;
     }
 
@@ -287,6 +301,12 @@ public class WIActions implements CommandExecutor, TabCompleter {
                 language.getString("commands.no-permission")));
             return true;
         }
+
+        if(args.length < 2) {
+            commandSender.sendMessage("/wi setlanguage lang");
+            return true;
+        }
+
         String newLang = args[1];
         if(language.getYamlConfig().contains(newLang)) {
             plugin.getConfig().set("language-override", newLang);
@@ -393,6 +413,12 @@ public class WIActions implements CommandExecutor, TabCompleter {
             plugin.getLogger().log(Level.SEVERE, "Failed to make a copy of JSON payloads file: " + e.getMessage());
         }
 
+        String message = LanguageConfiguration.get().getString("commands.config.backupCreated");
+        message = message.replace("%01", backupName);
+        message = ChatColor.translateAlternateColorCodes('&', message);
+
+        commandSender.sendMessage(message);
+
         return true;
     }
 
@@ -451,6 +477,12 @@ public class WIActions implements CommandExecutor, TabCompleter {
         } catch (IOException e) {
             plugin.getLogger().log(Level.SEVERE, "Failed to replace the JSON payloads file: " + e.getMessage());
         }
+
+        String message = LanguageConfiguration.get().getString("commands.config.backupLoaded");
+        message = message.replace("%01", backupName);
+        message = ChatColor.translateAlternateColorCodes('&', message);
+
+        commandSender.sendMessage(message);
 
         return true;
     }

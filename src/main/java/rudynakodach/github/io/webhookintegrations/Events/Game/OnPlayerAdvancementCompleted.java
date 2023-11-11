@@ -44,7 +44,6 @@ public class OnPlayerAdvancementCompleted implements Listener {
             return;
         }
 
-        // if the advancement is hidden
         if (event.getAdvancement().getDisplay() == null) {
             return;
         }

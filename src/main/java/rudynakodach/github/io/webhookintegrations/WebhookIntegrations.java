@@ -40,10 +40,9 @@ import java.util.TimeZone;
 import java.util.logging.Level;
 
 public final class WebhookIntegrations extends JavaPlugin {
-    // Welcome, fellow source code reader!
 
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 55;
+    public static int currentBuildNumber = 56;
 
     @Override
     public void onEnable() {
@@ -118,8 +117,14 @@ public final class WebhookIntegrations extends JavaPlugin {
             }
         }
 
-        if (getConfig().getString("webhookUrl") == null || getConfig().getString("webhookUrl").equalsIgnoreCase("")) {
+        String webhookUrl = getConfig().getString("webhookUrl");
+
+        if (webhookUrl == null) {
             getLogger().log(Level.WARNING, language.getString("onStart.webhookEmpty"));
+        } else {
+            if(webhookUrl.equalsIgnoreCase("")) {
+                getLogger().log(Level.WARNING, language.getString("onStart.webhookEmpty"));
+            }
         }
 
         getLogger().log(Level.INFO, language.getString("onStart.registeringEvents"));

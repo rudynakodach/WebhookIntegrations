@@ -206,7 +206,7 @@ onPlayerChat:
   ]
 }'
 
-onPlayerAdvancementComplete:
+onPlayerAdvancement:
   # Available variables:
   # - $player$ - player name
   # - $uuid$ - player's uuid who died
