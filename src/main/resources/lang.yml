@@ -1,4 +1,4 @@
-# If you want to contribute and add your own translations, create a fork and make a pull request on the GitHub repository here: https://github.com/rudynakodach/WebhookIntegrations/pulls
+# If you want to contribute and add your own translations, fork the project's repository and make a pull request here: https://github.com/rudynakodach/WebhookIntegrations/pulls
 
 en_US:
   no-permission: "&cYou don't have permission to do that."
@@ -20,6 +20,9 @@ en_US:
     commandRegisterFinish: "Commands registered."
 
   commands:
+    enable: "Plugin enabled."
+    disable: "Plugin disabled."
+
     setUrl:
       verifyStart: "Verifying URL..."
       verifySuccess: "URL verified!"
@@ -46,6 +49,9 @@ en_US:
       keyCreated: "&aCreated key %01 with a value of %02."
       keyRemoved: "&aRemoved key %01."
       saveFailed: "&cAn error occurred while saving the file: %04."
+
+      backupCreated: "&aCreated backup &o%01"
+      backupLoaded: "&aLoaded backup &o%01"
 
     update:
       success: "Latest version downloaded!"
@@ -74,9 +80,12 @@ pl_PL:
     webhookEmpty: "Adres Webhooka jest pusty i nie może zostać użyty! Ustaw wartość 'webhookUrl' w configu albo użyj \"/seturl <url>\"!"
     registeringEvents: "Rejestrowanie wydarzeń..."
     eventRegisterFinish: "Wydarzenia zarejestrowane."
-    commandRegisterFinish: "Komendy zarejestrowne."
+    commandRegisterFinish: "Komendy zarejestrowane."
 
   commands:
+    enable: "Plugin włączony."
+    disable: "Plugin wyłączony."
+
     seturl:
       verifyStart: "Weryfikowanie URL..."
       verifySuccess: "URL zweryfikowane!"
@@ -103,6 +112,9 @@ pl_PL:
       keyCreated: "&aUtworzono klucz &l%01&r&a z wartością &l%02&r&a."
       keyRemoved: "&aUsunięto klucz &l%01&r&a."
       saveFailed: "&cWystąpił błąd podczas zapisywania pliku: &l%04&r&a."
+
+      backupCreated: "&aUtworzono backup &o%01"
+      backupLoaded: "&aZaładowano backup &o%01"
 
     update:
       success: "Pobrano najnowszą wersje!"
