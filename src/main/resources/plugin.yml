@@ -58,3 +58,7 @@ commands:
   savebackup:
     usage: /wi config savebackup <?name>
     permission: webhookintegrations.config.savebackup
+
+  sendtemplate:
+    usage: /wi template send <name>
+    permission: webhookintegrations.templates.send

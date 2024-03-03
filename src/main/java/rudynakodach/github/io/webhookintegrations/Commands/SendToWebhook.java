@@ -53,7 +53,7 @@ public class SendToWebhook implements CommandExecutor {
 
                 if (webhookUrl.equals("")) {
                     String response = ChatColor.translateAlternateColorCodes('&',
-                            language.getString("commands.send.onEmptyUrl"));
+                            language.getLocalizedString("commands.send.onEmptyUrl"));
                     sender.sendMessage(response);
                     return true;
                 }
@@ -79,7 +79,7 @@ public class SendToWebhook implements CommandExecutor {
 
             } else {
                 String response = ChatColor.translateAlternateColorCodes('&',
-                        language.getString("commands.send.commandIncorrectUsage") + "\n" +
+                        language.getLocalizedString("commands.send.commandIncorrectUsage") + "\n" +
                         "&r&f/send &aisEmbed&7(true/false)&r&a message");
                 sender.sendMessage(response);
 

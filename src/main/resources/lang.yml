@@ -63,6 +63,12 @@ en_US:
       changed: "Language changed."
       notExists: "&cLanguage provided doesn't exist."
 
+    templates:
+      success: "&aTemplate sent!"
+      noAccess: "&cYou don't have access to this template!"
+      noJson: "&cTemplate is missing its JSON body. Check templates.yml!"
+      notFound: "&cTemplate not found."
+
 pl_PL:
   no-permission: "&cNie masz uprawnień."
 
@@ -125,5 +131,12 @@ pl_PL:
     setLang:
       changed: "Zmieniono język."
       notExists: "&cPodany język nie istnieje."
+
+    templates:
+      success: "&aWysłano szablon!"
+      noAccess: "&cNie masz dostępu do tego szablonu!"
+      noJson: "&cSzablon nie zawiera wiadomości JSON. Sprawdź templates.yml!"
+      notFound: "&cNie znaleziono szablonu."
+
 
 # END OF FILE

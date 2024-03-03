@@ -23,9 +23,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 
-public class MessageConfiguration {
-    private YamlConfiguration config;
-    private final JavaPlugin plugin;
+public class MessageConfiguration extends WebhookIntegrationsModule {
     private static MessageConfiguration instance;
 
     public static MessageConfiguration get() {
@@ -33,7 +31,7 @@ public class MessageConfiguration {
     }
 
     public MessageConfiguration(JavaPlugin plugin) {
-        this.plugin = plugin;
+        super("messages.yml", plugin);
         this.config = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "messages.yml"));
 
         instance = this;
@@ -43,14 +41,7 @@ public class MessageConfiguration {
         return config.getBoolean(message + ".announce");
     }
 
-    public YamlConfiguration getYamlConfig() {
-        return config;
-    }
     public String getMessage(String path) {
         return config.getString(path + ".messageJson");
-    }
-
-    public void reload() {
-        this.config = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "messages.json"));
     }
 }

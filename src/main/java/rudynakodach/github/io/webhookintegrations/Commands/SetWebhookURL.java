@@ -58,35 +58,35 @@ public class SetWebhookURL implements CommandExecutor {
 
             //checking URL validity
             if (!newUrl.startsWith("https://")) {
-                sender.sendMessage(ChatColor.RED + language.getString("commands.seturl.noHttps"));
+                sender.sendMessage(ChatColor.RED + language.getLocalizedString("commands.seturl.noHttps"));
                 return true;
             } else if (!newUrl.contains("discord")) {
-                sender.sendMessage(ChatColor.RED + language.getString("commands.seturl.notDiscord"));
+                sender.sendMessage(ChatColor.RED + language.getLocalizedString("commands.seturl.notDiscord"));
                 return true;
             }
 
-            sender.sendMessage(ChatColor.BLUE + language.getString("commands.seturl.verifyStart"));
+            sender.sendMessage(ChatColor.BLUE + language.getLocalizedString("commands.seturl.verifyStart"));
 
             try {
                 int responseCode = getResponseCode(newUrl);
 
                 if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_NO_CONTENT) {
-                    sender.sendMessage(ChatColor.GREEN + language.getString("commands.seturl.verifySuccess"));
+                    sender.sendMessage(ChatColor.GREEN + language.getLocalizedString("commands.seturl.verifySuccess"));
                 } else {
-                    sender.sendMessage(ChatColor.LIGHT_PURPLE + language.getString("commands.seturl.verifyFail"));
+                    sender.sendMessage(ChatColor.LIGHT_PURPLE + language.getLocalizedString("commands.seturl.verifyFail"));
                     return true;
                 }
             } catch (IOException e) {
-                sender.sendMessage(ChatColor.RED + language.getString("commands.seturl.verifyFail"));
+                sender.sendMessage(ChatColor.RED + language.getLocalizedString("commands.seturl.verifyFail"));
                 return true;
             }
 
             config.set("webhookUrl", newUrl);
             plugin.saveConfig();
-            sender.sendMessage(ChatColor.GREEN + language.getString("commands.seturl.newUrlSet"));
+            sender.sendMessage(ChatColor.GREEN + language.getLocalizedString("commands.seturl.newUrlSet"));
             return true;
         } else {
-            sender.sendMessage(ChatColor.LIGHT_PURPLE + language.getString("commands.seturl.commandIncorrectUsage"));
+            sender.sendMessage(ChatColor.LIGHT_PURPLE + language.getLocalizedString("commands.seturl.commandIncorrectUsage"));
             return false;
         }
     }

@@ -30,6 +30,7 @@ import rudynakodach.github.io.webhookintegrations.Events.Game.*;
 import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
+import rudynakodach.github.io.webhookintegrations.Modules.TemplateConfiguration;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -40,9 +41,8 @@ import java.util.TimeZone;
 import java.util.logging.Level;
 
 public final class WebhookIntegrations extends JavaPlugin {
-
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 56;
+    public static int currentBuildNumber = 57;
 
     @Override
     public void onEnable() {
@@ -58,6 +58,10 @@ public final class WebhookIntegrations extends JavaPlugin {
 
         if(!new File(getDataFolder(), "lang.yml").exists()) {
             this.saveResource("lang.yml",false);
+        }
+
+        if(!new File(getDataFolder(), "templates.yml").exists()) {
+            this.saveResource("templates.yml", false);
         }
 
         if(!new File(getDataFolder(), "config-backups").exists()) {
@@ -92,17 +96,17 @@ public final class WebhookIntegrations extends JavaPlugin {
 
         LanguageConfiguration language = new LanguageConfiguration(this, selectedLanguage, languageConfig);
 
-        getLogger().log(Level.INFO, language.getString("onStart.message"));
+        getLogger().log(Level.INFO, language.getLocalizedString("onStart.message"));
 
         if(getConfig().getBoolean("check-for-updates")) {
-            getLogger().log(Level.INFO, language.getString("update.checking"));
+            getLogger().log(Level.INFO, language.getLocalizedString("update.checking"));
 
             try {
                 int receivedBuildNumber = new AutoUpdater(this).getLatestVersion();
                 if (currentBuildNumber < receivedBuildNumber && receivedBuildNumber != -1) {
                     isLatest = false;
                     getLogger().log(Level.WARNING, "------------------------- WI -------------------------");
-                    getLogger().log(Level.INFO, language.getString("update.updateFound"));
+                    getLogger().log(Level.INFO, language.getLocalizedString("update.updateFound"));
                     getLogger().log(Level.WARNING, "------------------------------------------------------");
 
                     if (getConfig().getBoolean("auto-update")) {
@@ -110,24 +114,26 @@ public final class WebhookIntegrations extends JavaPlugin {
                     }
 
                 } else {
-                    getLogger().log(Level.INFO, language.getString("update.latest"));
+                    getLogger().log(Level.INFO, language.getLocalizedString("update.latest"));
                 }
             } catch (IOException e) {
-                getLogger().log(Level.WARNING, language.getString("update.checkFailed") + e.getMessage());
+                getLogger().log(Level.WARNING, language.getLocalizedString("update.checkFailed") + e.getMessage());
             }
         }
 
         String webhookUrl = getConfig().getString("webhookUrl");
 
         if (webhookUrl == null) {
-            getLogger().log(Level.WARNING, language.getString("onStart.webhookEmpty"));
+            getLogger().log(Level.WARNING, language.getLocalizedString("onStart.webhookEmpty"));
         } else {
             if(webhookUrl.equalsIgnoreCase("")) {
-                getLogger().log(Level.WARNING, language.getString("onStart.webhookEmpty"));
+                getLogger().log(Level.WARNING, language.getLocalizedString("onStart.webhookEmpty"));
             }
         }
 
-        getLogger().log(Level.INFO, language.getString("onStart.registeringEvents"));
+        getLogger().log(Level.INFO, language.getLocalizedString("onStart.registeringEvents"));
+
+        new TemplateConfiguration(this);
 
         // Events
         OnServerStart serverStart = new OnServerStart(this);
@@ -154,7 +160,7 @@ public final class WebhookIntegrations extends JavaPlugin {
         OnPlayerDeath playerDeath = new OnPlayerDeath(this);
         getServer().getPluginManager().registerEvents(playerDeath,this);
 
-        getLogger().log(Level.INFO, language.getString("onStart.eventRegisterFinish"));
+        getLogger().log(Level.INFO, language.getLocalizedString("onStart.eventRegisterFinish"));
 
         // Commands
         SetWebhookURL setWebhookUrlCommand = new SetWebhookURL(this);
@@ -166,7 +172,7 @@ public final class WebhookIntegrations extends JavaPlugin {
         WIActions resetConfig = new WIActions(this);
         Objects.requireNonNull(getCommand("wi")).setExecutor(resetConfig);
 
-        getLogger().log(Level.INFO, language.getString("onStart.commandRegisterFinish"));
+        getLogger().log(Level.INFO, language.getLocalizedString("onStart.commandRegisterFinish"));
 
         new MessageConfiguration(this);
 

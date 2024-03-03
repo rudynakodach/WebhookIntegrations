@@ -18,14 +18,14 @@
 
 package rudynakodach.github.io.webhookintegrations.Modules;
 
-public class MessageType {
-    public static String SERVER_START = "onServerStart";
-    public static String SERVER_STOP = "onServerStop";
-    public static String PLAYER_JOIN = "onPlayerJoin";
-    public static String PLAYER_QUIT = "onPlayerQuit";
-    public static String PLAYER_KICK = "onPlayerKicked";
-    public static String PLAYER_DEATH_NPC = "onPlayerDeath.playerKilledByNPC";
-    public static String PLAYER_DEATH_KILLED = "noPlayerDeath.playerKilledByPlayer";
-    public static String PLAYER_CHAT = "onPlayerChat";
-    public static String PLAYER_ADVANCEMENT = "onPlayerAdvancement";
+public final class MessageType {
+    public static final String SERVER_START = "onServerStart";
+    public static final String SERVER_STOP = "onServerStop";
+    public static final String PLAYER_JOIN = "onPlayerJoin";
+    public static final String PLAYER_QUIT = "onPlayerQuit";
+    public static final String PLAYER_KICK = "onPlayerKicked";
+    public static final String PLAYER_DEATH_NPC = "onPlayerDeath.playerKilledByNPC";
+    public static final String PLAYER_DEATH_KILLED = "noPlayerDeath.playerKilledByPlayer";
+    public static final String PLAYER_CHAT = "onPlayerChat";
+    public static final String PLAYER_ADVANCEMENT = "onPlayerAdvancement";
 }

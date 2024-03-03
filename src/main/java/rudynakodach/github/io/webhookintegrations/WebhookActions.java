@@ -48,7 +48,7 @@ public class WebhookActions {
     public void SendAsync(String json) {
         if(!plugin.getConfig().getBoolean("isEnabled")) {return;}
         if(!plugin.getConfig().contains("webhookUrl")) {
-            plugin.getLogger().log(Level.SEVERE, LanguageConfiguration.get().getString("config.noWebhookUrl"));
+            plugin.getLogger().log(Level.SEVERE, LanguageConfiguration.get().getLocalizedString("config.noWebhookUrl"));
             return;
         }
 
@@ -91,7 +91,7 @@ public class WebhookActions {
     public void SendSync(String json) {
         if(!plugin.getConfig().getBoolean("isEnabled")) {return;}
         if(!plugin.getConfig().contains("webhookUrl")) {
-            plugin.getLogger().log(Level.SEVERE, LanguageConfiguration.get().getString("config.noWebhookUrl"));
+            plugin.getLogger().log(Level.SEVERE, LanguageConfiguration.get().getLocalizedString("config.noWebhookUrl"));
             return;
         }
 

@@ -1,0 +1,24 @@
+# Globals are text macros that can be used by surrounding the name of the key with $ signs, e.g. $hello$
+globals:
+  hello: "Hello, world!"
+
+templates:
+  # Showcase template
+  # Usage: /wi template send test --player "text" --level "text 2"
+  # Permissions required to send:
+  # - webhookintegrations.templates.send - use the template send command
+  # - webhookintegrations.templates.send.test - send this template
+  # (webhookintegrations.templates.send.any allows to send all templates)
+  test:
+    useGlobals: true              # Should we use globals (not ignore text surrounded in $s)?
+    params: ['player', 'level']   # Text in % signs with the same name as the param will be replaced with its value passed in the command
+    messageJson: '{
+    "content": null,
+    "embeds": [
+      {
+        "title": "$hello$",
+        "description": "%player% is now on level %level%",
+        "color": 14745344
+      }
+    ]
+  }'

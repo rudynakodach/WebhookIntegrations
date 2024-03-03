@@ -30,9 +30,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import rudynakodach.github.io.webhookintegrations.AutoUpdater;
-import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
-import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
-import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
+import rudynakodach.github.io.webhookintegrations.Modules.*;
+import rudynakodach.github.io.webhookintegrations.WebhookActions;
 import rudynakodach.github.io.webhookintegrations.WebhookIntegrations;
 
 import java.io.File;
@@ -43,15 +42,14 @@ import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class WIActions implements CommandExecutor, TabCompleter {
     JavaPlugin plugin;
-    private final LanguageConfiguration language;
     public WIActions(JavaPlugin plugin) {
         this.plugin = plugin;
-
-        language = LanguageConfiguration.get();
     }
 
     @Override
@@ -70,11 +68,11 @@ public class WIActions implements CommandExecutor, TabCompleter {
                         if(!commandSender.hasPermission("webhookintegrations.config.reset")) {
                             commandSender.sendMessage(
                                     ChatColor.translateAlternateColorCodes('&',
-                                            language.getString("commands.no-permission"))
+                                            LanguageConfiguration.get().getLocalizedString("no-permission"))
                             );
                             return true;
                         }
-                        commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', language.getString("commands.config.noConfirm")));
+                        commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', LanguageConfiguration.get().getLocalizedString("commands.config.noConfirm")));
                         return true;
                     }
                 } else if (args[0].equalsIgnoreCase("reload")) {
@@ -102,7 +100,13 @@ public class WIActions implements CommandExecutor, TabCompleter {
                         return loadBackup(commandSender, args);
                     }
                 }
+                if(args.length >= 2) {
+                    if(args[0].equalsIgnoreCase("template") && args[1].equalsIgnoreCase("send")) {
+                        return sendTemplate(commandSender, args);
+                    }
+                }
             }
+            commandSender.sendMessage("This server is running WebhookIntegrations");
         }
         return true;
     }
@@ -120,25 +124,27 @@ public class WIActions implements CommandExecutor, TabCompleter {
                 suggestions.add("analyze");
                 suggestions.add("update");
                 suggestions.add("config");
+                suggestions.add("template");
             } else if (args.length == 2) {
                 if(args[0].equalsIgnoreCase("reset")) {
                     suggestions.add("confirm");
                 } else if(args[0].equalsIgnoreCase("setlanguage")) {
-                    return language.getYamlConfig().getKeys(false).stream().toList();
+                    return LanguageConfiguration.get().getYamlConfig().getKeys(false).stream().toList();
                 } else if(args[0].equalsIgnoreCase("config")) {
                     suggestions.add("setvalue");
                     suggestions.add("savebackup");
                     suggestions.add("loadbackup");
-                    return suggestions;
+                } else if(args[0].equalsIgnoreCase("template")) {
+                    suggestions.add("send");
                 }
             } else if(args.length == 3) {
                 if(args[0].equalsIgnoreCase("config")) {
-                    if(args[1].equalsIgnoreCase("setvalue")) {
+                    if (args[1].equalsIgnoreCase("setvalue")) {
                         return plugin.getConfig().getKeys(true).stream().toList();
-                    } else if(args[1].equalsIgnoreCase("loadbackup")) {
+                    } else if (args[1].equalsIgnoreCase("loadbackup")) {
                         File configBackupsDirectory = new File(plugin.getDataFolder(), "config-backups");
                         File[] backups = configBackupsDirectory.listFiles();
-                        if(backups == null) {
+                        if (backups == null) {
                             return suggestions;
                         }
 
@@ -147,7 +153,10 @@ public class WIActions implements CommandExecutor, TabCompleter {
                                 .map(File::getName)
                                 .collect(Collectors.toList());
                     }
+                } else if(args[0].equalsIgnoreCase("template") && args[1].equalsIgnoreCase("send")) {
+                    return new ArrayList<>(TemplateConfiguration.get().config.getConfigurationSection("templates").getKeys(false));
                 }
+
             } else if(args.length == 4) {
                 if(args[0].equalsIgnoreCase("config") && args[1].equalsIgnoreCase("setvalue")) {
                     if(!plugin.getConfig().contains(args[3])) {return null;}
@@ -172,7 +181,7 @@ public class WIActions implements CommandExecutor, TabCompleter {
         if (!commandSender.hasPermission("webhookintegrations.analyze")) {
             commandSender.sendMessage(
                     ChatColor.translateAlternateColorCodes('&',
-                            language.getString("commands.no-permission"))
+                            LanguageConfiguration.get().getLocalizedString("no-permission"))
             );
             return true;
         }
@@ -202,16 +211,13 @@ public class WIActions implements CommandExecutor, TabCompleter {
         if (!commandSender.hasPermission("webhookintegrations.config.reset")) {
             commandSender.sendMessage(
                     ChatColor.translateAlternateColorCodes('&',
-                            language.getString("commands.no-permission"))
+                            LanguageConfiguration.get().getLocalizedString("no-permission"))
             );
             return true;
         }
 
-        plugin.saveResource("config.yml", true);
-        plugin.saveResource("lang.yml", true);
-        plugin.saveResource("messages.yml", true);
+        WebhookIntegrationsModule.resetAll();
 
-        plugin.reloadConfig();
         return true;
     }
 
@@ -219,14 +225,15 @@ public class WIActions implements CommandExecutor, TabCompleter {
         if (!commandSender.hasPermission("webhookintegrations.reload")) {
             commandSender.sendMessage(
                     ChatColor.translateAlternateColorCodes('&',
-                            language.getString("commands.no-permission"))
+                            LanguageConfiguration.get().getLocalizedString("no-permission"))
             );
             return true;
         }
+
         plugin.reloadConfig();
-        language.reload();
-        MessageConfiguration.get().reload();
-        commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', language.getString("commands.config.reloadFinish")));
+        WebhookIntegrationsModule.reloadAll();
+
+        commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', LanguageConfiguration.get().getLocalizedString("commands.config.reloadFinish")));
         return true;
     }
 
@@ -234,28 +241,32 @@ public class WIActions implements CommandExecutor, TabCompleter {
         if(!commandSender.hasPermission("webhookintegrations.update")) {
             commandSender.sendMessage(
                     ChatColor.translateAlternateColorCodes('&',
-                            language.getString("commands.no-permission"))
+                            LanguageConfiguration.get().getLocalizedString("no-permission"))
             );
             return true;
         }
+
         AutoUpdater updater = new AutoUpdater(plugin);
+
         try {
             int latestVersion = updater.getLatestVersion();
             if (latestVersion > WebhookIntegrations.currentBuildNumber) {
                 boolean success = updater.Update();
                 if (success) {
-                    commandSender.sendMessage(language.getString("commands.update.success"));
+                    commandSender.sendMessage(LanguageConfiguration.get().getLocalizedString("commands.update.success"));
                 } else {
-                    commandSender.sendMessage(language.getString("commands.update.failed"));
+                    commandSender.sendMessage(LanguageConfiguration.get().getLocalizedString("commands.update.failed"));
                 }
             } else {
                 if(latestVersion == -1) {
-                    commandSender.sendMessage(language.getString("commands.update.versionCheckFailed"));
+                    commandSender.sendMessage(LanguageConfiguration.get().getLocalizedString("commands.update.versionCheckFailed"));
                 } else {
-                    commandSender.sendMessage(language.getString("commands.update.latest"));
+                    commandSender.sendMessage(LanguageConfiguration.get().getLocalizedString("commands.update.latest"));
                 }
             }
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+            commandSender.sendMessage(LanguageConfiguration.get().getLocalizedString("commands.update.failed"));
+        }
         return true;
     }
 
@@ -263,7 +274,7 @@ public class WIActions implements CommandExecutor, TabCompleter {
         if(!commandSender.hasPermission("webhookintegrations.enable")) {
             commandSender.sendMessage(
                     ChatColor.translateAlternateColorCodes('&',
-                            language.getString("commands.no-permission"))
+                            LanguageConfiguration.get().getLocalizedString("no-permission"))
             );
             return true;
         }
@@ -272,7 +283,7 @@ public class WIActions implements CommandExecutor, TabCompleter {
         plugin.saveConfig();
         plugin.reloadConfig();
 
-        commandSender.sendMessage(LanguageConfiguration.get().getString("commands.enable"));
+        commandSender.sendMessage(LanguageConfiguration.get().getLocalizedString("commands.enable"));
 
         return true;
     }
@@ -281,7 +292,7 @@ public class WIActions implements CommandExecutor, TabCompleter {
         if(!commandSender.hasPermission("webhookintegrations.disable")) {
             commandSender.sendMessage(
                     ChatColor.translateAlternateColorCodes('&',
-                            language.getString("commands.no-permission"))
+                            LanguageConfiguration.get().getLocalizedString("no-permission"))
             );
             return true;
         }
@@ -290,7 +301,7 @@ public class WIActions implements CommandExecutor, TabCompleter {
         plugin.saveConfig();
         plugin.reloadConfig();
 
-        commandSender.sendMessage(LanguageConfiguration.get().getString("commands.disable"));
+        commandSender.sendMessage(LanguageConfiguration.get().getLocalizedString("commands.disable"));
 
         return true;
     }
@@ -298,7 +309,7 @@ public class WIActions implements CommandExecutor, TabCompleter {
     private boolean setLanguage(CommandSender commandSender, String[] args) {
         if(!commandSender.hasPermission("webhookintegrations.setlanguage")) {
             commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                language.getString("commands.no-permission")));
+                LanguageConfiguration.get().getLocalizedString("no-permission")));
             return true;
         }
 
@@ -308,13 +319,13 @@ public class WIActions implements CommandExecutor, TabCompleter {
         }
 
         String newLang = args[1];
-        if(language.getYamlConfig().contains(newLang)) {
+        if(LanguageConfiguration.get().getYamlConfig().contains(newLang)) {
             plugin.getConfig().set("language-override", newLang);
             plugin.reloadConfig();
-            language.setLanguage(newLang);
-            commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', language.getString("commands.setLang.changed")));
+            LanguageConfiguration.get().setLanguage(newLang);
+            commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', LanguageConfiguration.get().getLocalizedString("commands.setLang.changed")));
         } else {
-            commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', language.getString("commands.setLang.notExists")));
+            commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', LanguageConfiguration.get().getLocalizedString("commands.setLang.notExists")));
         }
         return true;
     }
@@ -322,7 +333,7 @@ public class WIActions implements CommandExecutor, TabCompleter {
     private boolean setConfig(CommandSender commandSender, String[] args) {
         if(!commandSender.hasPermission("webhookintegrations.config.setvalue")) {
             commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                    language.getString("commands.no-permission")));
+                    LanguageConfiguration.get().getLocalizedString("no-permission")));
             return true;
         }
         String path = args[2];
@@ -332,13 +343,13 @@ public class WIActions implements CommandExecutor, TabCompleter {
 
         if(plugin.getConfig().contains(path)) {
             oldValue = plugin.getConfig().get(path);
-            message = LanguageConfiguration.get().getString("commands.config.keyEdited");
+            message = LanguageConfiguration.get().getLocalizedString("commands.config.keyEdited");
         } else {
-            message = LanguageConfiguration.get().getString("commands.config.keyCreated");
+            message = LanguageConfiguration.get().getLocalizedString("commands.config.keyCreated");
         }
 
         if(value == null) {
-            message = LanguageConfiguration.get().getString("commands.config.keyRemoved");
+            message = LanguageConfiguration.get().getLocalizedString("commands.config.keyRemoved");
         } else {
             if (value.toString().equalsIgnoreCase("true")) {
                 value = true;
@@ -355,7 +366,7 @@ public class WIActions implements CommandExecutor, TabCompleter {
         try {
             plugin.getConfig().save(new File(plugin.getDataFolder(), "config.yml"));
         } catch (Exception e) {
-            commandSender.sendMessage(LanguageConfiguration.get().getString("commands.config.saveFailed").replace("%04", e.getMessage()));
+            commandSender.sendMessage(LanguageConfiguration.get().getLocalizedString("commands.config.saveFailed").replace("%04", e.getMessage()));
             return true;
         }
 
@@ -375,7 +386,7 @@ public class WIActions implements CommandExecutor, TabCompleter {
     private boolean saveBackup(CommandSender commandSender, String[] args) {
         if(!commandSender.hasPermission("webhookintegrations.config.savebackup")) {
             commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                    language.getString("commands.no-permission")));
+                    LanguageConfiguration.get().getLocalizedString("no-permission")));
             return true;
         }
         // Saves the backup as the provided name if possible, current unix time otherwise.
@@ -413,7 +424,7 @@ public class WIActions implements CommandExecutor, TabCompleter {
             plugin.getLogger().log(Level.SEVERE, "Failed to make a copy of JSON payloads file: " + e.getMessage());
         }
 
-        String message = LanguageConfiguration.get().getString("commands.config.backupCreated");
+        String message = LanguageConfiguration.get().getLocalizedString("commands.config.backupCreated");
         message = message.replace("%01", backupName);
         message = ChatColor.translateAlternateColorCodes('&', message);
 
@@ -425,7 +436,7 @@ public class WIActions implements CommandExecutor, TabCompleter {
     private boolean loadBackup(CommandSender commandSender, String[] args) {
         if(!commandSender.hasPermission("webhookintegrations.config.loadbackup")) {
             commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                    language.getString("commands.no-permission")));
+                    LanguageConfiguration.get().getLocalizedString("no-permission")));
             return true;
         }
 
@@ -478,11 +489,59 @@ public class WIActions implements CommandExecutor, TabCompleter {
             plugin.getLogger().log(Level.SEVERE, "Failed to replace the JSON payloads file: " + e.getMessage());
         }
 
-        String message = LanguageConfiguration.get().getString("commands.config.backupLoaded");
+        String message = LanguageConfiguration.get().getLocalizedString("commands.config.backupLoaded");
         message = message.replace("%01", backupName);
         message = ChatColor.translateAlternateColorCodes('&', message);
 
         commandSender.sendMessage(message);
+
+        return true;
+    }
+
+    private boolean sendTemplate(CommandSender sender, String[] args) {
+
+        if(!sender.hasPermission("webhookintegrations.templates.send")) {
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                    LanguageConfiguration.get().getLocalizedString("no-permission")));
+            return true;
+        }
+
+        String templateName = args[2];
+
+        if(!TemplateConfiguration.Template.templateExists(templateName)) {
+            sender.sendMessage(
+                    ChatColor.translateAlternateColorCodes('&', LanguageConfiguration.get().getLocalizedString("commands.templates.notFound"))
+            );
+            return true;
+        }
+
+        if(!sender.hasPermission("webhookintegrations.templates.send.%s".formatted(templateName)) &&
+                !sender.hasPermission("webhookintegrations.templates.send.any")) {
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LanguageConfiguration.get().getLocalizedString("commands.templates.noAccess")));
+            return true;
+        }
+
+        TemplateConfiguration.Template template = TemplateConfiguration.get().getTemplate(templateName);
+
+        if(template == null || template.jsonBody == null) {
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LanguageConfiguration.get().getLocalizedString("commands.templates.noJson")));
+            return true;
+        }
+
+        String[] commandArgs = Arrays.copyOfRange(args, 3, args.length);
+        String argsString = String.join(" ", commandArgs);
+
+        Pattern argsPatters = Pattern.compile("--([a-zA-Z0-9]+) \"((?:[^\"\\\\]|\\\\.)+)\"");
+        Matcher matcher = argsPatters.matcher(argsString);
+
+        HashMap<String, String> params = new HashMap<>();
+        while(matcher.find()) {
+            params.put(matcher.group(1), matcher.group(2));
+        }
+
+        new WebhookActions(plugin).SendAsync(template.compile(params));
+
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LanguageConfiguration.get().getLocalizedString("commands.templates.success")));
 
         return true;
     }
