@@ -44,11 +44,16 @@ public class OnPlayerQuit implements Listener {
     public void onPlayerQuitEvent(PlayerQuitEvent event) {
         if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_QUIT)) {return;}
 
-        if(new WebhookActions(plugin).isPlayerVanished(event.getPlayer())) {
+        if(WebhookActions.isPlayerVanished(plugin, event.getPlayer())) {
             return;
         }
 
         String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_QUIT);
+
+        String playerName = event.getPlayer().getName();
+        if(plugin.getConfig().getBoolean("preventUsernameMarkdownFormatting")) {
+            playerName = WebhookActions.escapePlayerName(event.getPlayer());
+        }
 
         if(json == null) {
             return;
@@ -60,7 +65,7 @@ public class OnPlayerQuit implements Listener {
         json = json.replace("$playersOnline$",String.valueOf(plugin.getServer().getOnlinePlayers().size()))
             .replace("$timestamp$", sdf.format(new Date()))
             .replace("$maxPlayers$",String.valueOf(plugin.getServer().getMaxPlayers()))
-            .replace("$player$", event.getPlayer().getName())
+            .replace("$player$", playerName)
             .replace("$time$", new SimpleDateFormat(
                     Objects.requireNonNullElse(
                             plugin.getConfig().getString("date-format"),
@@ -71,6 +76,6 @@ public class OnPlayerQuit implements Listener {
             json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
         }
 
-        new WebhookActions(plugin).SendAsync(json);
+        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_QUIT)).SendAsync(json);
     }
 }

@@ -46,11 +46,14 @@ public class OnPlayerKick implements Listener {
             return;
         }
 
-        if(new WebhookActions(plugin).isPlayerVanished(event.getPlayer())) {
+        if(WebhookActions.isPlayerVanished(plugin, event.getPlayer())) {
             return;
         }
 
         String playerName = event.getPlayer().getName();
+        if(plugin.getConfig().getBoolean("preventUsernameMarkdownFormatting")) {
+            playerName = WebhookActions.escapePlayerName(event.getPlayer());
+        }
         String reason = PlainTextComponentSerializer.plainText().serialize(event.reason());
 
         if (reason.equals("")) {
@@ -82,6 +85,6 @@ public class OnPlayerKick implements Listener {
             json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
         }
 
-        new WebhookActions(plugin).SendAsync(json);
+        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_KICK)).SendAsync(json);
     }
 }

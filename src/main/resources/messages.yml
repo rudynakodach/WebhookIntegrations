@@ -2,6 +2,7 @@
 # minotar API for player head icons: https://minotar.net/
 
 onServerStart:
+  target: "main"
   # Available variables:
   # - $time$ - server's local time
   # - $timestamp$ - the current timestamp
@@ -13,7 +14,6 @@ onServerStart:
   # - $serverVersion$ - version of your server. this isn't the minecraft version
   # - $isOnlineMode$ - true if online-mode is enabled, false otherwise
   announce: true
-  # I won't make this message for you.
   messageJson: '{
   "embeds": [
     {
@@ -28,6 +28,7 @@ onServerStart:
 }'
 
 onServerStop:
+  target: "main"
   # Available variables:
   # - $time$ - server's local time
   # - $timestamp$ - the current timestamp
@@ -39,7 +40,6 @@ onServerStop:
   # - $serverVersion$ - version of your server. this isn't the minecraft version
   # - $isOnlineMode$ - true if online-mode is enabled, false otherwise
   announce: true
-  # I won't make this message for you.
   messageJson: '{
   "embeds": [
     {
@@ -54,6 +54,7 @@ onServerStop:
 }'
 
 onPlayerJoin:
+  target: "main"
   # Available variables:
   # - $player$ - player who joined
   # - $uuid$ - player's uuid who triggered the event
@@ -77,6 +78,7 @@ onPlayerJoin:
 }'
 
 onPlayerQuit:
+  target: "main"
   # Available variables:
   # - $player$ - player who left
   # - $uuid$ - player's uuid who triggered the event
@@ -100,6 +102,7 @@ onPlayerQuit:
 }'
 
 onPlayerKicked:
+  target: "main"
   # Available variables:
   # - $player$ - player who left
   # - $uuid$ - player's uuid who triggered the event
@@ -141,6 +144,7 @@ onPlayerDeath:
   # - $maxPlayers$ - slot count
   # - $playersOnline$ - the amount of players online
   playerKilledByNPC:
+    target: "main"
     announce: true
     messageJson: '{
   "embeds": [
@@ -156,6 +160,7 @@ onPlayerDeath:
   ]
 }'
   playerKilledByPlayer:
+    target: "main"
     # Additional variables:
     # - $killer$ - killer's player name
     # - $killerUuid$ - player's uuid who killed the player
@@ -166,10 +171,10 @@ onPlayerDeath:
   "embeds": [
     {
       "author": {
-        "name": "$player$",
-        "icon_url": "https://minotar.net/helm/$player$/512.png"
+        "name": "$victim$",
+        "icon_url": "https://minotar.net/helm/$victim$/512.png"
       },
-      "description": "**$player$** was killed by **$killer$**.",
+      "description": "$message$",
       "color": 16711680,
       "timestamp": "$timestamp$"
     }
@@ -177,7 +182,7 @@ onPlayerDeath:
 }'
 
 onPlayerChat:
-
+  target: "main"
   # Do we allow the user to have placeholders in their chat message?
   # Setting this to true will allow the player to format their messages using PAPI (%%) and built-in ($$) placeholders.
   allow-placeholders-in-message: false
@@ -207,6 +212,7 @@ onPlayerChat:
 }'
 
 onPlayerAdvancement:
+  target: "main"
   # Available variables:
   # - $player$ - player name
   # - $uuid$ - player's uuid who died
@@ -230,4 +236,4 @@ onPlayerAdvancement:
   ]
 }'
 
-#END OF FILE
+# Congrats! You survived through configuration!

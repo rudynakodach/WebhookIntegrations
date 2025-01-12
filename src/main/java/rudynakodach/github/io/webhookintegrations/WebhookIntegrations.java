@@ -42,7 +42,7 @@ import java.util.logging.Level;
 
 public final class WebhookIntegrations extends JavaPlugin {
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 57;
+    public static int currentBuildNumber = 59;
 
     @Override
     public void onEnable() {
@@ -234,6 +234,6 @@ public final class WebhookIntegrations extends JavaPlugin {
             .replace("$isOnlineMode$", String.valueOf(isOnlineMode))
             .replace("$playersOnline$", String.valueOf(playersOnline));
 
-        new WebhookActions(this).SendSync(json);
+        new WebhookActions(this, MessageConfiguration.get().getTarget(MessageType.SERVER_STOP)).SendSync(json);
     }
 }

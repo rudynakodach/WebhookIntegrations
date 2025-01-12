@@ -43,7 +43,7 @@ public class OnPlayerJoin implements Listener {
             return;
         }
 
-        if(new WebhookActions(plugin).isPlayerVanished(event.getPlayer())) {
+        if(WebhookActions.isPlayerVanished(plugin, event.getPlayer())) {
             return;
         }
 
@@ -53,6 +53,11 @@ public class OnPlayerJoin implements Listener {
             return;
         }
 
+        String playerName = event.getPlayer().getName();
+        if(plugin.getConfig().getBoolean("preventUsernameMarkdownFormatting")) {
+            playerName = WebhookActions.escapePlayerName(event.getPlayer());
+        }
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         sdf.setTimeZone(TimeZone.getTimeZone(plugin.getConfig().getString("timezone")));
 
@@ -60,7 +65,7 @@ public class OnPlayerJoin implements Listener {
                 .replace("$timestamp$", sdf.format(new Date()))
                 .replace("$maxPlayers$", String.valueOf(plugin.getServer().getMaxPlayers()))
                 .replace("$uuid$", event.getPlayer().getUniqueId().toString())
-                .replace("$player$", event.getPlayer().getName())
+                .replace("$player$", playerName)
                 .replace("$time$", new SimpleDateFormat(
                         Objects.requireNonNullElse(
                                 plugin.getConfig().getString("date-format"),
@@ -71,6 +76,6 @@ public class OnPlayerJoin implements Listener {
             json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
         }
 
-        new WebhookActions(plugin).SendAsync(json);
+        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_JOIN)).SendAsync(json);
     }
 }

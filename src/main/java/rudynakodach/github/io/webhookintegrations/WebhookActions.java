@@ -36,9 +36,12 @@ import java.util.Objects;
 import java.util.logging.Level;
 
 public class WebhookActions {
-    JavaPlugin plugin;
-    public WebhookActions(JavaPlugin plugin) {
+    private final JavaPlugin plugin;
+    private final String target;
+
+    public WebhookActions(JavaPlugin plugin, String target) {
         this.plugin = plugin;
+        this.target = target;
     }
 
     /**
@@ -47,14 +50,14 @@ public class WebhookActions {
      */
     public void SendAsync(String json) {
         if(!plugin.getConfig().getBoolean("isEnabled")) {return;}
-        if(!plugin.getConfig().contains("webhookUrl")) {
+        if(!plugin.getConfig().contains("webhooks.%s".formatted(target))) {
             plugin.getLogger().log(Level.SEVERE, LanguageConfiguration.get().getLocalizedString("config.noWebhookUrl"));
             return;
         }
 
-        String webhookUrl = Objects.requireNonNull(plugin.getConfig().getString("webhookUrl")).trim();
+        String webhookUrl = Objects.requireNonNull(plugin.getConfig().getString("webhooks.%s".formatted(target))).trim();
 
-        if (webhookUrl.equals("")) {
+        if (webhookUrl.isEmpty()) {
             plugin.getLogger().log(Level.WARNING, "Attempted to send a message to an empty webhook URL! Use /setUrl or disable the event in the config!");
             return;
         }
@@ -90,14 +93,14 @@ public class WebhookActions {
      */
     public void SendSync(String json) {
         if(!plugin.getConfig().getBoolean("isEnabled")) {return;}
-        if(!plugin.getConfig().contains("webhookUrl")) {
+        if(!plugin.getConfig().contains("webhooks.%s".formatted(target))) {
             plugin.getLogger().log(Level.SEVERE, LanguageConfiguration.get().getLocalizedString("config.noWebhookUrl"));
             return;
         }
 
-        String webhookUrl = Objects.requireNonNull(plugin.getConfig().getString("webhookUrl")).trim();
+        String webhookUrl = Objects.requireNonNull(plugin.getConfig().getString("webhooks.%s".formatted(target))).trim();
 
-        if (webhookUrl.equals("")) {
+        if (webhookUrl.isEmpty()) {
             plugin.getLogger().log(Level.WARNING, "Attempted to send a message to an empty webhook URL! Use /setUrl or disable the event in the config!");
             return;
         }
@@ -127,7 +130,7 @@ public class WebhookActions {
      * @param player Player to check
      * @return whether the player is vanished. {@code False} if {@code disableForVanishedPlayers} is set to {@code true} in the config
      */
-    public boolean isPlayerVanished(@NotNull Player player) {
+    public static boolean isPlayerVanished(@NotNull JavaPlugin plugin, @NotNull Player player) {
         if(!plugin.getConfig().getBoolean("disableForVanishedPlayers")) {
             return false;
         }
@@ -140,5 +143,9 @@ public class WebhookActions {
             }
         }
         return false;
+    }
+
+    public static String escapePlayerName(Player p) {
+        return p.getName().replaceAll("[*_~]", "\\\\$0");
     }
 }

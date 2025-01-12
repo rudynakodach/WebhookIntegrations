@@ -1,9 +1,17 @@
+# don't change this, otherwise you'll most likely break your config
+config-version: 2
+
 check-for-updates: true
 auto-update: true
 
 # The URL for your Discord Webhook.
 # This cannot be empty!
-webhookUrl: ""
+webhooks:
+  main: ""
+
+
+# Prevents Markdown formatting for usernames by escaping characters.
+preventUsernameMarkdownFormatting: true
 
 # The plugin selects the language of the system the plugin is running on.
 # Set this to your language you want the plugin to be in, false otherwise. Should be formatted like this: "en_US"

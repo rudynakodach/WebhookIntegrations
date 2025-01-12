@@ -33,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 import java.util.TimeZone;
+import java.util.logging.Level;
 
 public class OnPlayerDeath implements Listener {
 
@@ -44,11 +45,14 @@ public class OnPlayerDeath implements Listener {
     @EventHandler
     public void onPlayerDeathEvent(PlayerDeathEvent event) {
 
-        if(new WebhookActions(plugin).isPlayerVanished(event.getPlayer())) {
+        if(WebhookActions.isPlayerVanished(plugin, event.getPlayer())) {
             return;
         }
 
         String playerName = event.getEntity().getName();
+        if(plugin.getConfig().getBoolean("preventUsernameMarkdownFormatting")) {
+            playerName = WebhookActions.escapePlayerName(event.getPlayer());
+        }
         String deathMessage = PlainTextComponentSerializer.plainText().serialize(event.deathMessage() == null ? Component.empty() : Objects.requireNonNull(event.deathMessage()));
 
         String newLevel = String.valueOf(event.getNewLevel());
@@ -60,12 +64,16 @@ public class OnPlayerDeath implements Listener {
         sdf.setTimeZone(TimeZone.getTimeZone(plugin.getConfig().getString("timezone")));
 
         if(event.getEntity().getKiller() != null) {
-            if(new WebhookActions(plugin).isPlayerVanished(event.getEntity().getKiller())) {
+            if(WebhookActions.isPlayerVanished(plugin, event.getEntity().getKiller())) {
                 return;
             }
 
             if(!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_DEATH_KILLED)) {return;}
             String killerName = event.getEntity().getKiller().getName();
+            if(plugin.getConfig().getBoolean("preventUsernameMarkdownFormatting")) {
+                killerName = WebhookActions.escapePlayerName(event.getEntity().getKiller());
+            }
+
             String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_DEATH_KILLED);
 
             if(json == null) {
@@ -92,7 +100,7 @@ public class OnPlayerDeath implements Listener {
                 json = PlaceholderAPI.setRelationalPlaceholders(event.getPlayer(), event.getEntity().getKiller(), json);
             }
 
-            new WebhookActions(plugin).SendAsync(json);
+            new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_DEATH_KILLED)).SendAsync(json);
         }
         else {
             if(!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_DEATH_NPC)) {return;}
@@ -109,7 +117,7 @@ public class OnPlayerDeath implements Listener {
                     )
                 .replace("$timestamp$", sdf.format(new Date()))
                 .replace("$player$",playerName)
-                .replace("$deathMessage$",deathMessage)
+                .replace("$deathMessage$", deathMessage)
                 .replace("$newLevel$",newLevel)
                 .replace("$newExp$",newExp)
                 .replace("$oldLevel$",oldLevel)
@@ -119,7 +127,7 @@ public class OnPlayerDeath implements Listener {
                 json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
             }
 
-            new WebhookActions(plugin).SendAsync(json);
+            new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_DEATH_NPC)).SendAsync(json);
         }
     }
 }

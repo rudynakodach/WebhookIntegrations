@@ -46,7 +46,7 @@ public class OnPlayerChat implements Listener {
             return;
         }
 
-        if(new WebhookActions(plugin).isPlayerVanished(event.getPlayer())) {
+        if(WebhookActions.isPlayerVanished(plugin, event.getPlayer())) {
             return;
         }
 
@@ -54,6 +54,10 @@ public class OnPlayerChat implements Listener {
 
         String message = PlainTextComponentSerializer.plainText().serialize(event.message());
         String playerName = event.getPlayer().getName();
+        if(plugin.getConfig().getBoolean("preventUsernameMarkdownFormatting")) {
+            playerName = WebhookActions.escapePlayerName(event.getPlayer());
+        }
+
         String playerWorldName = event.getPlayer().getWorld().getName();
 
         String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_CHAT);
@@ -120,6 +124,6 @@ public class OnPlayerChat implements Listener {
             json = json.replace("$message$", message);
         }
 
-        new WebhookActions(plugin).SendAsync(json);
+        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_CHAT)).SendAsync(json);
     }
 }

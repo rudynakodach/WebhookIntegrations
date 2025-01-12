@@ -25,7 +25,7 @@ public final class MessageType {
     public static final String PLAYER_QUIT = "onPlayerQuit";
     public static final String PLAYER_KICK = "onPlayerKicked";
     public static final String PLAYER_DEATH_NPC = "onPlayerDeath.playerKilledByNPC";
-    public static final String PLAYER_DEATH_KILLED = "noPlayerDeath.playerKilledByPlayer";
+    public static final String PLAYER_DEATH_KILLED = "onPlayerDeath.playerKilledByPlayer";
     public static final String PLAYER_CHAT = "onPlayerChat";
     public static final String PLAYER_ADVANCEMENT = "onPlayerAdvancement";
 }
