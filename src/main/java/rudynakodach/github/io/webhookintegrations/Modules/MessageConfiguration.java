@@ -41,6 +41,10 @@ public class MessageConfiguration extends WebhookIntegrationsModule {
         return config.getBoolean(message + ".announce");
     }
 
+    public String getTarget(String message) {
+        return config.getString("%s.target".formatted(message));
+    }
+
     public String getMessage(String path) {
         return config.getString(path + ".messageJson");
     }

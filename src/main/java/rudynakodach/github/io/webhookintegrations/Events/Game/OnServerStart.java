@@ -77,6 +77,6 @@ public class OnServerStart implements Listener {
                 .replace("$isOnlineMode$", String.valueOf(isOnlineMode))
                 .replace("$playersOnline$", String.valueOf(playersOnline));
 
-        new WebhookActions(plugin).SendSync(json);
+        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.SERVER_START)).SendSync(json);
     }
 }

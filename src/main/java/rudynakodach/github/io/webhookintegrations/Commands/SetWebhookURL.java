@@ -53,8 +53,13 @@ public class SetWebhookURL implements CommandExecutor {
         if (!command.getName().equalsIgnoreCase("seturl")) {
             return true;
         }
-        if (args.length == 1) {
+
+        if (args.length >= 1) {
             String newUrl = args[0].trim();
+            String target = "main";
+            if(args.length >= 2) {
+                target = args[1].trim();
+            }
 
             //checking URL validity
             if (!newUrl.startsWith("https://")) {
@@ -81,7 +86,7 @@ public class SetWebhookURL implements CommandExecutor {
                 return true;
             }
 
-            config.set("webhookUrl", newUrl);
+            config.set("webhooks.%s".formatted(target), newUrl);
             plugin.saveConfig();
             sender.sendMessage(ChatColor.GREEN + language.getLocalizedString("commands.seturl.newUrlSet"));
             return true;

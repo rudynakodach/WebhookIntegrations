@@ -6,11 +6,11 @@ api-version: 1.17
 commands:
 
   seturl:
-    usage: /setUrl <url>
+    usage: /setUrl <url> <?id>
     permission: webhookintegrations.setwebhookurl
 
   send:
-    usage: /send <isEmbed> <message>
+    usage: /send <target?> <isEmbed> <message>
     permission: webhookintegrations.send
 
   configreset:
@@ -60,5 +60,5 @@ commands:
     permission: webhookintegrations.config.savebackup
 
   sendtemplate:
-    usage: /wi template send <name>
+    usage: /wi template send <name> <?target> <args>
     permission: webhookintegrations.templates.send

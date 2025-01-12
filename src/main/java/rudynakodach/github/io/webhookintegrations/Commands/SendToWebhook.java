@@ -30,18 +30,17 @@ import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
 
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.logging.Level;
 
 
 public class SendToWebhook implements CommandExecutor {
 
     final FileConfiguration config;
-    final JavaPlugin javaPlugin;
+    final JavaPlugin plugin;
     final LanguageConfiguration language;
-    public SendToWebhook(FileConfiguration cfg, JavaPlugin javaPlugin) {
+    public SendToWebhook(FileConfiguration cfg, JavaPlugin plugin) {
         config = cfg;
-        this.javaPlugin = javaPlugin;
+        this.plugin = plugin;
         this.language = LanguageConfiguration.get();
     }
 
@@ -49,31 +48,24 @@ public class SendToWebhook implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String label, String[] args) {
         if (command.getName().equalsIgnoreCase("send")) {
             if (args.length >= 2) {
-                String webhookUrl = Objects.requireNonNull(config.getString("webhookUrl"));
+                String target = args[0];
 
-                if (webhookUrl.equals("")) {
-                    String response = ChatColor.translateAlternateColorCodes('&',
-                            language.getLocalizedString("commands.send.onEmptyUrl"));
-                    sender.sendMessage(response);
-                    return true;
-                }
-
-                boolean isEmbed = Boolean.parseBoolean(args[0]);
-                String message = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+                boolean isEmbed = Boolean.parseBoolean(args[1]);
+                String message = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
 
                 String username = sender instanceof ConsoleCommandSender ? "CONSOLE" : sender.getName();
 
-                javaPlugin.getLogger().log(Level.INFO, username + " used /send with the following message: " + message);
+                plugin.getLogger().log(Level.INFO, username + " used /send with the following message: " + message);
 
                 if (isEmbed) {
                     String json = "{\"embeds\": [ {\"title\": \"" + username + "\",\"description\": \"" + message + "\"}]}";
 
-                    new WebhookActions(javaPlugin).SendAsync(json);
+                    new WebhookActions(plugin, target).SendAsync(json);
                 } else {
                     message = username + ": " + message;
                     String json = "{ \"content\": \"" + message + "\" }";
 
-                    new WebhookActions(javaPlugin).SendAsync(json);
+                    new WebhookActions(plugin, target).SendAsync(json);
                 }
                 return true;
 

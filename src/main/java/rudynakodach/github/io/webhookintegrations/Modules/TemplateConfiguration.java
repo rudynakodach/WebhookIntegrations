@@ -52,11 +52,13 @@ public class TemplateConfiguration extends WebhookIntegrationsModule {
         public final boolean isUsingGlobals;
         public final String jsonBody;
         public final List<String> params;
+        public final String defaultTarget;
 
         private Template(ConfigurationSection sect) {
             isUsingGlobals = sect.getBoolean("useGlobals");
             jsonBody = sect.getString("messageJson");
             params = sect.getStringList("params");
+            defaultTarget = sect.getString("defaultTarget");
         }
 
         public static boolean templateExists(String name) {

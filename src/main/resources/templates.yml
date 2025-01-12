@@ -10,6 +10,7 @@ templates:
   # - webhookintegrations.templates.send.test - send this template
   # (webhookintegrations.templates.send.any allows to send all templates)
   test:
+    defaultTarget: "main"
     useGlobals: true              # Should we use globals (not ignore text surrounded in $s)?
     params: ['player', 'level']   # Text in % signs with the same name as the param will be replaced with its value passed in the command
     messageJson: '{

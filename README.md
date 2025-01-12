@@ -8,7 +8,7 @@ The simpliest solution for Discord Webhook integration with your Minecraft serve
 ![Downloads](https://img.shields.io/github/downloads/rudynakodach/WebhookIntegrations/total?style=for-the-badge)
 
 # Download
-Get the plugin from [SpigotMC](https://www.spigotmc.org/resources/webhookintegrations-1-17-1-19-pl-en.107688/) or [CurseForge](https://legacy.curseforge.com/minecraft/bukkit-plugins/webhookintegrations)
+Get the plugin from [SpigotMC](https://www.spigotmc.org/resources/webhookintegrations-1-17-1-19-pl-en.107688/) or [CurseForge](https://curseforge.com/minecraft/bukkit-plugins/webhookintegrations)
 
 ## NOTE
 **THIS PLUGIN WILL NO LONGER SUPPORT LEGACY MINECRAFT VERSIONS. IF YOUR SERVER'S VERSION IS OUTDATED, PLEASE USE __ViaRewind__, __ViaBackwards__ or __ViaVersion__ DEPENDING ON YOUR NEEDS.**

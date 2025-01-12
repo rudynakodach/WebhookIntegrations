@@ -500,7 +500,7 @@ public class WIActions implements CommandExecutor, TabCompleter {
 
     private boolean sendTemplate(CommandSender sender, String[] args) {
 
-        if(!sender.hasPermission("webhookintegrations.templates.send")) {
+        if (!sender.hasPermission("webhookintegrations.templates.send")) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
                     LanguageConfiguration.get().getLocalizedString("no-permission")));
             return true;
@@ -508,14 +508,14 @@ public class WIActions implements CommandExecutor, TabCompleter {
 
         String templateName = args[2];
 
-        if(!TemplateConfiguration.Template.templateExists(templateName)) {
+        if (!TemplateConfiguration.Template.templateExists(templateName)) {
             sender.sendMessage(
                     ChatColor.translateAlternateColorCodes('&', LanguageConfiguration.get().getLocalizedString("commands.templates.notFound"))
             );
             return true;
         }
 
-        if(!sender.hasPermission("webhookintegrations.templates.send.%s".formatted(templateName)) &&
+        if (!sender.hasPermission("webhookintegrations.templates.send.%s".formatted(templateName)) ||
                 !sender.hasPermission("webhookintegrations.templates.send.any")) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LanguageConfiguration.get().getLocalizedString("commands.templates.noAccess")));
             return true;
@@ -523,23 +523,36 @@ public class WIActions implements CommandExecutor, TabCompleter {
 
         TemplateConfiguration.Template template = TemplateConfiguration.get().getTemplate(templateName);
 
-        if(template == null || template.jsonBody == null) {
+        if (template == null || template.jsonBody == null) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LanguageConfiguration.get().getLocalizedString("commands.templates.noJson")));
             return true;
         }
 
-        String[] commandArgs = Arrays.copyOfRange(args, 3, args.length);
-        String argsString = String.join(" ", commandArgs);
+        int argsOffset = 0;
+        String target = template.defaultTarget;
 
-        Pattern argsPatters = Pattern.compile("--([a-zA-Z0-9]+) \"((?:[^\"\\\\]|\\\\.)+)\"");
-        Matcher matcher = argsPatters.matcher(argsString);
-
-        HashMap<String, String> params = new HashMap<>();
-        while(matcher.find()) {
-            params.put(matcher.group(1), matcher.group(2));
+        if(args.length >= 4) {
+            if (!args[3].startsWith("--")) {
+                argsOffset = 1;
+                target = args[3];
+            }
         }
 
-        new WebhookActions(plugin).SendAsync(template.compile(params));
+        HashMap<String, String> params = new HashMap<>();
+
+        if(args.length >= 4 + argsOffset) {
+            String[] commandArgs = Arrays.copyOfRange(args, 3 + argsOffset, args.length);
+            String argsString = String.join(" ", commandArgs);
+
+            Pattern argsPatters = Pattern.compile("--([a-zA-Z0-9]+) \"((?:[^\"\\\\]|\\\\.)+)\"");
+            Matcher matcher = argsPatters.matcher(argsString);
+
+            while (matcher.find()) {
+                params.put(matcher.group(1), matcher.group(2));
+            }
+        }
+
+        new WebhookActions(plugin, target).SendAsync(template.compile(params));
 
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LanguageConfiguration.get().getLocalizedString("commands.templates.success")));
 
