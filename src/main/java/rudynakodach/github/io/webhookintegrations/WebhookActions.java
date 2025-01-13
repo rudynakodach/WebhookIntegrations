@@ -135,17 +135,23 @@ public class WebhookActions {
             return false;
         }
 
-        List<MetadataValue> meta = player.getMetadata("vanished");
-
-        for(MetadataValue key : meta) {
-            if(Boolean.parseBoolean(key.asString())) {
-                return true;
-            }
+        for (MetadataValue meta : player.getMetadata("vanished")) {
+            if (meta.asBoolean()) return true;
         }
         return false;
     }
 
     public static String escapePlayerName(Player p) {
         return p.getName().replaceAll("[*_~]", "\\\\$0");
+    }
+
+    public static String removeColorCoding(JavaPlugin plugin, String text) {
+        String regex = plugin.getConfig().getString("color-code-regex");
+
+        if(regex == null) {
+            throw new RuntimeException("Color coding regex was not found in config. Consider resetting the config");
+        }
+
+        return  text.replaceAll(regex, "");
     }
 }

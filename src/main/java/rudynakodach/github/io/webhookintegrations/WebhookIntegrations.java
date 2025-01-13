@@ -31,6 +31,7 @@ import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.Modules.TemplateConfiguration;
+import rudynakodach.github.io.webhookintegrations.Utils.ConfigMigrator;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -42,7 +43,8 @@ import java.util.logging.Level;
 
 public final class WebhookIntegrations extends JavaPlugin {
     public static boolean isLatest = true;
-    public static int currentBuildNumber = 59;
+    public static final int currentBuildNumber = 60;
+    public static final int currentConfigVersion = 2;
 
     @Override
     public void onEnable() {
@@ -95,6 +97,14 @@ public final class WebhookIntegrations extends JavaPlugin {
         }
 
         LanguageConfiguration language = new LanguageConfiguration(this, selectedLanguage, languageConfig);
+        new TemplateConfiguration(this);
+        new MessageConfiguration(this);
+
+        int presentConfigVersion = getConfig().getInt("config-version", 1);
+
+        if(currentConfigVersion > presentConfigVersion) {
+            ConfigMigrator.migrate(this, presentConfigVersion, currentConfigVersion);
+        }
 
         getLogger().log(Level.INFO, language.getLocalizedString("onStart.message"));
 
@@ -133,7 +143,6 @@ public final class WebhookIntegrations extends JavaPlugin {
 
         getLogger().log(Level.INFO, language.getLocalizedString("onStart.registeringEvents"));
 
-        new TemplateConfiguration(this);
 
         // Events
         OnServerStart serverStart = new OnServerStart(this);
@@ -173,8 +182,6 @@ public final class WebhookIntegrations extends JavaPlugin {
         Objects.requireNonNull(getCommand("wi")).setExecutor(resetConfig);
 
         getLogger().log(Level.INFO, language.getLocalizedString("onStart.commandRegisterFinish"));
-
-        new MessageConfiguration(this);
 
         // Metrics
         metrics.addCustomChart(new SimplePie("url_state", () ->

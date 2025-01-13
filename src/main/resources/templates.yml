@@ -4,13 +4,13 @@ globals:
 
 templates:
   # Showcase template
-  # Usage: /wi template send test --player "text" --level "text 2"
+  # Usage: /wi template send test <target?> --player "text" --level "text 2"
   # Permissions required to send:
   # - webhookintegrations.templates.send - use the template send command
   # - webhookintegrations.templates.send.test - send this template
   # (webhookintegrations.templates.send.any allows to send all templates)
   test:
-    defaultTarget: "main"
+    defaultTarget: "main"         # Which webhook are we sending this template by default if one is not provided in the command
     useGlobals: true              # Should we use globals (not ignore text surrounded in $s)?
     params: ['player', 'level']   # Text in % signs with the same name as the param will be replaced with its value passed in the command
     messageJson: '{

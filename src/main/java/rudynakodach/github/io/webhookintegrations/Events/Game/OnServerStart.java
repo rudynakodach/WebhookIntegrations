@@ -77,6 +77,10 @@ public class OnServerStart implements Listener {
                 .replace("$isOnlineMode$", String.valueOf(isOnlineMode))
                 .replace("$playersOnline$", String.valueOf(playersOnline));
 
+        if(plugin.getConfig().getBoolean("remove-color-coding", false)) {
+            json = WebhookActions.removeColorCoding(plugin, json);
+        }
+
         new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.SERVER_START)).SendSync(json);
     }
 }

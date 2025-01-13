@@ -10,7 +10,7 @@ commands:
     permission: webhookintegrations.setwebhookurl
 
   send:
-    usage: /send <target?> <isEmbed> <message>
+    usage: /send <?target> <isEmbed> <message>
     permission: webhookintegrations.send
 
   configreset:

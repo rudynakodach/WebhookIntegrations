@@ -22,6 +22,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -67,4 +69,14 @@ public abstract class WebhookIntegrationsModule {
         return config;
     }
 
+    public boolean save() {
+        try {
+            config.save(Path.of(plugin.getDataFolder().toString(), configFileName).toString());
+            return true;
+        } catch (IOException err) {
+            plugin.getLogger().log(Level.SEVERE, "Failed to save config: " + err.getMessage());
+            err.printStackTrace();
+            return false;
+        }
+    }
 }
