@@ -18,6 +18,10 @@
 
 package rudynakodach.github.io.webhookintegrations.Modules;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+
 public final class MessageType {
     public static final String SERVER_START = "onServerStart";
     public static final String SERVER_STOP = "onServerStop";
@@ -28,4 +32,19 @@ public final class MessageType {
     public static final String PLAYER_DEATH_KILLED = "onPlayerDeath.playerKilledByPlayer";
     public static final String PLAYER_CHAT = "onPlayerChat";
     public static final String PLAYER_ADVANCEMENT = "onPlayerAdvancement";
+
+    public static List<String> getAllMessageTypes() {
+        List<String> messageTypes = new ArrayList<>();
+        try {
+            for (Field field : MessageType.class.getDeclaredFields()) {
+                if (field.getType() == String.class) {
+                    field.setAccessible(true);
+                    messageTypes.add((String) field.get(null));
+                }
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return messageTypes;
+    }
 }

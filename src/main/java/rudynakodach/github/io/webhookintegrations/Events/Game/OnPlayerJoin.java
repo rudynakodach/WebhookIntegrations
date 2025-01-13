@@ -76,6 +76,10 @@ public class OnPlayerJoin implements Listener {
             json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
         }
 
+        if(plugin.getConfig().getBoolean("remove-color-coding", false)) {
+            json = WebhookActions.removeColorCoding(plugin, json);
+        }
+
         new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_JOIN)).SendAsync(json);
     }
 }

@@ -124,6 +124,10 @@ public class OnPlayerChat implements Listener {
             json = json.replace("$message$", message);
         }
 
+        if(plugin.getConfig().getBoolean("remove-color-coding", false)) {
+            json = WebhookActions.removeColorCoding(plugin, json);
+        }
+
         new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_CHAT)).SendAsync(json);
     }
 }

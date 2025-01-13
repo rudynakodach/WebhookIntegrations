@@ -56,7 +56,7 @@ public class OnPlayerKick implements Listener {
         }
         String reason = PlainTextComponentSerializer.plainText().serialize(event.reason());
 
-        if (reason.equals("")) {
+        if (reason.isEmpty("")) {
             reason = "Unspecified reason.";
         }
 
@@ -83,6 +83,10 @@ public class OnPlayerKick implements Listener {
 
         if(plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
+        }
+
+        if(plugin.getConfig().getBoolean("remove-color-coding", false)) {
+            json = WebhookActions.removeColorCoding(plugin, json);
         }
 
         new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_KICK)).SendAsync(json);

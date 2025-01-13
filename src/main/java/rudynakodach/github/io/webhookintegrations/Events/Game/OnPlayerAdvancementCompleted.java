@@ -27,6 +27,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
+import rudynakodach.github.io.webhookintegrations.WebhookIntegrations;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -79,6 +80,10 @@ public class OnPlayerAdvancementCompleted implements Listener {
 
         if (plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
+        }
+
+        if(plugin.getConfig().getBoolean("remove-color-coding", false)) {
+            json = WebhookActions.removeColorCoding(plugin, json);
         }
 
         new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_ADVANCEMENT)).SendAsync(json);

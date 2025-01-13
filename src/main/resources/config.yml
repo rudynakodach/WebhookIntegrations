@@ -1,4 +1,4 @@
-# don't change this, otherwise you'll most likely break your config
+# don't change this, you'll most likely break your config
 config-version: 2
 
 check-for-updates: true
@@ -9,6 +9,10 @@ auto-update: true
 webhooks:
   main: ""
 
+# Whether forcefully remove minecraft color codes
+remove-color-coding: false
+# Don't change unless you know what you're doing! This removes text like "&a", &#5865F2 and #00ff00
+color-code-regex: "[&§][a-f0-9klmnorA-FKLMNOR]|&?#[0-9a-fA-F]{6}"
 
 # Prevents Markdown formatting for usernames by escaping characters.
 preventUsernameMarkdownFormatting: true
@@ -18,7 +22,7 @@ preventUsernameMarkdownFormatting: true
 # NOTE: The language you will set it to MUST be in the lang.yml file. You can easily add new languages by copying existing ones and changing texts.
 language-override: false
 
-# set this to false if you don't want to send messages to the webhook
+# set this to false if you don't want to send messages to the webhooks
 isEnabled: true
 
 # Events will be ignored for vanished players and no message will be sent to the webhook.
@@ -51,5 +55,3 @@ date-format: "HH:mm:ss"
 
 # The timezone used for timestamps in the $timestamp$ placeholder.
 timezone: "UTC"
-
-#END OF FILE
