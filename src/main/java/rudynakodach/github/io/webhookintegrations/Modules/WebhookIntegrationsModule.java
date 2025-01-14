@@ -33,7 +33,7 @@ public abstract class WebhookIntegrationsModule {
 
     private final String configFileName;
     protected final JavaPlugin plugin;
-    public YamlConfiguration config;
+    protected YamlConfiguration config;
 
     protected WebhookIntegrationsModule(String fileName, JavaPlugin plugin) {
         this.plugin = plugin;

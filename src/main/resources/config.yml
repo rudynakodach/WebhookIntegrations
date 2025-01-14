@@ -1,5 +1,5 @@
 # don't change this, you'll most likely break your config
-config-version: 2
+config-version: 3
 
 check-for-updates: true
 auto-update: true
@@ -8,6 +8,14 @@ auto-update: true
 # This cannot be empty!
 webhooks:
   main: ""
+
+# Whether to send a quit message when a player gets kicked. false disables his behavior
+send-quit-when-kicked: false
+
+# How many ticks to wait before actually send the message for join and leave events. If the player leaves the server while the timer is active, no message will be sent. 0 disables this behavior
+timeout-delay: 0
+# If the player is on timeout, should we ignore all events sent by them?
+ignore-events-during-timeout: true
 
 # Whether forcefully remove minecraft color codes
 remove-color-coding: false

@@ -27,29 +27,29 @@ import org.bukkit.plugin.java.JavaPlugin;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
-import rudynakodach.github.io.webhookintegrations.WebhookIntegrations;
+
+import static rudynakodach.github.io.webhookintegrations.Events.Game.PlayerJoinListener.playersOnCountdown;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 import java.util.TimeZone;
 
-public class OnPlayerAdvancementCompleted implements Listener {
-    JavaPlugin plugin;
-    public OnPlayerAdvancementCompleted(JavaPlugin plugin) {
+public class PlayerAdvancementCompletedListener implements Listener {
+    private final JavaPlugin plugin;
+
+    public PlayerAdvancementCompletedListener(JavaPlugin plugin) {
         this.plugin = plugin;
     }
+
     @EventHandler
     public void onAdvancementMade(PlayerAdvancementDoneEvent event) {
-        if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_ADVANCEMENT)) {
-            return;
-        }
+        if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_ADVANCEMENT))    { return; }
+        if (event.getAdvancement().getDisplay() == null)                                { return; }
+        if (WebhookActions.isPlayerVanished(plugin, event.getPlayer()))                 { return; }
 
-        if (event.getAdvancement().getDisplay() == null) {
-            return;
-        }
-
-        if(WebhookActions.isPlayerVanished(plugin, event.getPlayer())) {
+        if (playersOnCountdown.contains(event.getPlayer().getName()) &&
+                plugin.getConfig().getBoolean("ignore-events-during-timeout", false)) {
             return;
         }
 

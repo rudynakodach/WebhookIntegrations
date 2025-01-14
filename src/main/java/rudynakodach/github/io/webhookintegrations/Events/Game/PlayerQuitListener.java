@@ -21,56 +21,64 @@ package rudynakodach.github.io.webhookintegrations.Events.Game;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import static rudynakodach.github.io.webhookintegrations.Events.Game.PlayerJoinListener.playersOnCountdown;
 
-public class OnPlayerJoin implements Listener {
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Objects;
+import java.util.TimeZone;
+
+public class PlayerQuitListener implements Listener {
 
     JavaPlugin plugin;
-    public OnPlayerJoin(JavaPlugin plugin) {
+
+    public PlayerQuitListener(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 
     @EventHandler
-    public void onPlayerJoinEvent(PlayerJoinEvent event) {
-        if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_JOIN)) {
+    public void onPlayerQuitEvent(PlayerQuitEvent event) {
+        if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_QUIT))   { return; }
+        if (WebhookActions.isPlayerVanished(plugin, event.getPlayer()))         { return; }
+
+        if (playersOnCountdown.contains(event.getPlayer().getName()) &&
+                plugin.getConfig().getBoolean("ignore-events-during-timeout", false)) {
             return;
         }
 
-        if(WebhookActions.isPlayerVanished(plugin, event.getPlayer())) {
+        if(!plugin.getConfig().getBoolean("send-quit-when-kicked", false) && event.getReason() == PlayerQuitEvent.QuitReason.KICKED) {
             return;
         }
 
-        String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_JOIN);
-
-        if(json == null) {
-            return;
-        }
+        String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_QUIT);
 
         String playerName = event.getPlayer().getName();
         if(plugin.getConfig().getBoolean("preventUsernameMarkdownFormatting")) {
             playerName = WebhookActions.escapePlayerName(event.getPlayer());
         }
 
+        if(json == null) {
+            return;
+        }
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         sdf.setTimeZone(TimeZone.getTimeZone(plugin.getConfig().getString("timezone")));
 
-        json = json.replace("$playersOnline$", String.valueOf(plugin.getServer().getOnlinePlayers().size()))
-                .replace("$timestamp$", sdf.format(new Date()))
-                .replace("$maxPlayers$", String.valueOf(plugin.getServer().getMaxPlayers()))
-                .replace("$uuid$", event.getPlayer().getUniqueId().toString())
-                .replace("$player$", playerName)
-                .replace("$time$", new SimpleDateFormat(
-                        Objects.requireNonNullElse(
-                                plugin.getConfig().getString("date-format"),
-                                "")).format(new Date())
-                );
+        json = json.replace("$playersOnline$",String.valueOf(plugin.getServer().getOnlinePlayers().size()))
+            .replace("$timestamp$", sdf.format(new Date()))
+            .replace("$maxPlayers$",String.valueOf(plugin.getServer().getMaxPlayers()))
+            .replace("$player$", playerName)
+            .replace("$time$", new SimpleDateFormat(
+                    Objects.requireNonNullElse(
+                            plugin.getConfig().getString("date-format"),
+                            "")).format(new Date())
+            );
 
         if(plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
@@ -80,6 +88,6 @@ public class OnPlayerJoin implements Listener {
             json = WebhookActions.removeColorCoding(plugin, json);
         }
 
-        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_JOIN)).SendAsync(json);
+        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_QUIT)).SendAsync(json);
     }
 }

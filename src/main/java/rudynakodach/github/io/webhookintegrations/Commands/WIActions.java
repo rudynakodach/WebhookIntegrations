@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import rudynakodach.github.io.webhookintegrations.AutoUpdater;
 import rudynakodach.github.io.webhookintegrations.Modules.*;
+import rudynakodach.github.io.webhookintegrations.Utils.Config.ConfigBackupManager;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
 import rudynakodach.github.io.webhookintegrations.WebhookIntegrations;
 
@@ -154,7 +155,7 @@ public class WIActions implements CommandExecutor, TabCompleter {
                                 .collect(Collectors.toList());
                     }
                 } else if(args[0].equalsIgnoreCase("template") && args[1].equalsIgnoreCase("send")) {
-                    return new ArrayList<>(TemplateConfiguration.get().config.getConfigurationSection("templates").getKeys(false));
+                    return new ArrayList<>(TemplateConfiguration.get().getYamlConfig().getConfigurationSection("templates").getKeys(false));
                 }
 
             } else if(args.length == 4) {
@@ -393,42 +394,15 @@ public class WIActions implements CommandExecutor, TabCompleter {
         String backupName = args.length >= 3 ? String.join("_", Arrays.copyOfRange(args, 2, args.length)) :
                 new SimpleDateFormat("yyyy-MM-dd_hh-mm-ss-SSS").format(new Date());
 
-        Path originalConfig = Path.of(plugin.getDataFolder().getAbsolutePath(), "config.yml");
-        Path originalLanguage = Path.of(plugin.getDataFolder().getAbsolutePath(), "lang.yml");
-        Path originalMessages = Path.of(plugin.getDataFolder().getAbsolutePath(), "messages.yml");
+        if(!ConfigBackupManager.get().saveBackup(backupName)) {
+            commandSender.sendMessage("Failed to create backup");
+        } else {
+            String message = LanguageConfiguration.get().getLocalizedString("commands.config.backupCreated");
+            message = message.replace("%01", backupName);
+            message = ChatColor.translateAlternateColorCodes('&', message);
 
-        Path backupConfig = Path.of(plugin.getDataFolder().getAbsolutePath(), "config-backups", backupName, "config.yml");
-        Path backupLanguage = Path.of(plugin.getDataFolder().getAbsolutePath(), "config-backups", backupName, "lang.yml");
-        Path backupMessages = Path.of(plugin.getDataFolder().getAbsolutePath(), "config-backups", backupName, "messages.yml");
-
-        try {
-            Files.createDirectory(Path.of(plugin.getDataFolder().getAbsolutePath(), "config-backups", backupName));
-        } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to make a backup folder: " + e.getMessage());
-            return true;
+            commandSender.sendMessage(message);
         }
-
-        try {
-            Files.copy(originalConfig, backupConfig, StandardCopyOption.COPY_ATTRIBUTES);
-        } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to make a copy of the config file: " + e.getMessage());
-        }
-        try {
-            Files.copy(originalLanguage, backupLanguage, StandardCopyOption.COPY_ATTRIBUTES);
-        } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to make a copy of the language configuration file: " + e.getMessage());
-        }
-        try {
-            Files.copy(originalMessages, backupMessages, StandardCopyOption.COPY_ATTRIBUTES);
-        } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to make a copy of JSON payloads file: " + e.getMessage());
-        }
-
-        String message = LanguageConfiguration.get().getLocalizedString("commands.config.backupCreated");
-        message = message.replace("%01", backupName);
-        message = ChatColor.translateAlternateColorCodes('&', message);
-
-        commandSender.sendMessage(message);
 
         return true;
     }
@@ -441,53 +415,13 @@ public class WIActions implements CommandExecutor, TabCompleter {
         }
 
         String backupName = args[2];
-        Path backups = Path.of(plugin.getDataFolder().getAbsolutePath(), "config-backups");
 
-        if(!Files.exists(Path.of(backups.toAbsolutePath().toString(), backupName))) {
+        if(!ConfigBackupManager.get().backupExists(backupName)) {
             commandSender.sendMessage(Component.text("Folder doesn't exist.").color(NamedTextColor.RED));
             return true;
         }
 
-        Path originalConfig = Path.of(plugin.getDataFolder().getAbsolutePath(), "config.yml");
-        Path originalLanguage = Path.of(plugin.getDataFolder().getAbsolutePath(), "lang.yml");
-        Path originalMessages = Path.of(plugin.getDataFolder().getAbsolutePath(), "messages.yml");
-
-        Path backupConfig = Path.of(plugin.getDataFolder().getAbsolutePath(), "config-backups", backupName, "config.yml");
-        Path backupLanguage = Path.of(plugin.getDataFolder().getAbsolutePath(), "config-backups", backupName, "lang.yml");
-        Path backupMessages = Path.of(plugin.getDataFolder().getAbsolutePath(), "config-backups", backupName, "messages.yml");
-
-        try {
-            if(Files.exists(Path.of(plugin.getDataFolder().getAbsolutePath(), "config.yml"))) {
-                Files.copy(backupConfig, originalConfig, StandardCopyOption.REPLACE_EXISTING);
-            } else {
-                Files.copy(backupConfig, originalConfig, StandardCopyOption.COPY_ATTRIBUTES);
-            }
-            plugin.reloadConfig();
-        } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to replace the config file: " + e.getMessage());
-        }
-
-        try {
-            if(Files.exists(Path.of(plugin.getDataFolder().getAbsolutePath(), "lang.yml"))) {
-                Files.copy(backupLanguage, originalLanguage, StandardCopyOption.REPLACE_EXISTING);
-            } else {
-                Files.copy(backupLanguage, originalLanguage, StandardCopyOption.COPY_ATTRIBUTES);
-            }
-            LanguageConfiguration.get().reload();
-        } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to replace the language configuration file: " + e.getMessage());
-        }
-
-        try {
-            if(Files.exists(Path.of(plugin.getDataFolder().getAbsolutePath(), "messages.yml"))) {
-                Files.copy(backupMessages, originalMessages, StandardCopyOption.REPLACE_EXISTING);
-            } else {
-                Files.copy(backupMessages, originalMessages, StandardCopyOption.COPY_ATTRIBUTES);
-            }
-            MessageConfiguration.get().reload();
-        } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to replace the JSON payloads file: " + e.getMessage());
-        }
+        ConfigBackupManager.get().loadBackup(backupName);
 
         String message = LanguageConfiguration.get().getLocalizedString("commands.config.backupLoaded");
         message = message.replace("%01", backupName);

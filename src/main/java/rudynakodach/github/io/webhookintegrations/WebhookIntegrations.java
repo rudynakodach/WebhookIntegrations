@@ -31,7 +31,8 @@ import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.Modules.TemplateConfiguration;
-import rudynakodach.github.io.webhookintegrations.Utils.ConfigMigrator;
+import rudynakodach.github.io.webhookintegrations.Utils.Config.ConfigBackupManager;
+import rudynakodach.github.io.webhookintegrations.Utils.Config.ConfigMigrator;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -43,14 +44,11 @@ import java.util.logging.Level;
 
 public final class WebhookIntegrations extends JavaPlugin {
     public static boolean isLatest = true;
-    public static final int currentBuildNumber = 60;
-    public static final int currentConfigVersion = 2;
+    public static final int currentBuildNumber = 61;
+    public static final int currentConfigVersion = 3;
 
     @Override
     public void onEnable() {
-        // bStats integration
-        Metrics metrics = new Metrics(this, 18509);
-
         saveDefaultConfig();
         getLogger().log(Level.INFO, "Hello, World!");
 
@@ -100,6 +98,8 @@ public final class WebhookIntegrations extends JavaPlugin {
         new TemplateConfiguration(this);
         new MessageConfiguration(this);
 
+        new ConfigBackupManager(this);
+
         int presentConfigVersion = getConfig().getInt("config-version", 1);
 
         if(currentConfigVersion > presentConfigVersion) {
@@ -143,31 +143,33 @@ public final class WebhookIntegrations extends JavaPlugin {
 
         getLogger().log(Level.INFO, language.getLocalizedString("onStart.registeringEvents"));
 
-
         // Events
-        OnServerStart serverStart = new OnServerStart(this);
+        ServerStartListener serverStart = new ServerStartListener(this);
         getServer().getPluginManager().registerEvents(serverStart, this);
 
-        OnPlayerChat chatEvent = new OnPlayerChat(this);
+        PlayerChatListener chatEvent = new PlayerChatListener(this);
         getServer().getPluginManager().registerEvents(chatEvent,  this);
 
-        OnPlayerJoin onPlayerJoinEvent = new OnPlayerJoin(this);
+        PlayerJoinListener onPlayerJoinEvent = new PlayerJoinListener(this);
         getServer().getPluginManager().registerEvents(onPlayerJoinEvent, this);
 
         OpJoinEvent opJoinEvent = new OpJoinEvent(this);
         getServer().getPluginManager().registerEvents(opJoinEvent, this);
 
-        OnPlayerQuit playerQuitEvent = new OnPlayerQuit(this);
+        PlayerQuitListener playerQuitEvent = new PlayerQuitListener(this);
         getServer().getPluginManager().registerEvents(playerQuitEvent, this);
 
-        OnPlayerKick playerKick = new OnPlayerKick(this);
+        PlayerKickListener playerKick = new PlayerKickListener(this);
         getServer().getPluginManager().registerEvents(playerKick, this);
 
-        OnPlayerAdvancementCompleted onPlayerAdvancement = new OnPlayerAdvancementCompleted(this);
+        PlayerAdvancementCompletedListener onPlayerAdvancement = new PlayerAdvancementCompletedListener(this);
         getServer().getPluginManager().registerEvents(onPlayerAdvancement, this);
 
-        OnPlayerDeath playerDeath = new OnPlayerDeath(this);
+        PlayerDeathListener playerDeath = new PlayerDeathListener(this);
         getServer().getPluginManager().registerEvents(playerDeath,this);
+
+        PlayerCountChangeListener playerCountChangeListener = new PlayerCountChangeListener(this);
+        getServer().getPluginManager().registerEvents(playerCountChangeListener,this);
 
         getLogger().log(Level.INFO, language.getLocalizedString("onStart.eventRegisterFinish"));
 
@@ -184,8 +186,10 @@ public final class WebhookIntegrations extends JavaPlugin {
         getLogger().log(Level.INFO, language.getLocalizedString("onStart.commandRegisterFinish"));
 
         // Metrics
+        Metrics metrics = new Metrics(this, 18509);
+
         metrics.addCustomChart(new SimplePie("url_state", () ->
-                String.valueOf(!Objects.requireNonNullElse(getConfig().getString("webhookUrl"), "").equalsIgnoreCase(""))));
+                String.valueOf(!Objects.requireNonNullElse(getConfig().getString("webhookUrl"), "").isBlank())));
 
         metrics.addCustomChart(new SimplePie("lang_used", () -> LanguageConfiguration.get().getLocale()));
 

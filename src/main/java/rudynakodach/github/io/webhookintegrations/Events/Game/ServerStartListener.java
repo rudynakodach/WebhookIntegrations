@@ -18,11 +18,10 @@
 
 package rudynakodach.github.io.webhookintegrations.Events.Game;
 
-import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
@@ -33,34 +32,28 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.TimeZone;
 
-public class OnPlayerKick implements Listener {
-    JavaPlugin plugin;
+public class ServerStartListener implements Listener {
 
-    public OnPlayerKick(JavaPlugin plugin) {
+    private final JavaPlugin plugin;
+
+    public ServerStartListener(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 
     @EventHandler
-    public void onPlayerKickedEvent(PlayerKickEvent event) {
-        if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_KICK)) {
-            return;
-        }
+    public void onServerLoad(ServerLoadEvent event) {
+        if(event.getType() != ServerLoadEvent.LoadType.STARTUP)                 { return; }
+        if(!MessageConfiguration.get().canAnnounce(MessageType.SERVER_START))   { return; }
 
-        if(WebhookActions.isPlayerVanished(plugin, event.getPlayer())) {
-            return;
-        }
+        String json = MessageConfiguration.get().getMessage(MessageType.SERVER_START);
 
-        String playerName = event.getPlayer().getName();
-        if(plugin.getConfig().getBoolean("preventUsernameMarkdownFormatting")) {
-            playerName = WebhookActions.escapePlayerName(event.getPlayer());
-        }
-        String reason = PlainTextComponentSerializer.plainText().serialize(event.reason());
-
-        if (reason.isEmpty()) {
-            reason = "Unspecified reason.";
-        }
-
-        String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_KICK);
+        String serverIp = plugin.getServer().getIp();
+        int slots = plugin.getServer().getMaxPlayers();
+        String serverMotd = PlainTextComponentSerializer.plainText().serialize(plugin.getServer().motd());
+        String serverName = plugin.getServer().getName();
+        String serverVersion = plugin.getServer().getVersion();
+        Boolean isOnlineMode = plugin.getServer().getOnlineMode();
+        int playersOnline = plugin.getServer().getOnlinePlayers().size();
 
         if(json == null) {
             return;
@@ -69,26 +62,23 @@ public class OnPlayerKick implements Listener {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         sdf.setTimeZone(TimeZone.getTimeZone(plugin.getConfig().getString("timezone")));
 
-        json = json.replace("$playersOnline$",String.valueOf(plugin.getServer().getOnlinePlayers().size()))
-            .replace("$timestamp$", sdf.format(new Date()))
-            .replace("$maxPlayers$",String.valueOf(plugin.getServer().getMaxPlayers()))
-            .replace("$uuid$", event.getPlayer().getUniqueId().toString())
-            .replace("$player$", playerName)
-            .replace("$reason$", reason)
+        json = json.replace("$serverIp$", serverIp)
+                .replace("$timestamp$", sdf.format(new Date()))
                 .replace("$time$", new SimpleDateFormat(
                         Objects.requireNonNullElse(
                                 plugin.getConfig().getString("date-format"),
-                                "")).format(new Date())
-                );
-
-        if(plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
-        }
+                                "")).format(new Date()))
+                .replace("$maxPlayers$", String.valueOf(slots))
+                .replace("$serverMotd$", serverMotd)
+                .replace("$serverName$", serverName)
+                .replace("$serverVersion$", serverVersion)
+                .replace("$isOnlineMode$", String.valueOf(isOnlineMode))
+                .replace("$playersOnline$", String.valueOf(playersOnline));
 
         if(plugin.getConfig().getBoolean("remove-color-coding", false)) {
             json = WebhookActions.removeColorCoding(plugin, json);
         }
 
-        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_KICK)).SendAsync(json);
+        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.SERVER_START)).SendSync(json);
     }
 }

@@ -33,21 +33,27 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 import java.util.TimeZone;
-import java.util.logging.Level;
 
-public class OnPlayerDeath implements Listener {
+import static rudynakodach.github.io.webhookintegrations.Events.Game.PlayerJoinListener.playersOnCountdown;
+
+public class PlayerDeathListener implements Listener {
 
     JavaPlugin plugin;
-    public OnPlayerDeath(JavaPlugin plugin) {
+    public PlayerDeathListener(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 
     @EventHandler
     public void onPlayerDeathEvent(PlayerDeathEvent event) {
-
         if(WebhookActions.isPlayerVanished(plugin, event.getPlayer())) {
             return;
         }
+
+        if (playersOnCountdown.contains(event.getPlayer().getName()) &&
+                plugin.getConfig().getBoolean("ignore-events-during-timeout", false)) {
+            return;
+        }
+
 
         String playerName = event.getEntity().getName();
         if(plugin.getConfig().getBoolean("preventUsernameMarkdownFormatting")) {

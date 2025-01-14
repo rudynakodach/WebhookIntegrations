@@ -1,5 +1,6 @@
-# IF YOU DON'T KNOW ANYTHING ABOUT WEBHOOK STRUCTURE, PLEASE GO HERE: https://birdie0.github.io/discord-webhooks-guide/index.html
-# minotar API for player head icons: https://minotar.net/
+# You can crate your embeds here: https://discohook.org/
+# Webhook structure is explained here: https://birdie0.github.io/discord-webhooks-guide/index.html
+# Minotar API for player head icons: https://minotar.net/
 
 onServerStart:
   target: "main"
@@ -58,7 +59,7 @@ onPlayerJoin:
   # Available variables:
   # - $player$ - player who joined
   # - $uuid$ - player's uuid who triggered the event
-  # - $time$ - server"s local time
+  # - $time$ - server's local time
   # - $timestamp$ - the current timestamp
   # - $maxPlayers$ - slot count
   # - $playersOnline$ - the amount of players online
@@ -232,6 +233,27 @@ onPlayerAdvancement:
       "description": "**$player$** has made the advancement `[$advancement$]`",
       "color": 16766720,
       "timestamp": "$timestamp$"
+    }
+  ]
+}'
+
+onPlayerCountChange:
+  target: "main"
+  timeout-delay: 100 # Delay in ticks until the message can be sent. Each update in player count restarts the timer
+  # Available variables:
+  # - $time$ - server's local time
+  # - $timestamp$ - the current timestamp
+  # - $maxPlayers$ - slot count
+  # - $playersOnline$ - the amount of players online
+  announce: false
+  messageJson: '{
+  "embeds": [
+    {
+      "author": {
+        "name": "Server"
+      },
+      "description": "Current player count: **$playersOnline$**",
+      "color": 16753920
     }
   ]
 }'

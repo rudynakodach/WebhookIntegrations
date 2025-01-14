@@ -32,11 +32,13 @@ import rudynakodach.github.io.webhookintegrations.WebhookActions;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class OnPlayerChat implements Listener {
+import static rudynakodach.github.io.webhookintegrations.Events.Game.PlayerJoinListener.playersOnCountdown;
 
-    JavaPlugin plugin;
+public class PlayerChatListener implements Listener {
 
-    public OnPlayerChat(JavaPlugin plugin) {
+    private final JavaPlugin plugin;
+
+    public PlayerChatListener(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -47,6 +49,11 @@ public class OnPlayerChat implements Listener {
         }
 
         if(WebhookActions.isPlayerVanished(plugin, event.getPlayer())) {
+            return;
+        }
+
+        if (playersOnCountdown.contains(event.getPlayer().getName()) &&
+                plugin.getConfig().getBoolean("ignore-events-during-timeout", false)) {
             return;
         }
 

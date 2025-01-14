@@ -32,6 +32,8 @@ public final class MessageType {
     public static final String PLAYER_DEATH_KILLED = "onPlayerDeath.playerKilledByPlayer";
     public static final String PLAYER_CHAT = "onPlayerChat";
     public static final String PLAYER_ADVANCEMENT = "onPlayerAdvancement";
+    public static final String PLAYER_COUNT_CHANGED = "onPlayerCountChange";
+
 
     public static List<String> getAllMessageTypes() {
         List<String> messageTypes = new ArrayList<>();

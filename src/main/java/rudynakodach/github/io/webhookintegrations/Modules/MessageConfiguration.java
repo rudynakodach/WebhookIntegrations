@@ -42,7 +42,7 @@ public class MessageConfiguration extends WebhookIntegrationsModule {
     }
 
     public String getTarget(String message) {
-        return config.getString("%s.target".formatted(message));
+        return config.getString("%s.target".formatted(message), "main");
     }
 
     public String getMessage(String path) {
