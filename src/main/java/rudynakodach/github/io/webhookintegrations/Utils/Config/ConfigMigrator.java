@@ -30,6 +30,21 @@ public class ConfigMigrator {
                 } else if(current == 2) {
                     toVersion3(plugin);
                 }
+                break;
+
+            case 4:
+                if(current == 1) {
+                    toVersion2(plugin);
+                    toVersion3(plugin);
+                    toVersion4(plugin);
+                }
+                else if(current == 2) {
+                    toVersion3(plugin);
+                    toVersion4(plugin);
+                } else if(current == 3) {
+                    toVersion4(plugin);
+                }
+                break;
         }
     }
 

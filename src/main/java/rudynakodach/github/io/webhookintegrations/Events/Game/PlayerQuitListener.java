@@ -19,6 +19,7 @@
 package rudynakodach.github.io.webhookintegrations.Events.Game;
 
 import me.clip.placeholderapi.PlaceholderAPI;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -33,6 +34,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 import java.util.TimeZone;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class PlayerQuitListener implements Listener {
 
@@ -96,8 +99,8 @@ public class PlayerQuitListener implements Listener {
             BukkitRunnable runnable = new BukkitRunnable(){
                 @Override
                 public void run() {
-                    // check if player didn't join back
-                    if(!plugin.getServer().getOnlinePlayers().contains(event.getPlayer())) {
+                    // check if player didn't join back by their name, event.getPlayer() doesn't work
+                    if(!plugin.getServer().getOnlinePlayers().stream().map(Player::getName).collect(Collectors.joining()).contains(event.getPlayer().getName())) {
                         action.SendAsync(finalJson);
                     }
                 }
