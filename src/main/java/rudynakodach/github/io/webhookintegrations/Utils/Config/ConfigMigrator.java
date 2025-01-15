@@ -95,4 +95,13 @@ public class ConfigMigrator {
 
         plugin.getLogger().log(Level.INFO, "Config migrated to version 3!");
     }
+
+    public static void toVersion4(@NotNull JavaPlugin plugin) {
+        plugin.getConfig().set("exclude-vanished-from-player-count", true);
+
+        plugin.saveConfig();
+        plugin.reloadConfig();
+
+        plugin.getLogger().log(Level.INFO, "Config migrated to version 4!");
+    }
 }

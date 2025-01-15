@@ -27,14 +27,13 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
+import rudynakodach.github.io.webhookintegrations.Utils.Timeout.TimeoutManager;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 import java.util.TimeZone;
-
-import static rudynakodach.github.io.webhookintegrations.Events.Game.PlayerJoinListener.playersOnCountdown;
 
 public class PlayerDeathListener implements Listener {
 
@@ -49,7 +48,7 @@ public class PlayerDeathListener implements Listener {
             return;
         }
 
-        if (playersOnCountdown.contains(event.getPlayer().getName()) &&
+        if (TimeoutManager.get().isTimedOut(event.getPlayer()) &&
                 plugin.getConfig().getBoolean("ignore-events-during-timeout", false)) {
             return;
         }
@@ -86,7 +85,7 @@ public class PlayerDeathListener implements Listener {
                 return;
             }
 
-            json = json.replace("$playersOnline$",String.valueOf(plugin.getServer().getOnlinePlayers().size()))
+            json = json.replace("$playersOnline$",String.valueOf(WebhookActions.getPlayerCount(plugin)))
                 .replace("$timestamp$", sdf.format(new Date()))
                 .replace("$maxPlayers$",String.valueOf(plugin.getServer().getMaxPlayers()))
                     .replace("$time$", new SimpleDateFormat(

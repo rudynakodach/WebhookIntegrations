@@ -33,6 +33,7 @@ import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.Modules.TemplateConfiguration;
 import rudynakodach.github.io.webhookintegrations.Utils.Config.ConfigBackupManager;
 import rudynakodach.github.io.webhookintegrations.Utils.Config.ConfigMigrator;
+import rudynakodach.github.io.webhookintegrations.Utils.Timeout.TimeoutManager;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -99,6 +100,7 @@ public final class WebhookIntegrations extends JavaPlugin {
         new MessageConfiguration(this);
 
         new ConfigBackupManager(this);
+        new TimeoutManager(this);
 
         int presentConfigVersion = getConfig().getInt("config-version", 1);
 
@@ -112,7 +114,8 @@ public final class WebhookIntegrations extends JavaPlugin {
             getLogger().log(Level.INFO, language.getLocalizedString("update.checking"));
 
             try {
-                int receivedBuildNumber = new AutoUpdater(this).getLatestVersion();
+                AutoUpdater updater = new AutoUpdater(this);
+                int receivedBuildNumber = updater.getLatestVersion();
                 if (currentBuildNumber < receivedBuildNumber && receivedBuildNumber != -1) {
                     isLatest = false;
                     getLogger().log(Level.WARNING, "------------------------- WI -------------------------");
@@ -120,7 +123,7 @@ public final class WebhookIntegrations extends JavaPlugin {
                     getLogger().log(Level.WARNING, "------------------------------------------------------");
 
                     if (getConfig().getBoolean("auto-update")) {
-                        isLatest = new AutoUpdater(this).Update();
+                        isLatest = updater.Update();
                     }
 
                 } else {

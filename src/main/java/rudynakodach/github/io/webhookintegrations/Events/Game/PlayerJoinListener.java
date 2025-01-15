@@ -26,14 +26,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
+import rudynakodach.github.io.webhookintegrations.Utils.Timeout.TimeoutManager;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class PlayerJoinListener implements Listener {
-
-    public static Set<String> playersOnCountdown = new HashSet<>();
 
     JavaPlugin plugin;
     public PlayerJoinListener(JavaPlugin plugin) {
@@ -43,6 +42,11 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onPlayerJoinEvent(PlayerJoinEvent event) {
         if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_JOIN)) {
+            return;
+        }
+
+        if(TimeoutManager.get().isTimedOut(event.getPlayer()) &&
+                plugin.getConfig().getBoolean("ignore-events-during-timeout", false)) {
             return;
         }
 
@@ -64,7 +68,7 @@ public class PlayerJoinListener implements Listener {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         sdf.setTimeZone(TimeZone.getTimeZone(plugin.getConfig().getString("timezone")));
 
-        json = json.replace("$playersOnline$", String.valueOf(plugin.getServer().getOnlinePlayers().size()))
+        json = json.replace("$playersOnline$", String.valueOf(WebhookActions.getPlayerCount(plugin)))
                 .replace("$timestamp$", sdf.format(new Date()))
                 .replace("$maxPlayers$", String.valueOf(plugin.getServer().getMaxPlayers()))
                 .replace("$uuid$", event.getPlayer().getUniqueId().toString())
@@ -88,17 +92,17 @@ public class PlayerJoinListener implements Listener {
 
         int timeoutDelay = plugin.getConfig().getInt("timeout-delay", 0);
         if(timeoutDelay > 0 && !(event.getPlayer().hasPermission("webhookintegrations.bypassTimeout"))) {
-            playersOnCountdown.add(playerName);
-            new BukkitRunnable(){
+            BukkitRunnable runnable = new BukkitRunnable(){
                 @Override
                 public void run() {
                     // check if player didn't leave
                     if(plugin.getServer().getOnlinePlayers().contains(event.getPlayer())) {
-                        playersOnCountdown.remove(event.getPlayer().getName());
                         action.SendAsync(finalJson);
                     }
                 }
-            }.runTaskLaterAsynchronously(plugin, timeoutDelay);
+            };
+
+            TimeoutManager.get().timeout(event.getPlayer(), runnable);
         } else {
             action.SendAsync(finalJson);
         }

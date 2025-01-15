@@ -16,7 +16,7 @@ public class PlayerCountChangeListener implements Listener {
 
     private final JavaPlugin plugin;
     private @Nullable BukkitRunnable currentRunnable;
-    private int lastPlayerCountSent = -1;
+    private int lastPlayerCountSent = 0;
 
     public PlayerCountChangeListener(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -55,11 +55,7 @@ public class PlayerCountChangeListener implements Listener {
         String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_COUNT_CHANGED);
 
         String serverMotd = PlainTextComponentSerializer.plainText().serialize(plugin.getServer().motd());
-        int playersOnline = plugin.getServer().getOnlinePlayers().size();
-
-        lastPlayerCountSent = playersOnline;
-
-        json = json.replace("$motd$", serverMotd).replace("$playersOnline$", String.valueOf(playersOnline));
+        json = json.replace("$motd$", serverMotd).replace("$playersOnline$", String.valueOf(WebhookActions.getPlayerCount(plugin)));
 
         if(plugin.getConfig().getBoolean("remove-color-coding", false)) {
             json = WebhookActions.removeColorCoding(plugin, json);

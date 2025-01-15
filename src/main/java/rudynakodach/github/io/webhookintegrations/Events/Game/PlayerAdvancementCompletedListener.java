@@ -24,11 +24,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import rudynakodach.github.io.webhookintegrations.Commands.WIActions;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
+import rudynakodach.github.io.webhookintegrations.Utils.Timeout.TimeoutManager;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
-
-import static rudynakodach.github.io.webhookintegrations.Events.Game.PlayerJoinListener.playersOnCountdown;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -48,7 +48,7 @@ public class PlayerAdvancementCompletedListener implements Listener {
         if (event.getAdvancement().getDisplay() == null)                                { return; }
         if (WebhookActions.isPlayerVanished(plugin, event.getPlayer()))                 { return; }
 
-        if (playersOnCountdown.contains(event.getPlayer().getName()) &&
+        if (TimeoutManager.get().isTimedOut(event.getPlayer()) &&
                 plugin.getConfig().getBoolean("ignore-events-during-timeout", false)) {
             return;
         }
@@ -68,7 +68,7 @@ public class PlayerAdvancementCompletedListener implements Listener {
 
         json = json.replace("$desc$", advancementDescription)
                 .replace("$timestamp$", sdf.format(new Date()))
-                .replace("$playersOnline$", String.valueOf(plugin.getServer().getOnlinePlayers().size()))
+                .replace("$playersOnline$", String.valueOf(WebhookActions.getPlayerCount(plugin)))
                 .replace("$advancement$", advancement)
                 .replace("$player$", playerName)
                 .replace("$uuid$", event.getPlayer().getUniqueId().toString())

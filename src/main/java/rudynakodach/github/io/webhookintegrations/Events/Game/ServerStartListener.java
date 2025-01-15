@@ -53,7 +53,7 @@ public class ServerStartListener implements Listener {
         String serverName = plugin.getServer().getName();
         String serverVersion = plugin.getServer().getVersion();
         Boolean isOnlineMode = plugin.getServer().getOnlineMode();
-        int playersOnline = plugin.getServer().getOnlinePlayers().size();
+        int playersOnline = WebhookActions.getPlayerCount(plugin);
 
         if(json == null) {
             return;

@@ -29,6 +29,7 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+import rudynakodach.github.io.webhookintegrations.Commands.WIActions;
 import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
 
 import java.util.List;
@@ -153,5 +154,13 @@ public class WebhookActions {
         }
 
         return  text.replaceAll(regex, "");
+    }
+
+    public static int getPlayerCount(JavaPlugin plugin) {
+        if(plugin.getConfig().getBoolean("exclude-vanished-from-player-count", false)) {
+            return (int) plugin.getServer().getOnlinePlayers().stream().filter(p -> !isPlayerVanished(plugin, p)).count();
+        } else {
+            return plugin.getServer().getOnlinePlayers().size();
+        }
     }
 }

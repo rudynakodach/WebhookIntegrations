@@ -23,11 +23,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
+import rudynakodach.github.io.webhookintegrations.Utils.Timeout.TimeoutManager;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
-
-import static rudynakodach.github.io.webhookintegrations.Events.Game.PlayerJoinListener.playersOnCountdown;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -47,7 +47,7 @@ public class PlayerQuitListener implements Listener {
         if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_QUIT))   { return; }
         if (WebhookActions.isPlayerVanished(plugin, event.getPlayer()))         { return; }
 
-        if (playersOnCountdown.contains(event.getPlayer().getName()) &&
+        if (TimeoutManager.get().isTimedOut(event.getPlayer()) &&
                 plugin.getConfig().getBoolean("ignore-events-during-timeout", false)) {
             return;
         }
@@ -70,7 +70,7 @@ public class PlayerQuitListener implements Listener {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         sdf.setTimeZone(TimeZone.getTimeZone(plugin.getConfig().getString("timezone")));
 
-        json = json.replace("$playersOnline$",String.valueOf(plugin.getServer().getOnlinePlayers().size()))
+        json = json.replace("$playersOnline$",String.valueOf(WebhookActions.getPlayerCount(plugin)))
             .replace("$timestamp$", sdf.format(new Date()))
             .replace("$maxPlayers$",String.valueOf(plugin.getServer().getMaxPlayers()))
             .replace("$player$", playerName)
@@ -88,6 +88,25 @@ public class PlayerQuitListener implements Listener {
             json = WebhookActions.removeColorCoding(plugin, json);
         }
 
-        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_QUIT)).SendAsync(json);
+        String finalJson = json;
+        WebhookActions action = new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_QUIT));
+
+        int timeoutDelay = plugin.getConfig().getInt("timeout-delay", 0);
+        if(timeoutDelay > 0 && !(event.getPlayer().hasPermission("webhookintegrations.bypassTimeout"))) {
+            BukkitRunnable runnable = new BukkitRunnable(){
+                @Override
+                public void run() {
+                    // check if player didn't join back
+                    if(!plugin.getServer().getOnlinePlayers().contains(event.getPlayer())) {
+                        action.SendAsync(finalJson);
+                    }
+                }
+            };
+
+            TimeoutManager.get().timeout(event.getPlayer(), runnable);
+        } else {
+            action.SendAsync(finalJson);
+        }
+
     }
 }
