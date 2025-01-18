@@ -104,7 +104,6 @@ public class ConfigMigrator {
         MessageConfiguration.get().reload();
 
         plugin.getConfig().set("config-version", 3);
-
         plugin.saveConfig();
         plugin.reloadConfig();
 
@@ -114,6 +113,7 @@ public class ConfigMigrator {
     public static void toVersion4(@NotNull JavaPlugin plugin) {
         plugin.getConfig().set("exclude-vanished-from-player-count", true);
 
+        plugin.getConfig().set("config-version", 4);
         plugin.saveConfig();
         plugin.reloadConfig();
 
