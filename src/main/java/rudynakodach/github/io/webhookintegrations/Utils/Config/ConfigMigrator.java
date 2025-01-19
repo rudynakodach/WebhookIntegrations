@@ -16,35 +16,19 @@ public class ConfigMigrator {
     public static void migrate(@NotNull JavaPlugin plugin, int current, int target) {
         plugin.getLogger().log(Level.INFO, "Migrating config from %d to %d".formatted(current, target));
 
-        switch (target) {
-            case 2:
-                if(current == 1) {
+        while (current < target) {
+            switch (current) {
+                case 1:
                     toVersion2(plugin);
-                }
-                break;
-
-            case 3:
-                if(current == 1) {
-                    toVersion2(plugin);
+                    break;
+                case 2:
                     toVersion3(plugin);
-                } else if(current == 2) {
-                    toVersion3(plugin);
-                }
-                break;
-
-            case 4:
-                if(current == 1) {
-                    toVersion2(plugin);
-                    toVersion3(plugin);
+                    break;
+                case 3:
                     toVersion4(plugin);
-                }
-                else if(current == 2) {
-                    toVersion3(plugin);
-                    toVersion4(plugin);
-                } else if(current == 3) {
-                    toVersion4(plugin);
-                }
-                break;
+                    break;
+            }
+            current++;
         }
     }
 
@@ -104,7 +88,6 @@ public class ConfigMigrator {
         MessageConfiguration.get().reload();
 
         plugin.getConfig().set("config-version", 3);
-
         plugin.saveConfig();
         plugin.reloadConfig();
 
@@ -114,6 +97,7 @@ public class ConfigMigrator {
     public static void toVersion4(@NotNull JavaPlugin plugin) {
         plugin.getConfig().set("exclude-vanished-from-player-count", true);
 
+        plugin.getConfig().set("config-version", 4);
         plugin.saveConfig();
         plugin.reloadConfig();
 
