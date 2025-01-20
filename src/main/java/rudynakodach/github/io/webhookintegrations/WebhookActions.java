@@ -142,21 +142,17 @@ public class WebhookActions {
         return false;
     }
 
-    public static String escapePlayerName(Player p) {
+    public static @NotNull String escapePlayerName(@NotNull Player p) {
         return p.getName().replaceAll("[*_~]", "\\\\$0");
     }
 
-    public static String removeColorCoding(JavaPlugin plugin, String text) {
-        String regex = plugin.getConfig().getString("color-code-regex");
-
-        if(regex == null) {
-            throw new RuntimeException("Color coding regex was not found in config. Consider resetting the config");
-        }
+    public static @NotNull String removeColorCoding(@NotNull JavaPlugin plugin, @NotNull String text) {
+        String regex = plugin.getConfig().getString("color-code-regex", "[&§][a-f0-9klmnorA-FKLMNOR]|&?#[0-9a-fA-F]{6}");
 
         return  text.replaceAll(regex, "");
     }
 
-    public static int getPlayerCount(JavaPlugin plugin) {
+    public static int getPlayerCount(@NotNull JavaPlugin plugin) {
         if(plugin.getConfig().getBoolean("exclude-vanished-from-player-count", false)) {
             return (int) plugin.getServer().getOnlinePlayers().stream().filter(p -> !isPlayerVanished(plugin, p)).count();
         } else {
