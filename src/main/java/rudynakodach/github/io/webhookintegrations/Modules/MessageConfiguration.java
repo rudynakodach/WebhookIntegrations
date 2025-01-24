@@ -19,6 +19,7 @@
 package rudynakodach.github.io.webhookintegrations.Modules;
 
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -39,6 +40,14 @@ public class MessageConfiguration extends WebhookIntegrationsModule {
 
     public boolean canAnnounce(String message) {
         return config.getBoolean(message + ".announce");
+    }
+
+    public boolean hasPlayerPermission(Player p, String messageType) {
+        if(config.getBoolean("%s.usePermissions".formatted(messageType), false)) {
+            return p.hasPermission("webhookintegrations.events.%s".formatted(messageType)) || p.hasPermission("webhookintegrations.events.all");
+        }
+
+        return true;
     }
 
     public String getTarget(String message) {

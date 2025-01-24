@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
+import rudynakodach.github.io.webhookintegrations.WebhookIntegrations;
 
 public class PlayerCountChangeListener implements Listener {
 
@@ -39,7 +40,6 @@ public class PlayerCountChangeListener implements Listener {
                    return;
                 }
 
-                lastPlayerCountSent = WebhookActions.getPlayerCount(plugin);
                 sendPlayerCount();
             }
         };
@@ -55,8 +55,15 @@ public class PlayerCountChangeListener implements Listener {
     private void sendPlayerCount() {
         String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_COUNT_CHANGED);
 
+        int playerCount = WebhookActions.getPlayerCount(plugin);
+        int playerCountChange = playerCount - lastPlayerCountSent;
+
         String serverMotd = PlainTextComponentSerializer.plainText().serialize(plugin.getServer().motd());
-        json = json.replace("$motd$", serverMotd).replace("$playersOnline$", String.valueOf(WebhookActions.getPlayerCount(plugin)));
+        json = json.replace("$motd$", serverMotd).replace("$playersOnline$", String.valueOf(playerCount))
+                .replace("$oldPlayerCount$", String.valueOf(lastPlayerCountSent))
+                .replace("$playerCountChange$", playerCountChange > 0 ? "+" + playerCountChange : String.valueOf(playerCountChange));
+
+        lastPlayerCountSent = WebhookActions.getPlayerCount(plugin);
 
 
 

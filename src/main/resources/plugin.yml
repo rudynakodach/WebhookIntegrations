@@ -27,6 +27,10 @@ commands:
     aliases:
       - "webhookintegrations"
 
+  help:
+    usage: /wi help
+    permission: webhookintegrations.help
+
   update:
     usage: /wi update
     permission: webhookintegrations.update

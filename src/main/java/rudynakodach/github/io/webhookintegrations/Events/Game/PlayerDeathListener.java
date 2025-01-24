@@ -53,7 +53,6 @@ public class PlayerDeathListener implements Listener {
             return;
         }
 
-
         String playerName = event.getEntity().getName();
         if(plugin.getConfig().getBoolean("preventUsernameMarkdownFormatting")) {
             playerName = WebhookActions.escapePlayerName(event.getPlayer());
@@ -74,6 +73,8 @@ public class PlayerDeathListener implements Listener {
             }
 
             if(!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_DEATH_KILLED)) {return;}
+            if(!MessageConfiguration.get().hasPlayerPermission(event.getPlayer().getKiller(), MessageType.PLAYER_DEATH_KILLED)) {return;}
+
             String killerName = event.getEntity().getKiller().getName();
             if(plugin.getConfig().getBoolean("preventUsernameMarkdownFormatting")) {
                 killerName = WebhookActions.escapePlayerName(event.getEntity().getKiller());
@@ -109,6 +110,7 @@ public class PlayerDeathListener implements Listener {
         }
         else {
             if(!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_DEATH_NPC)) {return;}
+            if(!MessageConfiguration.get().hasPlayerPermission(event.getPlayer(), MessageType.PLAYER_DEATH_NPC)) {return;}
             String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_DEATH_NPC);
 
             if(json == null) {

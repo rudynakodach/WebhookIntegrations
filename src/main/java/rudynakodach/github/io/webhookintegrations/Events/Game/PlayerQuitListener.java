@@ -34,7 +34,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 import java.util.TimeZone;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class PlayerQuitListener implements Listener {
@@ -49,6 +48,8 @@ public class PlayerQuitListener implements Listener {
     public void onPlayerQuitEvent(PlayerQuitEvent event) {
         if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_QUIT))   { return; }
         if (WebhookActions.isPlayerVanished(plugin, event.getPlayer()))         { return; }
+
+        if (!MessageConfiguration.get().hasPlayerPermission(event.getPlayer(), MessageType.PLAYER_QUIT)) {return;}
 
         if (TimeoutManager.get().isTimedOut(event.getPlayer()) &&
                 plugin.getConfig().getBoolean("ignore-events-during-timeout", false)) {

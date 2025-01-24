@@ -23,6 +23,7 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
@@ -41,9 +42,17 @@ public class PlayerChatListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerChatEvent(AsyncChatEvent event) {
+        if(event.isCancelled()) {
+            return;
+        }
+
         if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_CHAT)) {
+            return;
+        }
+
+        if(!MessageConfiguration.get().hasPlayerPermission(event.getPlayer(), MessageType.PLAYER_CHAT)) {
             return;
         }
 

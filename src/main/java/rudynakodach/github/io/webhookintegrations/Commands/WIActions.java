@@ -76,6 +76,8 @@ public class WIActions implements CommandExecutor, TabCompleter {
                         commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', LanguageConfiguration.get().getLocalizedString("commands.config.noConfirm")));
                         return true;
                     }
+                } else if(args[0].equalsIgnoreCase("help")) {
+                  commandSender.sendMessage("https://www.github.com/rudynakodach/webhookintegrations/docs/guide.md");
                 } else if (args[0].equalsIgnoreCase("reload")) {
                     return reload(commandSender);
                 } else if(args[0].equalsIgnoreCase("analyze")) {
@@ -117,6 +119,7 @@ public class WIActions implements CommandExecutor, TabCompleter {
         List<String> suggestions = new ArrayList<>();
         if (command.getName().equalsIgnoreCase("wi")) {
             if (args.length == 1) {
+                suggestions.add("help");
                 suggestions.add("setlanguage");
                 suggestions.add("reset");
                 suggestions.add("enable");

@@ -21,6 +21,7 @@ package rudynakodach.github.io.webhookintegrations.Events.Game;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -41,9 +42,17 @@ public class PlayerKickListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerKickedEvent(PlayerKickEvent event) {
+        if(event.isCancelled()) {
+            return;
+        }
+
         if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_KICK)) {
+            return;
+        }
+
+        if (!MessageConfiguration.get().hasPlayerPermission(event.getPlayer(), MessageType.PLAYER_KICK)) {
             return;
         }
 

@@ -56,6 +56,7 @@ onServerStop:
 
 onPlayerJoin:
   target: "main"
+  usePermissions: false
   # Available variables:
   # - $player$ - player who joined
   # - $uuid$ - player's uuid who triggered the event
@@ -80,6 +81,7 @@ onPlayerJoin:
 
 onPlayerQuit:
   target: "main"
+  usePermissions: false
   # Available variables:
   # - $player$ - player who left
   # - $uuid$ - player's uuid who triggered the event
@@ -104,6 +106,7 @@ onPlayerQuit:
 
 onPlayerKicked:
   target: "main"
+  usePermissions: false
   # Available variables:
   # - $player$ - player who left
   # - $uuid$ - player's uuid who triggered the event
@@ -146,6 +149,7 @@ onPlayerDeath:
   # - $playersOnline$ - the amount of players online
   playerKilledByNPC:
     target: "main"
+    usePermissions: false
     announce: true
     messageJson: '{
   "embeds": [
@@ -162,6 +166,7 @@ onPlayerDeath:
 }'
   playerKilledByPlayer:
     target: "main"
+    usePermissions: false
     # Additional variables:
     # - $killer$ - killer's player name
     # - $killerUuid$ - player's uuid who killed the player
@@ -184,6 +189,7 @@ onPlayerDeath:
 
 onPlayerChat:
   target: "main"
+  usePermissions: false
   # Do we allow the user to have placeholders in their chat message?
   # Setting this to true will allow the player to format their messages using PAPI (%%) and built-in ($$) placeholders.
   allow-placeholders-in-message: false
@@ -214,6 +220,7 @@ onPlayerChat:
 
 onPlayerAdvancement:
   target: "main"
+  usePermissions: false
   # Available variables:
   # - $player$ - player name
   # - $uuid$ - player's uuid who died
@@ -245,6 +252,8 @@ onPlayerCountChange:
   # - $timestamp$ - the current timestamp
   # - $maxPlayers$ - slot count
   # - $playersOnline$ - the amount of players online
+  # - $oldPlayerCount$ - previous player count
+  # - $playerCountChange$ - the difference in player count - can be -11, -3 or 4 depending on change
   announce: false
   messageJson: '{
   "embeds": [
@@ -252,7 +261,7 @@ onPlayerCountChange:
       "author": {
         "name": "Server"
       },
-      "description": "Current player count: **$playersOnline$**",
+      "description": "Current player count: **$playersOnline$** | `$playerCountChange$`",
       "color": 16753920
     }
   ]

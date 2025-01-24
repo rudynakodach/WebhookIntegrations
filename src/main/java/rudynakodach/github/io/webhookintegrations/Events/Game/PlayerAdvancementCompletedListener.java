@@ -21,10 +21,10 @@ package rudynakodach.github.io.webhookintegrations.Events.Game;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import rudynakodach.github.io.webhookintegrations.Commands.WIActions;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.Utils.Timeout.TimeoutManager;
@@ -47,6 +47,10 @@ public class PlayerAdvancementCompletedListener implements Listener {
         if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_ADVANCEMENT))    { return; }
         if (event.getAdvancement().getDisplay() == null)                                { return; }
         if (WebhookActions.isPlayerVanished(plugin, event.getPlayer()))                 { return; }
+
+        if(!MessageConfiguration.get().hasPlayerPermission(event.getPlayer(), MessageType.PLAYER_ADVANCEMENT)) {
+            return;
+        }
 
         if (TimeoutManager.get().isTimedOut(event.getPlayer()) &&
                 plugin.getConfig().getBoolean("ignore-events-during-timeout", false)) {
