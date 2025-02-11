@@ -191,10 +191,10 @@ public class WIActions implements CommandExecutor, TabCompleter {
         }
         commandSender.sendMessage(ChatColor.AQUA + "Analyzing config... To reload the config use /wi reload");
         String message = "auto-update: " + colorBoolean(plugin.getConfig().getBoolean("auto-update"));
-        if (Objects.requireNonNull(plugin.getConfig().getString("webhookUrl")).trim().equalsIgnoreCase("")) {
-            message += "\nwebhookUrl: " + ChatColor.RED + "unset\n";
+        if (Objects.requireNonNull(plugin.getConfig().getString("webhooks.main")).trim().equalsIgnoreCase("")) {
+            message += "\nwebhooks.main: " + ChatColor.RED + "unset\n";
         } else {
-            message += "\nwebhookUrl: " + ChatColor.GREEN + "set\n";
+            message += "\nwebhooks.main: " + ChatColor.GREEN + "set\n";
         }
 
         message += ChatColor.YELLOW + "EVENTS" + ChatColor.WHITE;

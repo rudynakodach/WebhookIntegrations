@@ -52,7 +52,7 @@ public class WebhookActions {
     public void SendAsync(String json) {
         if(!plugin.getConfig().getBoolean("isEnabled")) {return;}
         if(!plugin.getConfig().contains("webhooks.%s".formatted(target))) {
-            plugin.getLogger().log(Level.SEVERE, LanguageConfiguration.get().getLocalizedString("config.noWebhookUrl"));
+            plugin.getLogger().log(Level.SEVERE, LanguageConfiguration.get().getLocalizedString("config.noWebhookUrl").formatted(target));
             return;
         }
 
