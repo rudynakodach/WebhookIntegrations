@@ -4,7 +4,7 @@ en_US:
   no-permission: "&cYou don't have permission to do that."
 
   config:
-    noWebhookUrl: "Config doesn't contain a webhookUrl key! Creating a backup of the config file and using /wi config reset is recommended."
+    noWebhookUrl: "Config doesn't contain a webhooks.%s key! Creating a backup of the config file and using /wi config reset is recommended."
 
   update:
     checking: "Checking for updates..."
@@ -14,7 +14,7 @@ en_US:
 
   onStart:
     message: "Thank you for using WebhookIntegrations <3"
-    webhookEmpty: "WebhookURL is empty and cannot be used! Set the value of webhookUrl inside the config.yml file and restart the server or use \"/setUrl <url>\"!"
+    webhookEmpty: "Main WebhookURL is empty and cannot be used! Set the value of webhooks.main inside the config.yml file and restart the server or use \"/setUrl <url>\"!"
     registeringEvents: "Registering events..."
     eventRegisterFinish: "Events registered."
     commandRegisterFinish: "Commands registered."
@@ -73,7 +73,7 @@ pl_PL:
   no-permission: "&cNie masz uprawnień."
 
   config:
-    noWebhookUrl: "Config nie zawiera klucza webhookUrl! Zalecane jest stworzenie kopii zapasowej pliku konfiguracyjnego i użycie /wi config reset confirm"
+    noWebhookUrl: "Config nie zawiera klucza webhooks.%s! Zalecane jest stworzenie kopii zapasowej pliku konfiguracyjnego i użycie /wi config reset confirm"
 
   update:
     checking: "Sprawdzanie aktualizacji..."
@@ -83,7 +83,7 @@ pl_PL:
 
   onStart:
     message: "Dziękuję za korzystanie z WebhookIntegrations <3"
-    webhookEmpty: "Adres Webhooka jest pusty i nie może zostać użyty! Ustaw wartość 'webhookUrl' w configu albo użyj \"/seturl <url>\"!"
+    webhookEmpty: "Adres Webhooka jest pusty i nie może zostać użyty! Ustaw wartość 'webhooks.main' w configu albo użyj \"/seturl <url>\"!"
     registeringEvents: "Rejestrowanie wydarzeń..."
     eventRegisterFinish: "Wydarzenia zarejestrowane."
     commandRegisterFinish: "Komendy zarejestrowane."
