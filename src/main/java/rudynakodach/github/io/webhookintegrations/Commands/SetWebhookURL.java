@@ -88,7 +88,7 @@ public class SetWebhookURL implements CommandExecutor {
 
             config.set("webhooks.%s".formatted(target), newUrl);
             plugin.saveConfig();
-            sender.sendMessage(ChatColor.GREEN + language.getLocalizedString("commands.seturl.newUrlSet"));
+            sender.sendMessage(ChatColor.GREEN + language.getLocalizedString("commands.seturl.newUrlSet").formatted(target));
             return true;
         } else {
             sender.sendMessage(ChatColor.LIGHT_PURPLE + language.getLocalizedString("commands.seturl.commandIncorrectUsage"));

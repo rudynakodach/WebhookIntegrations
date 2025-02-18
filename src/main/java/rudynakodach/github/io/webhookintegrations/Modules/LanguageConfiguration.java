@@ -47,6 +47,6 @@ public class LanguageConfiguration extends WebhookIntegrationsModule {
     }
 
     public String getLocalizedString(String key) {
-        return config.getString(locale + "." + key);
+        return config.getString(locale + "." + key, key);
     }
 }

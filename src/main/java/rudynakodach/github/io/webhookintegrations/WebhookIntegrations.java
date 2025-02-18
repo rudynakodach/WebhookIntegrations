@@ -42,6 +42,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.TimeZone;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public final class WebhookIntegrations extends JavaPlugin {
     public static boolean isLatest = true;
@@ -248,6 +249,6 @@ public final class WebhookIntegrations extends JavaPlugin {
             .replace("$isOnlineMode$", String.valueOf(isOnlineMode))
             .replace("$playersOnline$", String.valueOf(playersOnline));
 
-        new WebhookActions(this, MessageConfiguration.get().getTarget(MessageType.SERVER_STOP)).SendSync(json);
+        new WebhookActions(this, MessageConfiguration.get().getTarget(MessageType.SERVER_STOP)).setHeaders(MessageConfiguration.get().getHeaders(MessageType.SERVER_STOP)).SendSync(json);
     }
 }

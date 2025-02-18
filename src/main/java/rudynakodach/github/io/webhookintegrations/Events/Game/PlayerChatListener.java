@@ -143,6 +143,6 @@ public class PlayerChatListener implements Listener {
             json = WebhookActions.removeColorCoding(plugin, json);
         }
 
-        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_CHAT)).SendAsync(json);
+        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_CHAT)).setHeaders(MessageConfiguration.get().getHeaders(MessageType.PLAYER_CHAT)).SendAsync(json);
     }
 }

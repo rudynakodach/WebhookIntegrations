@@ -104,6 +104,6 @@ public class PlayerKickListener implements Listener {
             json = WebhookActions.removeColorCoding(plugin, json);
         }
 
-        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_KICK)).SendAsync(json);
+        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_KICK)).setHeaders(MessageConfiguration.get().getHeaders(MessageType.PLAYER_KICK)).SendAsync(json);
     }
 }

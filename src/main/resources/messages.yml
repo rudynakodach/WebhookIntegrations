@@ -14,6 +14,8 @@ onServerStart:
   # - $serverName$ - name of your server
   # - $serverVersion$ - version of your server. this isn't the minecraft version
   # - $isOnlineMode$ - true if online-mode is enabled, false otherwise
+  headers:
+    "Content-Type": "application/json"
   announce: true
   messageJson: '{
   "embeds": [

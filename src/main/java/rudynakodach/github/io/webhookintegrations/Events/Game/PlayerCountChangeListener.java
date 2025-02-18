@@ -71,7 +71,7 @@ public class PlayerCountChangeListener implements Listener {
             json = WebhookActions.removeColorCoding(plugin, json);
         }
 
-        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_COUNT_CHANGED)).SendSync(json);
+        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_COUNT_CHANGED)).setHeaders(MessageConfiguration.get().getHeaders(MessageType.PLAYER_COUNT_CHANGED)).SendSync(json);
     }
 
     @EventHandler

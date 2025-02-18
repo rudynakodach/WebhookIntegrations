@@ -79,6 +79,6 @@ public class ServerStartListener implements Listener {
             json = WebhookActions.removeColorCoding(plugin, json);
         }
 
-        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.SERVER_START)).SendSync(json);
+        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.SERVER_START)).setHeaders(MessageConfiguration.get().getHeaders(MessageType.SERVER_START)).SendSync(json);
     }
 }

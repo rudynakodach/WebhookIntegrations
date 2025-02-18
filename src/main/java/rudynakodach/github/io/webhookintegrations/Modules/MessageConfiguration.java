@@ -18,11 +18,16 @@
 
 package rudynakodach.github.io.webhookintegrations.Modules;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.logging.Level;
 
 public class MessageConfiguration extends WebhookIntegrationsModule {
     private static MessageConfiguration instance;
@@ -56,5 +61,21 @@ public class MessageConfiguration extends WebhookIntegrationsModule {
 
     public String getMessage(String path) {
         return config.getString(path + ".messageJson");
+    }
+
+    public @Nullable HashMap<String, String> getHeaders(String messageType) {
+        ConfigurationSection headersSection = config.getConfigurationSection("%s.headers".formatted(messageType));
+
+        if(headersSection == null) {
+            return null;
+        }
+
+        HashMap<String, String> headers = new HashMap<>();
+
+        for(String key : headersSection.getKeys(false)) {
+            headers.put(key, headersSection.get(key).toString());
+        }
+
+        return headers;
     }
 }

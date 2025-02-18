@@ -90,6 +90,6 @@ public class PlayerAdvancementCompletedListener implements Listener {
             json = WebhookActions.removeColorCoding(plugin, json);
         }
 
-        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_ADVANCEMENT)).SendAsync(json);
+        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_ADVANCEMENT)).setHeaders(MessageConfiguration.get().getHeaders(MessageType.PLAYER_ADVANCEMENT)).SendAsync(json);
     }
 }

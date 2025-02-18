@@ -29,10 +29,13 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import rudynakodach.github.io.webhookintegrations.Commands.WIActions;
 import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 
@@ -40,9 +43,17 @@ public class WebhookActions {
     private final JavaPlugin plugin;
     private final String target;
 
+    private @Nullable HashMap<String, String> headers = null;
+
     public WebhookActions(JavaPlugin plugin, String target) {
         this.plugin = plugin;
         this.target = target;
+    }
+
+    public @NotNull WebhookActions setHeaders(@Nullable HashMap<String, String> headers) {
+        this.headers = headers;
+
+        return this;
     }
 
     /**
@@ -65,25 +76,7 @@ public class WebhookActions {
 
         new BukkitRunnable() {
             public void run() {
-                CloseableHttpClient httpClient = HttpClients.createDefault();
-                HttpPost httpPost = new HttpPost(webhookUrl);
-
-                StringEntity requestEntity = new StringEntity(
-                        json,
-                        ContentType.APPLICATION_JSON
-                );
-                httpPost.setEntity(requestEntity);
-
-                try (CloseableHttpResponse ignored = httpClient.execute(httpPost)) {}
-                catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    try {
-                        httpClient.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+                send(webhookUrl, json);
             }
         }.runTaskAsynchronously(plugin);
     }
@@ -106,6 +99,10 @@ public class WebhookActions {
             return;
         }
 
+        send(target, json);
+    }
+
+    private void send(@NotNull String webhookUrl, @NotNull String json) {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(webhookUrl);
 
@@ -114,6 +111,12 @@ public class WebhookActions {
                 ContentType.APPLICATION_JSON
         );
         httpPost.setEntity(requestEntity);
+
+        if(headers != null) {
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                httpPost.addHeader(entry.getKey(), entry.getValue());
+            }
+        }
 
         try (CloseableHttpResponse ignored = httpClient.execute(httpPost)) {}
         catch (Exception e) {
@@ -126,6 +129,7 @@ public class WebhookActions {
             }
         }
     }
+
 
     /**
      * @param player Player to check

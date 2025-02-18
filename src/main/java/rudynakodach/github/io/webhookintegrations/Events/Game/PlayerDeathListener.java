@@ -138,7 +138,7 @@ public class PlayerDeathListener implements Listener {
                 json = WebhookActions.removeColorCoding(plugin, json);
             }
 
-            new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_DEATH_NPC)).SendAsync(json);
+            new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_DEATH_NPC)).setHeaders(MessageConfiguration.get().getHeaders(MessageType.PLAYER_DEATH_NPC)).SendAsync(json);
         }
     }
 }

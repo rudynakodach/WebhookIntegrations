@@ -55,5 +55,18 @@ Each of these events have a `target`, `canAnnounce`, `usePermission` and `messag
 
 `messageJson` is the json message of the embed
 
+## Adding request headers
+To add custom request headers, you need to add a `headers` section to `messages.yml` in the message you want to add headers to. Example:
+```yml
+onServerStart:
+  target: "main"
+  headers:
+    "Content-Type": "application/json"
+    "Test-Header": "example value"
+    "Lorem": "ipsum"
+  announce: true
+  messageJson: ...
+```
+
 # Something unclear? Ask a question!
 Create a support ticket [here](https://github.com/rudynakodach/WebhookIntegrations/issues/new?template=support.md), I'll get to you as fast as possible.

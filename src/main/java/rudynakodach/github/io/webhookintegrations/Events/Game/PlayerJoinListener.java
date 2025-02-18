@@ -93,7 +93,7 @@ public class PlayerJoinListener implements Listener {
         }
 
         String finalJson = json;
-        WebhookActions action = new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_JOIN));
+        WebhookActions action = new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_JOIN)).setHeaders(MessageConfiguration.get().getHeaders(MessageType.PLAYER_JOIN));
 
         int timeoutDelay = plugin.getConfig().getInt("timeout-delay", 0);
         if(timeoutDelay > 0 && !(event.getPlayer().hasPermission("webhookintegrations.bypassTimeout"))) {
