@@ -13,6 +13,10 @@ import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
 import rudynakodach.github.io.webhookintegrations.WebhookIntegrations;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 public class PlayerCountChangeListener implements Listener {
 
     private final JavaPlugin plugin;
@@ -58,13 +62,19 @@ public class PlayerCountChangeListener implements Listener {
         int playerCount = WebhookActions.getPlayerCount(plugin);
         int playerCountChange = playerCount - lastPlayerCountSent;
 
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        sdf.setTimeZone(TimeZone.getTimeZone(plugin.getConfig().getString("timezone")));
+
         String serverMotd = PlainTextComponentSerializer.plainText().serialize(plugin.getServer().motd());
-        json = json.replace("$motd$", serverMotd).replace("$playersOnline$", String.valueOf(playerCount))
+        json = json.replace("$motd$", serverMotd)
+                .replace("$playersOnline$", String.valueOf(playerCount))
                 .replace("$oldPlayerCount$", String.valueOf(lastPlayerCountSent))
+                .replace("$time$", new SimpleDateFormat(plugin.getConfig().getString("date-format", "HH:mm:ss")).format(new Date()))
+                .replace("$timestamp$", sdf.format(new Date()))
                 .replace("$playerCountChange$", playerCountChange > 0 ? "+" + playerCountChange : String.valueOf(playerCountChange));
 
-        lastPlayerCountSent = WebhookActions.getPlayerCount(plugin);
 
+        lastPlayerCountSent = WebhookActions.getPlayerCount(plugin);
 
 
         if(plugin.getConfig().getBoolean("remove-color-coding", false)) {

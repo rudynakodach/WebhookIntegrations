@@ -25,6 +25,8 @@
 
 `preventUsernameMarkdownFormatting`: whether to remove **_markdown_** formatting from player names by displaying unformatted text | bool
 
+`prevent-message-markdown-formatting`: whether to remove **_markdown_** from players' chat messages | bool
+
 `language-override`: <ins>should we use language override | string or none
 
 `isEnabled`: whether the plugin should send events to the webhooks | bool

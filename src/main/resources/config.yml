@@ -27,6 +27,8 @@ color-code-regex: "[&§][a-f0-9klmnorA-FKLMNOR]|&?#[0-9a-fA-F]{6}"
 
 # Prevents Markdown formatting for usernames by escaping characters.
 preventUsernameMarkdownFormatting: true
+# Prevents Markdown formatting for player messages
+prevent-message-markdown-formatting: false
 
 # The plugin selects the language of the system the plugin is running on.
 # Set this to your language you want the plugin to be in, false otherwise. Should be formatted like this: "en_US"

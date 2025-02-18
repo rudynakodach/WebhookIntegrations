@@ -14,8 +14,6 @@ onServerStart:
   # - $serverName$ - name of your server
   # - $serverVersion$ - version of your server. this isn't the minecraft version
   # - $isOnlineMode$ - true if online-mode is enabled, false otherwise
-  headers:
-    "Content-Type": "application/json"
   announce: true
   messageJson: '{
   "embeds": [
@@ -61,6 +59,7 @@ onPlayerJoin:
   usePermissions: false
   # Available variables:
   # - $player$ - player who joined
+  # - $rawUsername$ - player name before transformation (i.e. escaping markdown)
   # - $uuid$ - player's uuid who triggered the event
   # - $time$ - server's local time
   # - $timestamp$ - the current timestamp
@@ -71,8 +70,8 @@ onPlayerJoin:
   "embeds": [
     {
       "author": {
-        "name": "$player$",
-        "icon_url": "https://minotar.net/helm/$player$/512.png"
+        "name": "$rawUsername$",
+        "icon_url": "https://minotar.net/helm/$rawUsername$/512.png"
       },
       "description": "**$player$** joined the game.",
       "color": 65280,
@@ -86,6 +85,7 @@ onPlayerQuit:
   usePermissions: false
   # Available variables:
   # - $player$ - player who left
+  # - $rawUsername$ - player name before transformation (i.e. escaping markdown)
   # - $uuid$ - player's uuid who triggered the event
   # - $time$ - server's local time
   # - $timestamp$ - the current timestamp
@@ -96,8 +96,8 @@ onPlayerQuit:
   "embeds": [
     {
       "author": {
-        "name": "$player$",
-        "icon_url": "https://minotar.net/helm/$player$/512.png"
+        "name": "$rawUsername$",
+        "icon_url": "https://minotar.net/helm/$rawUsername$/512.png"
       },
       "description": "**$player$** left the game.",
       "color": 16711680,
@@ -111,6 +111,7 @@ onPlayerKicked:
   usePermissions: false
   # Available variables:
   # - $player$ - player who left
+  # - $rawUsername$ - player name before transformation (i.e. escaping markdown)
   # - $uuid$ - player's uuid who triggered the event
   # - $time$ - server's local time
   # - $timestamp$ - the current timestamp
@@ -123,8 +124,8 @@ onPlayerKicked:
   "embeds": [
     {
       "author": {
-        "name": "$player$",
-        "icon_url": "https://minotar.net/helm/$player$/512.png"
+        "name": "$rawUsername$",
+        "icon_url": "https://minotar.net/helm/$rawUsername$/512.png"
       },
       "description": "**$player$** was kicked: *$reason$*",
       "color": 16753920
@@ -133,11 +134,9 @@ onPlayerKicked:
 }'
 
 onPlayerDeath:
-  # This event is different.
-  # Message for a player dying from an NPC and a player are different.
-
   # Available variables:
-  # - $player$ - player who left
+  # - $player$ - player who died
+  # - $rawVictim$ - victim's name before transformation (i.e. escaping markdown)
   # - $uuid$ - player's uuid who died
 
   # - $time$ - server's local time
@@ -157,8 +156,8 @@ onPlayerDeath:
   "embeds": [
     {
       "author": {
-        "name": "$player$",
-        "icon_url": "https://minotar.net/helm/$player$/512.png"
+        "name": "$rawVictim$",
+        "icon_url": "https://minotar.net/helm/$rawVictim$/512.png"
       },
       "description": "**$player$** died.",
       "color": 15631086,
@@ -171,6 +170,7 @@ onPlayerDeath:
     usePermissions: false
     # Additional variables:
     # - $killer$ - killer's player name
+    # - $rawKiller$ - killer's name before transformation (i.e. escaping markdown)
     # - $killerUuid$ - player's uuid who killed the player
     # This uses relational placeholders from PlaceholderAPI. Its usage is as follows: %<rel_(identifier)_(params)>%
     # The first identifier is the victim, where the second is the killer.
@@ -179,8 +179,8 @@ onPlayerDeath:
   "embeds": [
     {
       "author": {
-        "name": "$victim$",
-        "icon_url": "https://minotar.net/helm/$victim$/512.png"
+        "name": "$rawVictim$",
+        "icon_url": "https://minotar.net/helm/$rawVictim$/512.png"
       },
       "description": "$message$",
       "color": 16711680,
@@ -198,6 +198,7 @@ onPlayerChat:
 
   # Available variables:
   # - $player$ - player who left
+  # - $rawUsername$ - player name before transformation (i.e. escaping markdown)
   # - $uuid$ - player's uuid who died
   # - $time$ - server's local time
   # - $timestamp$ - the current timestamp
@@ -210,8 +211,8 @@ onPlayerChat:
   "embeds": [
     {
       "author": {
-        "name": "$player$",
-        "icon_url": "https://minotar.net/helm/$player$/512.png"
+        "name": "$rawUsername$",
+        "icon_url": "https://minotar.net/helm/$rawUsername$/512.png"
       },
       "description": "$message$",
       "color": 3447003,
@@ -225,6 +226,7 @@ onPlayerAdvancement:
   usePermissions: false
   # Available variables:
   # - $player$ - player name
+  # - $rawUsername$ - player name before transformation (i.e. escaping markdown)
   # - $uuid$ - player's uuid who died
   # - $time$ - server's local time
   # - $timestamp$ - the current timestamp
@@ -236,8 +238,8 @@ onPlayerAdvancement:
   "embeds": [
     {
       "author": {
-        "name": "$player$",
-        "icon_url": "https://minotar.net/helm/$player$/512.png"
+        "name": "$rawUsername$",
+        "icon_url": "https://minotar.net/helm/$rawUsername$/512.png"
       },
       "description": "**$player$** has made the advancement `[$advancement$]`",
       "color": 16766720,
@@ -264,7 +266,8 @@ onPlayerCountChange:
         "name": "Server"
       },
       "description": "Current player count: **$playersOnline$** | `$playerCountChange$`",
-      "color": 16753920
+      "color": 16753920,
+      "timestamp": "$timestamp$"
     }
   ]
 }'

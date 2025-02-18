@@ -55,7 +55,7 @@ public class PlayerDeathListener implements Listener {
 
         String playerName = event.getEntity().getName();
         if(plugin.getConfig().getBoolean("preventUsernameMarkdownFormatting")) {
-            playerName = WebhookActions.escapePlayerName(event.getPlayer());
+            playerName = WebhookActions.escapeMarkdown(event.getPlayer().getName());
         }
         String deathMessage = PlainTextComponentSerializer.plainText().serialize(event.deathMessage() == null ? Component.empty() : Objects.requireNonNull(event.deathMessage()));
 
@@ -77,7 +77,7 @@ public class PlayerDeathListener implements Listener {
 
             String killerName = event.getEntity().getKiller().getName();
             if(plugin.getConfig().getBoolean("preventUsernameMarkdownFormatting")) {
-                killerName = WebhookActions.escapePlayerName(event.getEntity().getKiller());
+                killerName = WebhookActions.escapeMarkdown(event.getEntity().getKiller().getName());
             }
 
             String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_DEATH_KILLED);
@@ -89,12 +89,10 @@ public class PlayerDeathListener implements Listener {
             json = json.replace("$playersOnline$",String.valueOf(WebhookActions.getPlayerCount(plugin)))
                 .replace("$timestamp$", sdf.format(new Date()))
                 .replace("$maxPlayers$",String.valueOf(plugin.getServer().getMaxPlayers()))
-                    .replace("$time$", new SimpleDateFormat(
-                            Objects.requireNonNullElse(
-                                    plugin.getConfig().getString("date-format"),
-                                    "HH:mm:ss")).format(new Date())
-                    )
+                .replace("$time$", new SimpleDateFormat(plugin.getConfig().getString("date-format", "HH:mm:ss")).format(new Date()))
                 .replace("$victim$",playerName)
+                .replace("$rawVictim$", event.getPlayer().getName())
+                .replace("$rawKiller$", event.getEntity().getKiller().getName())
                 .replace("$killer$",killerName)
                 .replace("$deathMessage$",deathMessage)
                 .replace("$newLevel$",newLevel)
@@ -117,13 +115,10 @@ public class PlayerDeathListener implements Listener {
                 return;
             }
 
-            json = json.replace("$time$", new SimpleDateFormat(
-                            Objects.requireNonNullElse(
-                                    plugin.getConfig().getString("date-format"),
-                                    "HH:mm:ss")).format(new Date())
-                    )
+            json = json.replace("$time$", new SimpleDateFormat(plugin.getConfig().getString("date-format", "HH:mm:ss")).format(new Date()))
                 .replace("$timestamp$", sdf.format(new Date()))
-                .replace("$player$",playerName)
+                .replace("$player$", playerName)
+                .replace("$rawVictim$", event.getPlayer().getName())
                 .replace("$deathMessage$", deathMessage)
                 .replace("$newLevel$",newLevel)
                 .replace("$newExp$",newExp)

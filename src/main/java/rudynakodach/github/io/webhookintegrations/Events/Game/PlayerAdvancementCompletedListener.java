@@ -21,7 +21,6 @@ package rudynakodach.github.io.webhookintegrations.Events.Game;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -64,7 +63,7 @@ public class PlayerAdvancementCompletedListener implements Listener {
 
         String playerName = event.getPlayer().getName();
         if(plugin.getConfig().getBoolean("preventUsernameMarkdownFormatting")) {
-            playerName = WebhookActions.escapePlayerName(event.getPlayer());
+            playerName = WebhookActions.escapeMarkdown(event.getPlayer().getName());
         }
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
@@ -74,13 +73,10 @@ public class PlayerAdvancementCompletedListener implements Listener {
                 .replace("$timestamp$", sdf.format(new Date()))
                 .replace("$playersOnline$", String.valueOf(WebhookActions.getPlayerCount(plugin)))
                 .replace("$advancement$", advancement)
+                .replace("$rawUsername$", event.getPlayer().getName())
                 .replace("$player$", playerName)
                 .replace("$uuid$", event.getPlayer().getUniqueId().toString())
-                .replace("$time$", new SimpleDateFormat(
-                        Objects.requireNonNullElse(
-                                plugin.getConfig().getString("date-format"),
-                                "HH:mm:ss")).format(new Date())
-                );
+                .replace("$time$", new SimpleDateFormat(plugin.getConfig().getString("date-format", "HH:mm:ss")).format(new Date()));
 
         if (plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);

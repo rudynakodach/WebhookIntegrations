@@ -68,9 +68,10 @@ public class PlayerChatListener implements Listener {
         boolean allowPlaceholdersInMessage = MessageConfiguration.get().getYamlConfig().getBoolean("onPlayerChat.allow-placeholders-in-message");
 
         String message = PlainTextComponentSerializer.plainText().serialize(event.message());
-        String playerName = event.getPlayer().getName();
+//        String playerName = event.getPlayer().getName();
+        String playerName = "One_Two";
         if(plugin.getConfig().getBoolean("preventUsernameMarkdownFormatting")) {
-            playerName = WebhookActions.escapePlayerName(event.getPlayer());
+            playerName = WebhookActions.escapeMarkdown(playerName);
         }
 
         String playerWorldName = event.getPlayer().getWorld().getName();
@@ -103,6 +104,10 @@ public class PlayerChatListener implements Listener {
             return;
         }
 
+        if(plugin.getConfig().getBoolean("prevent-message-markdown-formatting", false)) {
+            message = WebhookActions.escapeMarkdown(message);
+        }
+
         if(plugin.getConfig().getBoolean("useRegexCensoring")) {
             List<String> patterns = Objects.requireNonNull(plugin.getConfig().getConfigurationSection("regexCensoring")).getKeys(false).stream().toList();
             for(String expr : patterns) {
@@ -124,12 +129,9 @@ public class PlayerChatListener implements Listener {
             .replace("$timestamp$", sdf.format(new Date()))
             .replace("$maxPlayers$",String.valueOf(plugin.getServer().getMaxPlayers()))
             .replace("$uuid$", event.getPlayer().getUniqueId().toString())
+            .replace("$rawUsername$", event.getPlayer().getName())
             .replace("$player$", playerName)
-                .replace("$time$", new SimpleDateFormat(
-                        Objects.requireNonNullElse(
-                                plugin.getConfig().getString("date-format"),
-                                "HH:mm:ss")).format(new Date())
-                )
+            .replace("$time$", new SimpleDateFormat(plugin.getConfig().getString("date-format", "HH:mm:ss")).format(new Date()))
             .replace("$world$", playerWorldName);
 
         if(!allowPlaceholdersInMessage) {

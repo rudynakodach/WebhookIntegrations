@@ -67,7 +67,7 @@ public class PlayerKickListener implements Listener {
 
         String playerName = event.getPlayer().getName();
         if(plugin.getConfig().getBoolean("preventUsernameMarkdownFormatting")) {
-            playerName = WebhookActions.escapePlayerName(event.getPlayer());
+            playerName = WebhookActions.escapeMarkdown(event.getPlayer().getName());
         }
         String reason = PlainTextComponentSerializer.plainText().serialize(event.reason());
 
@@ -89,12 +89,10 @@ public class PlayerKickListener implements Listener {
             .replace("$maxPlayers$",String.valueOf(plugin.getServer().getMaxPlayers()))
             .replace("$uuid$", event.getPlayer().getUniqueId().toString())
             .replace("$player$", playerName)
+            .replace("$rawUsername$", event.getPlayer().getName())
             .replace("$reason$", reason)
-                .replace("$time$", new SimpleDateFormat(
-                        Objects.requireNonNullElse(
-                                plugin.getConfig().getString("date-format"),
-                                "")).format(new Date())
-                );
+            .replace("$time$", new SimpleDateFormat(plugin.getConfig().getString("date-format", "HH:mm:ss")).format(new Date()));
+
 
         if(plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);

@@ -64,7 +64,7 @@ public class PlayerQuitListener implements Listener {
 
         String playerName = event.getPlayer().getName();
         if(plugin.getConfig().getBoolean("preventUsernameMarkdownFormatting")) {
-            playerName = WebhookActions.escapePlayerName(event.getPlayer());
+            playerName = WebhookActions.escapeMarkdown(event.getPlayer().getName());
         }
 
         if(json == null) {
@@ -78,11 +78,9 @@ public class PlayerQuitListener implements Listener {
             .replace("$timestamp$", sdf.format(new Date()))
             .replace("$maxPlayers$",String.valueOf(plugin.getServer().getMaxPlayers()))
             .replace("$player$", playerName)
-            .replace("$time$", new SimpleDateFormat(
-                    Objects.requireNonNullElse(
-                            plugin.getConfig().getString("date-format"),
-                            "")).format(new Date())
-            );
+            .replace("$rawUsername$", event.getPlayer().getName())
+            .replace("$time$", new SimpleDateFormat(plugin.getConfig().getString("date-format", "HH:mm:ss")).format(new Date()));
+
 
         if(plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);

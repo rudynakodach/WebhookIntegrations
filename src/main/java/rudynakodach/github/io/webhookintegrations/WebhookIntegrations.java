@@ -42,11 +42,10 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.TimeZone;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 public final class WebhookIntegrations extends JavaPlugin {
     public static boolean isLatest = true;
-    public static final int currentBuildNumber = 65;
+    public static final int currentBuildNumber = 66;
     public static final int currentConfigVersion = 4;
 
     @Override

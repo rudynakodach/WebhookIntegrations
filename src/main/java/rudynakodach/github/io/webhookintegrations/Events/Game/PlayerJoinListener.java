@@ -20,7 +20,6 @@ package rudynakodach.github.io.webhookintegrations.Events.Game;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -32,6 +31,7 @@ import rudynakodach.github.io.webhookintegrations.WebhookActions;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Level;
 
 public class PlayerJoinListener implements Listener {
 
@@ -67,7 +67,7 @@ public class PlayerJoinListener implements Listener {
 
         String playerName = event.getPlayer().getName();
         if(plugin.getConfig().getBoolean("preventUsernameMarkdownFormatting")) {
-            playerName = WebhookActions.escapePlayerName(event.getPlayer());
+            playerName = WebhookActions.escapeMarkdown(event.getPlayer().getName());
         }
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
@@ -78,11 +78,8 @@ public class PlayerJoinListener implements Listener {
                 .replace("$maxPlayers$", String.valueOf(plugin.getServer().getMaxPlayers()))
                 .replace("$uuid$", event.getPlayer().getUniqueId().toString())
                 .replace("$player$", playerName)
-                .replace("$time$", new SimpleDateFormat(
-                        Objects.requireNonNullElse(
-                                plugin.getConfig().getString("date-format"),
-                                "")).format(new Date())
-                );
+                .replace("$rawUsername$", event.getPlayer().getName())
+                .replace("$time$", new SimpleDateFormat(plugin.getConfig().getString("date-format", "HH:mm:ss")).format(new Date()));
 
         if(plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
@@ -93,6 +90,7 @@ public class PlayerJoinListener implements Listener {
         }
 
         String finalJson = json;
+        plugin.getLogger().log(Level.INFO, finalJson);
         WebhookActions action = new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_JOIN)).setHeaders(MessageConfiguration.get().getHeaders(MessageType.PLAYER_JOIN));
 
         int timeoutDelay = plugin.getConfig().getInt("timeout-delay", 0);

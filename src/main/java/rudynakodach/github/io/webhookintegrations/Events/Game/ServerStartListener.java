@@ -64,10 +64,7 @@ public class ServerStartListener implements Listener {
 
         json = json.replace("$serverIp$", serverIp)
                 .replace("$timestamp$", sdf.format(new Date()))
-                .replace("$time$", new SimpleDateFormat(
-                        Objects.requireNonNullElse(
-                                plugin.getConfig().getString("date-format"),
-                                "")).format(new Date()))
+                .replace("$time$", new SimpleDateFormat(plugin.getConfig().getString("date-format", "HH:mm:ss")).format(new Date()))
                 .replace("$maxPlayers$", String.valueOf(slots))
                 .replace("$serverMotd$", serverMotd)
                 .replace("$serverName$", serverName)

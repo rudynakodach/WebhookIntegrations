@@ -30,11 +30,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import rudynakodach.github.io.webhookintegrations.Commands.WIActions;
 import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -146,8 +144,8 @@ public class WebhookActions {
         return false;
     }
 
-    public static @NotNull String escapePlayerName(@NotNull Player p) {
-        return p.getName().replaceAll("[*_~]", "\\\\$0");
+    public static @NotNull String escapeMarkdown(@NotNull String s) {
+        return s.replaceAll("[*_~#\\-|\\[\\]()>`]", "\\\\\\\\$0");
     }
 
     public static @NotNull String removeColorCoding(@NotNull JavaPlugin plugin, @NotNull String text) {

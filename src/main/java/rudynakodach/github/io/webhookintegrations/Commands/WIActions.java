@@ -19,12 +19,15 @@
 package rudynakodach.github.io.webhookintegrations.Commands;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -37,12 +40,8 @@ import rudynakodach.github.io.webhookintegrations.WebhookIntegrations;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -77,7 +76,11 @@ public class WIActions implements CommandExecutor, TabCompleter {
                         return true;
                     }
                 } else if(args[0].equalsIgnoreCase("help")) {
-                  commandSender.sendMessage("https://www.github.com/rudynakodach/webhookintegrations/docs/guide.md");
+                    if(commandSender instanceof Player player) {
+                        player.sendMessage(Component.text("View the official guide ").append(Component.text("here").decorate(TextDecoration.BOLD).decorate(TextDecoration.UNDERLINED).clickEvent(ClickEvent.openUrl("https://github.com/rudynakodach/WebhookIntegrations/blob/master/docs/guide.md"))).append(Component.text(" [CLICK]").color(NamedTextColor.GRAY)));
+                    } else {
+                        commandSender.sendMessage("View the official guide here: https://github.com/rudynakodach/WebhookIntegrations/blob/master/docs/guide.md");
+                    }
                 } else if (args[0].equalsIgnoreCase("reload")) {
                     return reload(commandSender);
                 } else if(args[0].equalsIgnoreCase("analyze")) {
