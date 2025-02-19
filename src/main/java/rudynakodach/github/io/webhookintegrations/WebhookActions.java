@@ -31,6 +31,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import rudynakodach.github.io.webhookintegrations.Modules.LanguageConfiguration;
+import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
+import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
+import rudynakodach.github.io.webhookintegrations.Modules.TemplateConfiguration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,12 +43,26 @@ import java.util.logging.Level;
 public class WebhookActions {
     private final JavaPlugin plugin;
     private final String target;
+    private final String json;
 
     private @Nullable HashMap<String, String> headers = null;
 
-    public WebhookActions(JavaPlugin plugin, String target) {
+    public WebhookActions(MessageConfiguration.Message message) {
+        this.plugin = message.getPlugin();
+        this.target = message.getTarget();
+        this.json = message.getJson();
+    }
+
+    public WebhookActions(TemplateConfiguration.Template template) {
+        this.plugin = template.getPlugin();
+        this.target = template.getTarget();
+        this.json = template.getJson();
+    }
+
+    public WebhookActions(JavaPlugin plugin, String target, String json) {
         this.plugin = plugin;
         this.target = target;
+        this.json = json;
     }
 
     public @NotNull WebhookActions setHeaders(@Nullable HashMap<String, String> headers) {
@@ -54,11 +71,16 @@ public class WebhookActions {
         return this;
     }
 
+    public @NotNull WebhookActions setHeaders(MessageType type) {
+        this.headers = MessageConfiguration.get().getHeaders(type);
+
+        return this;
+    }
+
     /**
      * Asynchronously sends JSON payloads to the webhook URL using {@link BukkitRunnable}. Will do nothing if {@code webhookUrl} is not set or {@code isEnabled} is set to false in the config.
-     * @param json JSON payload to send
      */
-    public void SendAsync(String json) {
+    public void SendAsync() {
         if(!plugin.getConfig().getBoolean("isEnabled")) {return;}
         if(!plugin.getConfig().contains("webhooks.%s".formatted(target))) {
             plugin.getLogger().log(Level.SEVERE, LanguageConfiguration.get().getLocalizedString("config.noWebhookUrl").formatted(target));
@@ -81,9 +103,8 @@ public class WebhookActions {
 
     /**
      * Synchronously sends JSON payloads to the webhook URL. Will do nothing if {@code webhookUrl} is not set or {@code isEnabled} is set to false in the config.
-     * @param json JSON payload to send
      */
-    public void SendSync(String json) {
+    public void SendSync() {
         if(!plugin.getConfig().getBoolean("isEnabled")) {return;}
         if(!plugin.getConfig().contains("webhooks.%s".formatted(target))) {
             plugin.getLogger().log(Level.SEVERE, LanguageConfiguration.get().getLocalizedString("config.noWebhookUrl"));

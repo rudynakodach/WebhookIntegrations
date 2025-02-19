@@ -46,10 +46,8 @@ public class PlayerQuitListener implements Listener {
 
     @EventHandler
     public void onPlayerQuitEvent(PlayerQuitEvent event) {
-        if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_QUIT))   { return; }
-        if (WebhookActions.isPlayerVanished(plugin, event.getPlayer()))         { return; }
-
-        if (!MessageConfiguration.get().hasPlayerPermission(event.getPlayer(), MessageType.PLAYER_QUIT)) {return;}
+        MessageConfiguration.Message message = MessageConfiguration.get().getMessage(MessageType.PLAYER_QUIT);
+        if(!message.canPlayerTrigger(event.getPlayer())) { return; }
 
         if (TimeoutManager.get().isTimedOut(event.getPlayer()) &&
                 plugin.getConfig().getBoolean("ignore-events-during-timeout", false)) {
@@ -60,7 +58,7 @@ public class PlayerQuitListener implements Listener {
             return;
         }
 
-        String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_QUIT);
+        String json = message.getJson();
 
         String playerName = event.getPlayer().getName();
         if(plugin.getConfig().getBoolean("preventUsernameMarkdownFormatting")) {
@@ -90,8 +88,7 @@ public class PlayerQuitListener implements Listener {
             json = WebhookActions.removeColorCoding(plugin, json);
         }
 
-        String finalJson = json;
-        WebhookActions action = new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_QUIT)).setHeaders(MessageConfiguration.get().getHeaders(MessageType.PLAYER_QUIT));
+        WebhookActions action = new WebhookActions(message.setJson(json)).setHeaders(MessageType.PLAYER_QUIT);
 
         int timeoutDelay = plugin.getConfig().getInt("timeout-delay", 0);
         if(timeoutDelay > 0 && !(event.getPlayer().hasPermission("webhookintegrations.bypassTimeout"))) {
@@ -100,14 +97,14 @@ public class PlayerQuitListener implements Listener {
                 public void run() {
                     // check if player didn't join back by their name, event.getPlayer() doesn't work
                     if(!plugin.getServer().getOnlinePlayers().stream().map(Player::getName).collect(Collectors.joining()).contains(event.getPlayer().getName())) {
-                        action.SendAsync(finalJson);
+                        action.SendAsync();
                     }
                 }
             };
 
             TimeoutManager.get().timeout(event.getPlayer(), runnable);
         } else {
-            action.SendAsync(finalJson);
+            action.SendAsync();
         }
 
     }

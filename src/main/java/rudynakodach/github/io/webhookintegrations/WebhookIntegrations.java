@@ -214,9 +214,9 @@ public final class WebhookIntegrations extends JavaPlugin {
     }
 
     private void sendStopMessage() {
-        if(!MessageConfiguration.get().canAnnounce(MessageType.SERVER_STOP)) {
-            return;
-        }
+        MessageConfiguration.Message message = MessageConfiguration.get().getMessage(MessageType.SERVER_STOP);
+
+        if(!message.canAnnounce()) { return; }
 
         String serverIp = getServer().getIp();
         int slots = getServer().getMaxPlayers();
@@ -226,11 +226,7 @@ public final class WebhookIntegrations extends JavaPlugin {
         Boolean isOnlineMode = getServer().getOnlineMode();
         int playersOnline = getServer().getOnlinePlayers().size();
 
-        String json = MessageConfiguration.get().getMessage(MessageType.SERVER_STOP);
-
-        if(json == null) {
-            return;
-        }
+        String json = message.getJson();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         sdf.setTimeZone(TimeZone.getTimeZone(getConfig().getString("timezone")));
@@ -248,6 +244,6 @@ public final class WebhookIntegrations extends JavaPlugin {
             .replace("$isOnlineMode$", String.valueOf(isOnlineMode))
             .replace("$playersOnline$", String.valueOf(playersOnline));
 
-        new WebhookActions(this, MessageConfiguration.get().getTarget(MessageType.SERVER_STOP)).setHeaders(MessageConfiguration.get().getHeaders(MessageType.SERVER_STOP)).SendSync(json);
+        new WebhookActions(message.setJson(json)).setHeaders(MessageType.SERVER_STOP).SendSync();
     }
 }

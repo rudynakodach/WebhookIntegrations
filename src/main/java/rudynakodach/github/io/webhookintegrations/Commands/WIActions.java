@@ -83,8 +83,6 @@ public class WIActions implements CommandExecutor, TabCompleter {
                     }
                 } else if (args[0].equalsIgnoreCase("reload")) {
                     return reload(commandSender);
-                } else if(args[0].equalsIgnoreCase("analyze")) {
-                    return analyze(commandSender);
                 } else if (args[0].equalsIgnoreCase("update")) {
                     return update(commandSender);
                 } else if(args[0].equalsIgnoreCase("enable")) {
@@ -128,7 +126,6 @@ public class WIActions implements CommandExecutor, TabCompleter {
                 suggestions.add("enable");
                 suggestions.add("disable");
                 suggestions.add("reload");
-                suggestions.add("analyze");
                 suggestions.add("update");
                 suggestions.add("config");
                 suggestions.add("template");
@@ -182,36 +179,6 @@ public class WIActions implements CommandExecutor, TabCompleter {
     @Contract(pure = true)
     private @NotNull String colorBoolean(Boolean b) {
         return (b ? ChatColor.GREEN : ChatColor.RED) + String.valueOf(b) + ChatColor.RESET;
-    }
-
-    private boolean analyze(CommandSender commandSender) {
-        if (!commandSender.hasPermission("webhookintegrations.analyze")) {
-            commandSender.sendMessage(
-                    ChatColor.translateAlternateColorCodes('&',
-                            LanguageConfiguration.get().getLocalizedString("no-permission"))
-            );
-            return true;
-        }
-        commandSender.sendMessage(ChatColor.AQUA + "Analyzing config... To reload the config use /wi reload");
-        String message = "auto-update: " + colorBoolean(plugin.getConfig().getBoolean("auto-update"));
-        if (Objects.requireNonNull(plugin.getConfig().getString("webhooks.main")).trim().equalsIgnoreCase("")) {
-            message += "\nwebhooks.main: " + ChatColor.RED + "unset\n";
-        } else {
-            message += "\nwebhooks.main: " + ChatColor.GREEN + "set\n";
-        }
-
-        message += ChatColor.YELLOW + "EVENTS" + ChatColor.WHITE;
-        message += "\nServer Start: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean(MessageType.SERVER_START));
-        message += "\nServer Stop: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean(MessageType.SERVER_STOP));
-        message += "\nPlayer Join: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean(MessageType.PLAYER_JOIN));
-        message += "\nPlayer Quit: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean(MessageType.PLAYER_QUIT));
-        message += "\nPlayer Kick: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean(MessageType.PLAYER_KICK));
-        message += "\nAdvancement made: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean(MessageType.PLAYER_ADVANCEMENT));
-        message += "\nPlayer Death PVE: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean(MessageType.PLAYER_DEATH_NPC));
-        message += "\nPlayer Death PVP: " + colorBoolean(MessageConfiguration.get().getYamlConfig().getBoolean(MessageType.PLAYER_DEATH_KILLED));
-
-        commandSender.sendMessage(message);
-        return true;
     }
 
     private boolean resetConfig(CommandSender commandSender) {
@@ -463,18 +430,17 @@ public class WIActions implements CommandExecutor, TabCompleter {
 
         TemplateConfiguration.Template template = TemplateConfiguration.get().getTemplate(templateName);
 
-        if (template == null || template.jsonBody == null) {
+        if (template == null || template.getJson() == null) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LanguageConfiguration.get().getLocalizedString("commands.templates.noJson")));
             return true;
         }
 
         int argsOffset = 0;
-        String target = template.defaultTarget;
 
         if(args.length >= 4) {
             if (!args[3].startsWith("--")) {
                 argsOffset = 1;
-                target = args[3];
+                template.setTarget(args[3]);
             }
         }
 
@@ -492,7 +458,7 @@ public class WIActions implements CommandExecutor, TabCompleter {
             }
         }
 
-        new WebhookActions(plugin, target).SendAsync(template.compile(params));
+        new WebhookActions(template.setJson(template.compile(params))).SendAsync();
 
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LanguageConfiguration.get().getLocalizedString("commands.templates.success")));
 

@@ -45,20 +45,48 @@ public class TemplateConfiguration extends WebhookIntegrationsModule {
         if(sect == null) {
             return null;
         }
-        return new Template(sect);
+        return new Template(plugin, sect);
     }
 
     public class Template {
-        public final boolean isUsingGlobals;
-        public final String jsonBody;
-        public final List<String> params;
-        public final String defaultTarget;
+        private final JavaPlugin plugin;
 
-        private Template(ConfigurationSection sect) {
-            isUsingGlobals = sect.getBoolean("useGlobals");
-            jsonBody = sect.getString("messageJson");
-            params = sect.getStringList("params");
-            defaultTarget = sect.getString("defaultTarget");
+        public final boolean isUsingGlobals;
+        private String json;
+        public final List<String> params;
+        private String target;
+
+        private Template(JavaPlugin plugin, ConfigurationSection sect) {
+            this.plugin = plugin;
+
+            this.isUsingGlobals = sect.getBoolean("useGlobals");
+            this.json = sect.getString("messageJson");
+            this.params = sect.getStringList("params");
+            this.target = sect.getString("defaultTarget");
+        }
+
+        public String getJson() {
+            return json;
+        }
+
+        public Template setJson(String json) {
+            this.json = json;
+
+            return this;
+        }
+
+        public String getTarget() {
+            return target;
+        }
+
+        public Template setTarget(String target) {
+            this.target = target;
+
+            return this;
+        }
+
+        public JavaPlugin getPlugin() {
+            return plugin;
         }
 
         public static boolean templateExists(String name) {
@@ -66,7 +94,7 @@ public class TemplateConfiguration extends WebhookIntegrationsModule {
         }
 
         public String compile(Map<String, String> args) {
-            String compiledBody = jsonBody;
+            String compiledBody = json;
 
             for(Map.Entry<String, String> entry : args.entrySet()) {
                 if(params.contains(entry.getKey())) {

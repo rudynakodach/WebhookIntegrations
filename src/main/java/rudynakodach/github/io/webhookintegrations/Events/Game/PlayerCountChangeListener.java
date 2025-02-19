@@ -11,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageConfiguration;
 import rudynakodach.github.io.webhookintegrations.Modules.MessageType;
 import rudynakodach.github.io.webhookintegrations.WebhookActions;
-import rudynakodach.github.io.webhookintegrations.WebhookIntegrations;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,7 +27,8 @@ public class PlayerCountChangeListener implements Listener {
     }
 
     private void update() {
-        if(!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_COUNT_CHANGED)) {
+        MessageConfiguration.Message message = MessageConfiguration.get().getMessage(MessageType.PLAYER_COUNT_CHANGED);
+        if(!message.canAnnounce()) {
             return;
         }
 
@@ -57,7 +57,8 @@ public class PlayerCountChangeListener implements Listener {
     }
 
     private void sendPlayerCount() {
-        String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_COUNT_CHANGED);
+        MessageConfiguration.Message message = MessageConfiguration.get().getMessage(MessageType.PLAYER_COUNT_CHANGED);
+        String json = message.getJson();
 
         int playerCount = WebhookActions.getPlayerCount(plugin);
         int playerCountChange = playerCount - lastPlayerCountSent;
@@ -76,12 +77,11 @@ public class PlayerCountChangeListener implements Listener {
 
         lastPlayerCountSent = WebhookActions.getPlayerCount(plugin);
 
-
         if(plugin.getConfig().getBoolean("remove-color-coding", false)) {
             json = WebhookActions.removeColorCoding(plugin, json);
         }
 
-        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_COUNT_CHANGED)).setHeaders(MessageConfiguration.get().getHeaders(MessageType.PLAYER_COUNT_CHANGED)).SendSync(json);
+        new WebhookActions(message.setJson(json)).setHeaders(MessageType.PLAYER_COUNT_CHANGED).SendSync();
     }
 
     @EventHandler

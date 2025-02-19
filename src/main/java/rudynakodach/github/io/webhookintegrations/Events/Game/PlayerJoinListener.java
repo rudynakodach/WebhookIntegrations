@@ -42,28 +42,16 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onPlayerJoinEvent(PlayerJoinEvent event) {
-        if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_JOIN)) {
-            return;
-        }
+        MessageConfiguration.Message message = MessageConfiguration.get().getMessage(MessageType.PLAYER_JOIN);
 
-        if (!MessageConfiguration.get().hasPlayerPermission(event.getPlayer(), MessageType.PLAYER_JOIN)) {
-            return;
-        }
+        if(!message.canPlayerTrigger(event.getPlayer())) { return; }
 
         if(TimeoutManager.get().isTimedOut(event.getPlayer()) &&
                 plugin.getConfig().getBoolean("ignore-events-during-timeout", false)) {
             return;
         }
 
-        if(WebhookActions.isPlayerVanished(plugin, event.getPlayer())) {
-            return;
-        }
-
-        String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_JOIN);
-
-        if(json == null) {
-            return;
-        }
+        String json = message.getJson();
 
         String playerName = event.getPlayer().getName();
         if(plugin.getConfig().getBoolean("preventUsernameMarkdownFormatting")) {
@@ -91,7 +79,7 @@ public class PlayerJoinListener implements Listener {
 
         String finalJson = json;
         plugin.getLogger().log(Level.INFO, finalJson);
-        WebhookActions action = new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_JOIN)).setHeaders(MessageConfiguration.get().getHeaders(MessageType.PLAYER_JOIN));
+        WebhookActions action = new WebhookActions(message.setJson(json)).setHeaders(MessageType.PLAYER_JOIN);
 
         int timeoutDelay = plugin.getConfig().getInt("timeout-delay", 0);
         if(timeoutDelay > 0 && !(event.getPlayer().hasPermission("webhookintegrations.bypassTimeout"))) {
@@ -100,14 +88,14 @@ public class PlayerJoinListener implements Listener {
                 public void run() {
                     // check if player didn't leave
                     if(plugin.getServer().getOnlinePlayers().contains(event.getPlayer())) {
-                        action.SendAsync(finalJson);
+                        action.SendAsync();
                     }
                 }
             };
 
             TimeoutManager.get().timeout(event.getPlayer(), runnable);
         } else {
-            action.SendAsync(finalJson);
+            action.SendAsync();
         }
     }
 }

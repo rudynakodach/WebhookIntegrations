@@ -22,7 +22,9 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import rudynakodach.github.io.webhookintegrations.WebhookActions;
 
 import java.io.File;
 import java.util.HashMap;
@@ -43,28 +45,24 @@ public class MessageConfiguration extends WebhookIntegrationsModule {
         instance = this;
     }
 
+    public Message getMessage(MessageType type) {
+        return new Message(plugin, type);
+    }
+
     public boolean canAnnounce(String message) {
         return config.getBoolean(message + ".announce");
     }
 
-    public boolean hasPlayerPermission(Player p, String messageType) {
-        if(config.getBoolean("%s.usePermissions".formatted(messageType), false)) {
-            return p.hasPermission("webhookintegrations.events.%s".formatted(messageType)) || p.hasPermission("webhookintegrations.events.all");
-        }
+//    public String getTarget(String message) {
+//        return config.getString("%s.target".formatted(message), "main");
+//    }
 
-        return true;
-    }
+//    public String getMessage(String path) {
+//        return config.getString(path + ".messageJson");
+//    }
 
-    public String getTarget(String message) {
-        return config.getString("%s.target".formatted(message), "main");
-    }
-
-    public String getMessage(String path) {
-        return config.getString(path + ".messageJson");
-    }
-
-    public @Nullable HashMap<String, String> getHeaders(String messageType) {
-        ConfigurationSection headersSection = config.getConfigurationSection("%s.headers".formatted(messageType));
+    public @Nullable HashMap<String, String> getHeaders(MessageType type) {
+        ConfigurationSection headersSection = config.getConfigurationSection("%s.headers".formatted(type.toString()));
 
         if(headersSection == null) {
             return null;
@@ -77,5 +75,65 @@ public class MessageConfiguration extends WebhookIntegrationsModule {
         }
 
         return headers;
+    }
+
+    public static class Message {
+        private final JavaPlugin plugin;
+
+        private final String target;
+        private final boolean announce;
+        private String json;
+        private final boolean usePermissions;
+        private final MessageType type;
+
+        public Message(JavaPlugin plugin, MessageType type) {
+            this.plugin = plugin;
+            this.type = type;
+
+            ConfigurationSection sect = get().getYamlConfig().getConfigurationSection(type.toString());
+
+            if(sect == null) {
+                throw new IllegalArgumentException("Provided section for event was null");
+            }
+
+            this.target = sect.getString("target", "main");
+            this.announce = sect.getBoolean("announce", true);
+            this.json = sect.getString("messageJson", "");
+            this.usePermissions = sect.getBoolean("usePermissions", false);
+        }
+
+        public JavaPlugin getPlugin() {
+            return plugin;
+        }
+
+        public String getTarget() {
+            return target;
+        }
+
+        public Message setJson(String json) {
+            this.json = json;
+
+            return this;
+        }
+
+        public boolean canAnnounce() {
+            return announce;
+        }
+
+        public String getJson() {
+            return json;
+        }
+
+        public boolean usesPermissions() {
+            return usePermissions;
+        }
+
+        public boolean canPlayerTrigger(Player p) {
+            return announce && !WebhookActions.isPlayerVanished(plugin, p) && (!usePermissions || hasPlayerPermission(p, type));
+        }
+
+        private boolean hasPlayerPermission(Player p, MessageType type) {
+            return p.hasPermission("webhookintegrations.events.%s".formatted(type.toString())) || p.hasPermission("webhookintegrations.events.all");
+        }
     }
 }

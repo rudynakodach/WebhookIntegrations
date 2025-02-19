@@ -22,18 +22,27 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class MessageType {
-    public static final String SERVER_START = "onServerStart";
-    public static final String SERVER_STOP = "onServerStop";
-    public static final String PLAYER_JOIN = "onPlayerJoin";
-    public static final String PLAYER_QUIT = "onPlayerQuit";
-    public static final String PLAYER_KICK = "onPlayerKicked";
-    public static final String PLAYER_DEATH_NPC = "onPlayerDeath.playerKilledByNPC";
-    public static final String PLAYER_DEATH_KILLED = "onPlayerDeath.playerKilledByPlayer";
-    public static final String PLAYER_CHAT = "onPlayerChat";
-    public static final String PLAYER_ADVANCEMENT = "onPlayerAdvancement";
-    public static final String PLAYER_COUNT_CHANGED = "onPlayerCountChange";
+public enum MessageType {
+    SERVER_START("onServerStart"),
+    SERVER_STOP("onServerStop"),
+    PLAYER_JOIN("onPlayerJoin"),
+    PLAYER_QUIT("onPlayerQuit"),
+    PLAYER_KICK("onPlayerKicked"),
+    PLAYER_DEATH_NPC("onPlayerDeath.playerKilledByNPC"),
+    PLAYER_DEATH_KILLED("onPlayerDeath.playerKilledByPlayer"),
+    PLAYER_CHAT("onPlayerChat"),
+    PLAYER_ADVANCEMENT("onPlayerAdvancement"),
+    PLAYER_COUNT_CHANGED("onPlayerCountChange");
 
+
+    private String t;
+    MessageType(String type) {
+        this.t = type;
+    }
+
+    public String toString() {
+        return t;
+    }
 
     public static List<String> getAllMessageTypes() {
         List<String> messageTypes = new ArrayList<>();

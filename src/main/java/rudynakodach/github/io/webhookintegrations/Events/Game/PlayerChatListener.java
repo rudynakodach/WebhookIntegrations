@@ -48,15 +48,9 @@ public class PlayerChatListener implements Listener {
             return;
         }
 
-        if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_CHAT)) {
-            return;
-        }
+        MessageConfiguration.Message message = MessageConfiguration.get().getMessage(MessageType.PLAYER_CHAT);
 
-        if(!MessageConfiguration.get().hasPlayerPermission(event.getPlayer(), MessageType.PLAYER_CHAT)) {
-            return;
-        }
-
-        if(WebhookActions.isPlayerVanished(plugin, event.getPlayer())) {
+        if(!message.canPlayerTrigger(event.getPlayer())) {
             return;
         }
 
@@ -67,16 +61,15 @@ public class PlayerChatListener implements Listener {
 
         boolean allowPlaceholdersInMessage = MessageConfiguration.get().getYamlConfig().getBoolean("onPlayerChat.allow-placeholders-in-message");
 
-        String message = PlainTextComponentSerializer.plainText().serialize(event.message());
-//        String playerName = event.getPlayer().getName();
-        String playerName = "One_Two";
+        String chatMessage = PlainTextComponentSerializer.plainText().serialize(event.message());
+        String playerName = event.getPlayer().getName();
         if(plugin.getConfig().getBoolean("preventUsernameMarkdownFormatting")) {
             playerName = WebhookActions.escapeMarkdown(playerName);
         }
 
         String playerWorldName = event.getPlayer().getWorld().getName();
 
-        String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_CHAT);
+        String json = message.getJson();
 
         if(json == null) {
             return;
@@ -86,37 +79,37 @@ public class PlayerChatListener implements Listener {
         if(section != null) {
             Set<String> keys = section.getKeys(false);
             for(String key : keys) {
-                message = message.replace(key, String.valueOf(plugin.getConfig().get("censoring." + key)));
+                chatMessage = chatMessage.replace(key, String.valueOf(plugin.getConfig().get("censoring." + key)));
             }
         }
 
         if(plugin.getConfig().getBoolean("remove-force-pings")) {
-            message = message.replaceAll("<@[0-9]+>", "");
+            chatMessage = chatMessage.replaceAll("<@[0-9]+>", "");
         }
         if(plugin.getConfig().getBoolean("remove-force-channel-pings")) {
-            message = message.replaceAll("<#[0-9]+>", "");
+            chatMessage = chatMessage.replaceAll("<#[0-9]+>", "");
         }
         if(plugin.getConfig().getBoolean("remove-force-role-pings")) {
-            message = message.replaceAll("<@&[0-9]+>", "");
+            chatMessage = chatMessage.replaceAll("<@&[0-9]+>", "");
         }
 
-        if(message.trim().equalsIgnoreCase("")) {
+        if(chatMessage.trim().equalsIgnoreCase("")) {
             return;
         }
 
         if(plugin.getConfig().getBoolean("prevent-message-markdown-formatting", false)) {
-            message = WebhookActions.escapeMarkdown(message);
+            chatMessage = WebhookActions.escapeMarkdown(chatMessage);
         }
 
         if(plugin.getConfig().getBoolean("useRegexCensoring")) {
             List<String> patterns = Objects.requireNonNull(plugin.getConfig().getConfigurationSection("regexCensoring")).getKeys(false).stream().toList();
             for(String expr : patterns) {
-                message = message.replace(expr, Objects.requireNonNull(plugin.getConfig().getString("regexCensoring." + expr)));
+                chatMessage = chatMessage.replace(expr, Objects.requireNonNull(plugin.getConfig().getString("regexCensoring." + expr)));
             }
         }
 
         if(allowPlaceholdersInMessage) {
-            json = json.replace("$message$", message);
+            json = json.replace("$message$", chatMessage);
             if(plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
                 json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
             }
@@ -138,13 +131,13 @@ public class PlayerChatListener implements Listener {
             if(plugin.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
                 json = PlaceholderAPI.setPlaceholders(event.getPlayer(), json);
             }
-            json = json.replace("$message$", message);
+            json = json.replace("$message$", chatMessage);
         }
 
         if(plugin.getConfig().getBoolean("remove-color-coding", false)) {
             json = WebhookActions.removeColorCoding(plugin, json);
         }
 
-        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_CHAT)).setHeaders(MessageConfiguration.get().getHeaders(MessageType.PLAYER_CHAT)).SendAsync(json);
+        new WebhookActions(message.setJson(json)).setHeaders(MessageType.PLAYER_CHAT).SendAsync();
     }
 }

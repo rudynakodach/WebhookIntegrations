@@ -48,20 +48,12 @@ public class PlayerKickListener implements Listener {
             return;
         }
 
-        if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_KICK)) {
-            return;
-        }
+        MessageConfiguration.Message message = MessageConfiguration.get().getMessage(MessageType.PLAYER_KICK);
 
-        if (!MessageConfiguration.get().hasPlayerPermission(event.getPlayer(), MessageType.PLAYER_KICK)) {
-            return;
-        }
+        if(!message.canPlayerTrigger(event.getPlayer())) { return; }
 
         if (TimeoutManager.get().isTimedOut(event.getPlayer()) &&
                 plugin.getConfig().getBoolean("ignore-events-during-timeout", false)) {
-            return;
-        }
-
-        if(WebhookActions.isPlayerVanished(plugin, event.getPlayer())) {
             return;
         }
 
@@ -75,11 +67,7 @@ public class PlayerKickListener implements Listener {
             reason = "Unspecified reason.";
         }
 
-        String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_KICK);
-
-        if(json == null) {
-            return;
-        }
+        String json = message.getJson();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         sdf.setTimeZone(TimeZone.getTimeZone(plugin.getConfig().getString("timezone")));
@@ -102,6 +90,6 @@ public class PlayerKickListener implements Listener {
             json = WebhookActions.removeColorCoding(plugin, json);
         }
 
-        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_KICK)).setHeaders(MessageConfiguration.get().getHeaders(MessageType.PLAYER_KICK)).SendAsync(json);
+        new WebhookActions(message.setJson(json)).setHeaders(MessageType.PLAYER_KICK).SendAsync();
     }
 }

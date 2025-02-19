@@ -42,10 +42,12 @@ public class ServerStartListener implements Listener {
 
     @EventHandler
     public void onServerLoad(ServerLoadEvent event) {
-        if(event.getType() != ServerLoadEvent.LoadType.STARTUP)                 { return; }
-        if(!MessageConfiguration.get().canAnnounce(MessageType.SERVER_START))   { return; }
+        MessageConfiguration.Message message = MessageConfiguration.get().getMessage(MessageType.SERVER_START);
 
-        String json = MessageConfiguration.get().getMessage(MessageType.SERVER_START);
+        if(!message.canAnnounce())                              { return; }
+        if(event.getType() != ServerLoadEvent.LoadType.STARTUP) { return; }
+
+        String json = message.getJson();
 
         String serverIp = plugin.getServer().getIp();
         int slots = plugin.getServer().getMaxPlayers();
@@ -54,10 +56,6 @@ public class ServerStartListener implements Listener {
         String serverVersion = plugin.getServer().getVersion();
         Boolean isOnlineMode = plugin.getServer().getOnlineMode();
         int playersOnline = WebhookActions.getPlayerCount(plugin);
-
-        if(json == null) {
-            return;
-        }
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         sdf.setTimeZone(TimeZone.getTimeZone(plugin.getConfig().getString("timezone")));
@@ -76,6 +74,6 @@ public class ServerStartListener implements Listener {
             json = WebhookActions.removeColorCoding(plugin, json);
         }
 
-        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.SERVER_START)).setHeaders(MessageConfiguration.get().getHeaders(MessageType.SERVER_START)).SendSync(json);
+        new WebhookActions(message.setJson(json)).setHeaders(MessageType.SERVER_START).SendSync();
     }
 }

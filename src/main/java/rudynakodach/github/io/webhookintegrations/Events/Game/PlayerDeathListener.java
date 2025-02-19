@@ -44,10 +44,6 @@ public class PlayerDeathListener implements Listener {
 
     @EventHandler
     public void onPlayerDeathEvent(PlayerDeathEvent event) {
-        if(WebhookActions.isPlayerVanished(plugin, event.getPlayer())) {
-            return;
-        }
-
         if (TimeoutManager.get().isTimedOut(event.getPlayer()) &&
                 plugin.getConfig().getBoolean("ignore-events-during-timeout", false)) {
             return;
@@ -68,23 +64,15 @@ public class PlayerDeathListener implements Listener {
         sdf.setTimeZone(TimeZone.getTimeZone(plugin.getConfig().getString("timezone")));
 
         if(event.getEntity().getKiller() != null) {
-            if(WebhookActions.isPlayerVanished(plugin, event.getEntity().getKiller())) {
-                return;
-            }
-
-            if(!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_DEATH_KILLED)) {return;}
-            if(!MessageConfiguration.get().hasPlayerPermission(event.getPlayer().getKiller(), MessageType.PLAYER_DEATH_KILLED)) {return;}
+            MessageConfiguration.Message message = MessageConfiguration.get().getMessage(MessageType.PLAYER_DEATH_KILLED);
+            if(!message.canPlayerTrigger(event.getPlayer().getKiller())) { return; }
 
             String killerName = event.getEntity().getKiller().getName();
             if(plugin.getConfig().getBoolean("preventUsernameMarkdownFormatting")) {
                 killerName = WebhookActions.escapeMarkdown(event.getEntity().getKiller().getName());
             }
 
-            String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_DEATH_KILLED);
-
-            if(json == null) {
-                return;
-            }
+            String json = message.getJson();
 
             json = json.replace("$playersOnline$",String.valueOf(WebhookActions.getPlayerCount(plugin)))
                 .replace("$timestamp$", sdf.format(new Date()))
@@ -104,12 +92,13 @@ public class PlayerDeathListener implements Listener {
                 json = PlaceholderAPI.setRelationalPlaceholders(event.getPlayer(), event.getEntity().getKiller(), json);
             }
 
-            new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_DEATH_KILLED)).SendAsync(json);
+            new WebhookActions(message.setJson(json)).setHeaders(MessageType.PLAYER_DEATH_KILLED).SendAsync();
         }
         else {
-            if(!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_DEATH_NPC)) {return;}
-            if(!MessageConfiguration.get().hasPlayerPermission(event.getPlayer(), MessageType.PLAYER_DEATH_NPC)) {return;}
-            String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_DEATH_NPC);
+            MessageConfiguration.Message message = MessageConfiguration.get().getMessage(MessageType.PLAYER_DEATH_NPC);
+            if(!message.canPlayerTrigger(event.getPlayer())) { return; }
+
+            String json = message.getJson();
 
             if(json == null) {
                 return;
@@ -133,7 +122,7 @@ public class PlayerDeathListener implements Listener {
                 json = WebhookActions.removeColorCoding(plugin, json);
             }
 
-            new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_DEATH_NPC)).setHeaders(MessageConfiguration.get().getHeaders(MessageType.PLAYER_DEATH_NPC)).SendAsync(json);
+            new WebhookActions(message.setJson(json)).setHeaders(MessageType.PLAYER_DEATH_NPC).SendAsync();
         }
     }
 }

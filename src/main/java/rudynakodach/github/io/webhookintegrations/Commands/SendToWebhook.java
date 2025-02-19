@@ -60,12 +60,12 @@ public class SendToWebhook implements CommandExecutor {
                 if (isEmbed) {
                     String json = "{\"embeds\": [ {\"title\": \"" + username + "\",\"description\": \"" + message + "\"}]}";
 
-                    new WebhookActions(plugin, target).SendAsync(json);
+                    new WebhookActions(plugin, target, json).SendAsync();
                 } else {
                     message = username + ": " + message;
                     String json = "{ \"content\": \"" + message + "\" }";
 
-                    new WebhookActions(plugin, target).SendAsync(json);
+                    new WebhookActions(plugin, target, json).SendAsync();
                 }
                 return true;
 

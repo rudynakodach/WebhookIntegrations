@@ -31,7 +31,6 @@ import rudynakodach.github.io.webhookintegrations.WebhookActions;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Objects;
 import java.util.TimeZone;
 
 public class PlayerAdvancementCompletedListener implements Listener {
@@ -43,13 +42,10 @@ public class PlayerAdvancementCompletedListener implements Listener {
 
     @EventHandler
     public void onAdvancementMade(PlayerAdvancementDoneEvent event) {
-        if (!MessageConfiguration.get().canAnnounce(MessageType.PLAYER_ADVANCEMENT))    { return; }
-        if (event.getAdvancement().getDisplay() == null)                                { return; }
-        if (WebhookActions.isPlayerVanished(plugin, event.getPlayer()))                 { return; }
+        MessageConfiguration.Message message = MessageConfiguration.get().getMessage(MessageType.PLAYER_ADVANCEMENT);
+        if(!message.canPlayerTrigger(event.getPlayer()))    { return; }
+        if (event.getAdvancement().getDisplay() == null)    { return; }
 
-        if(!MessageConfiguration.get().hasPlayerPermission(event.getPlayer(), MessageType.PLAYER_ADVANCEMENT)) {
-            return;
-        }
 
         if (TimeoutManager.get().isTimedOut(event.getPlayer()) &&
                 plugin.getConfig().getBoolean("ignore-events-during-timeout", false)) {
@@ -59,7 +55,7 @@ public class PlayerAdvancementCompletedListener implements Listener {
         String advancement = PlainTextComponentSerializer.plainText().serialize(event.getAdvancement().getDisplay().title());
         String advancementDescription = PlainTextComponentSerializer.plainText().serialize(event.getAdvancement().getDisplay().description());
 
-        String json = MessageConfiguration.get().getMessage(MessageType.PLAYER_ADVANCEMENT);
+        String json = message.getJson();
 
         String playerName = event.getPlayer().getName();
         if(plugin.getConfig().getBoolean("preventUsernameMarkdownFormatting")) {
@@ -86,6 +82,6 @@ public class PlayerAdvancementCompletedListener implements Listener {
             json = WebhookActions.removeColorCoding(plugin, json);
         }
 
-        new WebhookActions(plugin, MessageConfiguration.get().getTarget(MessageType.PLAYER_ADVANCEMENT)).setHeaders(MessageConfiguration.get().getHeaders(MessageType.PLAYER_ADVANCEMENT)).SendAsync(json);
+        new WebhookActions(message.setJson(json)).setHeaders(MessageType.PLAYER_ADVANCEMENT).SendAsync();
     }
 }
