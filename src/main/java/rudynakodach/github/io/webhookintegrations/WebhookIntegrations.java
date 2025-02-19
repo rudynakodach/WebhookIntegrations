@@ -45,7 +45,7 @@ import java.util.logging.Level;
 
 public final class WebhookIntegrations extends JavaPlugin {
     public static boolean isLatest = true;
-    public static final int currentBuildNumber = 66;
+    public static final int currentBuildNumber = 67;
     public static final int currentConfigVersion = 4;
 
     @Override

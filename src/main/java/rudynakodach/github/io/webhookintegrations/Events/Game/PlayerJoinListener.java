@@ -31,7 +31,6 @@ import rudynakodach.github.io.webhookintegrations.WebhookActions;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.Level;
 
 public class PlayerJoinListener implements Listener {
 
@@ -77,8 +76,6 @@ public class PlayerJoinListener implements Listener {
             json = WebhookActions.removeColorCoding(plugin, json);
         }
 
-        String finalJson = json;
-        plugin.getLogger().log(Level.INFO, finalJson);
         WebhookActions action = new WebhookActions(message.setJson(json)).setHeaders(MessageType.PLAYER_JOIN);
 
         int timeoutDelay = plugin.getConfig().getInt("timeout-delay", 0);

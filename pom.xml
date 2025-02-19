@@ -6,7 +6,7 @@
 
     <groupId>rudynakodach.github.io</groupId>
     <artifactId>WebhookIntegrations</artifactId>
-    <version>5.4</version>
+    <version>5.5</version>
     <packaging>jar</packaging>
 
     <name>WebhookIntegrations</name>

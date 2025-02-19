@@ -37,7 +37,6 @@ import rudynakodach.github.io.webhookintegrations.Modules.TemplateConfiguration;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.logging.Level;
 
 public class WebhookActions {
@@ -87,7 +86,7 @@ public class WebhookActions {
             return;
         }
 
-        String webhookUrl = Objects.requireNonNull(plugin.getConfig().getString("webhooks.%s".formatted(target))).trim();
+        String webhookUrl = plugin.getConfig().getString("webhooks.%s".formatted(target), "").trim();
 
         if (webhookUrl.isEmpty()) {
             plugin.getLogger().log(Level.WARNING, "Attempted to send a message to an empty webhook URL! Use /setUrl or disable the event in the config!");
@@ -111,14 +110,14 @@ public class WebhookActions {
             return;
         }
 
-        String webhookUrl = Objects.requireNonNull(plugin.getConfig().getString("webhooks.%s".formatted(target))).trim();
+        String webhookUrl = plugin.getConfig().getString("webhooks.%s".formatted(target), "").trim();
 
         if (webhookUrl.isEmpty()) {
             plugin.getLogger().log(Level.WARNING, "Attempted to send a message to an empty webhook URL! Use /setUrl or disable the event in the config!");
             return;
         }
 
-        send(target, json);
+        send(webhookUrl, json);
     }
 
     private void send(@NotNull String webhookUrl, @NotNull String json) {
