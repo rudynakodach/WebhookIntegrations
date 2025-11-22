@@ -13,56 +13,8 @@ commands:
     usage: /send <?target> <isEmbed> <message>
     permission: webhookintegrations.send
 
-  configreset:
-    usage: /wi config reset <confirm>
-    permission: webhookintegrations.config.reset
-
-  reload:
-    usage: /wi reload
-    permission: webhookintegrations.reload
-
   wi:
     usage: /wi
     permission: webhookintegrations.wi
     aliases:
       - "webhookintegrations"
-
-  help:
-    usage: /wi help
-    permission: webhookintegrations.help
-
-  update:
-    usage: /wi update
-    permission: webhookintegrations.update
-
-  analyze:
-    usage: /wi analyze
-    permission: webhookintegrations.analyze
-
-  disable:
-    usage: /wi disable
-    permission: webhookintegrations.disable
-
-  enable:
-    usage: /wi enable
-    permission: webhookintegrations.enable
-
-  setlang:
-    usage: /wi setlanguage
-    permission: webhookintegrations.setlanguage
-
-  setconfigvalue:
-    usage: /wi config setvalue <key> <value>
-    permission: webhookintegrations.config.setvalue
-
-  loadbackup:
-    usage: /wi config loadbackup <name>
-    permission: webhookintegrations.config.loadbackup
-
-  savebackup:
-    usage: /wi config savebackup <?name>
-    permission: webhookintegrations.config.savebackup
-
-  sendtemplate:
-    usage: /wi template send <name> <?target> <args>
-    permission: webhookintegrations.templates.send
